@@ -166,7 +166,9 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
             }
         }
 
+
         Logger.d(ACCESSIBILITYTAG,"EMIDUES: $emiDues")
+
 
         if (emiDues != null) {
             if (emiDues!! > 0) {
@@ -176,13 +178,13 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
             }
         }
 
+
         if (lateEMIs > 0) {
             Logger.d(ACCESSIBILITYTAG, "Late EMIs Count: $lateEMIs")
             this@isEMIDue.startLockSituation()
         }
         else {
-           // this@isEMIDue.stopLockSituation()
-            this@isEMIDue.startLockSituation()
+             this@isEMIDue.stopLockSituation()
         }
 
 
