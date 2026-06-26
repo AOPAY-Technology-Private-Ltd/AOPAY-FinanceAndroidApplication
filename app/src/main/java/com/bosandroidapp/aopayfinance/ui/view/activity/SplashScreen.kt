@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.lifecycleScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -51,6 +52,8 @@ class SplashScreen : AppCompatActivity() {
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
+
+        binding.uattext.visibility= View.GONE
 
 
         Handler(Looper.getMainLooper()).postDelayed({
