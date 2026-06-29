@@ -587,6 +587,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                         val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
                         val emiNumbers=  (1..selectedNoofEmi).joinToString("")
                         PGWebViewActivity.LoanCodePG = loanCode
+
                         var req = PGRequestCall(
                             payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
                             customerEmailID = email,

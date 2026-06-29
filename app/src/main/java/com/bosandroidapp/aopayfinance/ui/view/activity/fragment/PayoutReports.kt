@@ -43,14 +43,21 @@ class PayoutReports : Fragment() {
 
         preference = SharedPreference(requireContext())
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
-        hitApiForReports(reportType)
+       // hitApiForReports(reportType)
         return binding.root
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        hitApiForReports(reportType)
     }
 
 
     fun setview( ){
         // for report.........................................................................................
-        val adapter = ArrayAdapter.createFromResource(requireContext(),  R.array.reporttype, R.layout.mobilenamelayout)
+        val adapter = ArrayAdapter.createFromResource(requireContext(),  R.array.cibilreporttype, R.layout.mobilenamelayout)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.reporttype.adapter = adapter
         var isSpinnerFirstCall = true // declare outside the listener
@@ -90,7 +97,9 @@ class PayoutReports : Fragment() {
             if(!filteredList.isNullOrEmpty()){
                 binding.notfoundimage.visibility= View.GONE
                 binding.showreports.visibility = View.VISIBLE
-                var adapter = RetailerWalletAdapter(requireContext(), filteredList)
+                var list = filteredList.reversed()
+                Log.d("reversereportList", Gson().toJson( filteredList.reversed()))
+                var adapter = RetailerWalletAdapter(requireContext(), list)
                 binding.showreports.adapter = adapter
                 adapter.notifyDataSetChanged()
             }

@@ -91,6 +91,7 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerEMIPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerReportsPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.BankDetailsPage
+import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CustomerAppInstall
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IDVerificationPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MapActivity
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports.LowCibilScoreCustomerReports
@@ -164,6 +165,7 @@ class DashBoard : AppCompatActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION), 101)
             }
             binding.makePaymentLayout.visibility=View.GONE
+            binding.installAppLayout.visibility=View.GONE
             binding.logout.visibility = View.GONE
 
         }
@@ -174,7 +176,7 @@ class DashBoard : AppCompatActivity() {
             }
 
             binding.makePaymentLayout.visibility=View.VISIBLE
-
+            binding.installAppLayout.visibility=View.VISIBLE
             /*          binding.navRecyclerViewlayout.visibility=View.GONE
             binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
             navAdapter = NavAdapter(this, items) { clickedChild ->
@@ -185,12 +187,11 @@ class DashBoard : AppCompatActivity() {
             }
             binding.navRecyclerView.adapter = navAdapter*/
 
-            binding.logout.visibility = View.VISIBLE
+             binding.logout.visibility = View.VISIBLE
 
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
             }
-
 
           }
 
@@ -345,6 +346,7 @@ class DashBoard : AppCompatActivity() {
             startActivity(Intent(this@DashBoard, MakePaymentPage::class.java))
         }
 
+
         binding.appBarDashBoard.swiperefresh.setOnRefreshListener {
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
@@ -370,7 +372,7 @@ class DashBoard : AppCompatActivity() {
                 binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
             }
 
-           /* preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
+            /*preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
             binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
             binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE*/
 
@@ -385,6 +387,10 @@ class DashBoard : AppCompatActivity() {
         binding.navProfile.setOnClickListener {
             binding.drawerLayout.closeDrawers()
             startActivity(Intent(this, RetailerProfilePage::class.java))
+        }
+
+        binding.installAppLayout.setOnClickListener {
+            startActivity(Intent(this, CustomerAppInstall::class.java))
         }
 
 

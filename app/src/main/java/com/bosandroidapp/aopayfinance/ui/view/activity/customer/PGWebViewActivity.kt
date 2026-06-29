@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -100,6 +102,8 @@ class PGWebViewActivity : AppCompatActivity() {
         binding.pgwebview.settings.domStorageEnabled = true
         binding.pgwebview.webViewClient = object : WebViewClient() {
 
+            private var isSuccessPage = false
+
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
 
                 Log.d("URL", url.orEmpty())
@@ -112,11 +116,20 @@ class PGWebViewActivity : AppCompatActivity() {
 
                     // Handle PayU response URLs
                     when {
+
                         // Payment Success
                         url.contains("status=success", ignoreCase = true) || url.contains("/success", ignoreCase = true) -> {
-                            showingSuccessPopUp()
+
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                showingSuccessPopUp()
+                            }, 1000)
                             return true
+
+                           /* isSuccessPage = true
+                              return false*/
+                           // Let WebView load the success page
                         }
+
                         // Payment Failed
                         url.contains("status=failure", ignoreCase = true) || url.contains("/failure", ignoreCase = true) -> {
 
@@ -124,18 +137,21 @@ class PGWebViewActivity : AppCompatActivity() {
                             showingRejectionePGPopUp()
                             return true
                         }
+
                         // Payment Cancelled
                         url.contains("/cancel", ignoreCase = true) || url.contains("status=cancel", ignoreCase = true) || url.contains("action=userCancel", ignoreCase = true) -> {
                             Log.d("PAYU", "Payment Cancelled : $url")
                             showingRejectionePGPopUp()
                             return true
                         }
+
                     }
 
                     false // Let WebView load the URL itself
 
-                } else {
+                }
 
+                else {
                     try {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
 
@@ -148,14 +164,25 @@ class PGWebViewActivity : AppCompatActivity() {
                             Toast.makeText(this@PGWebViewActivity, "No UPI app found", Toast.LENGTH_SHORT).show()
                         }
 
-                    } catch (e: Exception) {
+                    }
+                    catch (e: Exception) {
                         Log.e("UPI", "Error launching app", e)
                         Toast.makeText(this@PGWebViewActivity, "No app found to handle this action", Toast.LENGTH_SHORT).show()
                     }
-
                     true
                 }
             }
+
+          /*  override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                Log.d("URL", url.orEmpty())
+
+                if (isSuccessPage) {
+                    isSuccessPage = false
+                    showingSuccessPopUp()
+                }
+            }*/
+
         }
 
         binding.pgwebview.loadDataWithBaseURL("https://secure.payu.in/", finalHtml, "text/html", "UTF-8", null)
@@ -165,7 +192,7 @@ class PGWebViewActivity : AppCompatActivity() {
 
 
 
-    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String){
+    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String,dialog: Dialog){
 
         var  createdBy = preference.getStringValue(ConstantClass.CustomerCode, "")
         var customercode =  preference.getStringValue(ConstantClass.CustomerCode, "")
@@ -195,8 +222,9 @@ class PGWebViewActivity : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let {
-                                    response ->
+                                response ->
                                 Log.d("loanEmiReceiveResp", response.toString())
+
                                 if(loopcount==emicount){
                                     if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
                                         ConstantClass.dialog.dismiss()
@@ -204,11 +232,15 @@ class PGWebViewActivity : AppCompatActivity() {
                                      emiList .clear()
                                      EMIamountPG  =""
                                      LoanCodePG  = ""
-                                   /* Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
                                     val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    startActivity(intent)*/
+                                    startActivity(intent)
+                                    if(dialog!=null && dialog.isShowing){
+                                        dialog.dismiss()
+                                    }
                                 }
+
                             }
                         }
 
@@ -291,9 +323,8 @@ class PGWebViewActivity : AppCompatActivity() {
 
         Ok.setOnClickListener {
             if(emiList.size>0){
-                dialog.dismiss()
                 for(i in 0 until emiList.size){
-                    HitApiForPayEmiAmount(emiList[i].selectedNoofEmi, emiList[i].emiNo, emiList[i].emiAmount,emiList[i].lateFine,emiList[i].loancode )
+                    HitApiForPayEmiAmount(emiList[i].selectedNoofEmi, emiList[i].emiNo, emiList[i].emiAmount,emiList[i].lateFine,emiList[i].loancode,dialog )
                 }
             }
         }

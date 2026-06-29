@@ -104,24 +104,27 @@ import javax.crypto.spec.SecretKeySpec
 object ConstantClass {
 
      // Procustion  API
-     const val BASE_URL = "https://api.aopay.finance/"
-     const val BASE_URL_IMAGE = "https://api.aopay.finance"
+
+   /* const val BASE_URL = "https://api.aopay.finance/"
+     const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
 
 
      // UAT API
-
-    /* const val BASE_URL = "https://uatapi.aopay.co.in/"
-     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
+     const val BASE_URL = "https://uatapi.aopay.co.in/"
+     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
 
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
+
      const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
      const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
 
-     const val FRP_MAIL_ID = "116164541526712076874" // info@aopay.in
+     const val OLD_FRP_MAIL_ID = "info@aopay.in"
+
+     const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
 
      const val CustomerCode = "customerCode"
 

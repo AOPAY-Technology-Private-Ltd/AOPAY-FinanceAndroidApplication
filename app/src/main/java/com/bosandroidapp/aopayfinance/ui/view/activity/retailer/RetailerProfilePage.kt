@@ -432,6 +432,7 @@ class RetailerProfilePage : AppCompatActivity() {
                         it.data.let { users ->
                             users!!.body().let { response ->
 
+                                if(response!=null){
                                 if (response!!.statuss.equals("True")) {
                                     Log.d("RetailerDetailsResponse", Gson().toJson(response))
                                     ConstantClass.dialog.dismiss()
@@ -461,7 +462,12 @@ class RetailerProfilePage : AppCompatActivity() {
                                     ConstantClass.dialog.dismiss()
                                     finish()
                                 }
+                                 }
 
+                                else{
+                                    ConstantClass.dialog.dismiss()
+                                    hitapiforGetUpdateProfile()
+                                }
                             }
 
                         }
@@ -470,6 +476,7 @@ class RetailerProfilePage : AppCompatActivity() {
 
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog.dismiss()
+                        hitapiforGetUpdateProfile()
                     }
 
                     ApiStatus.LOADING -> {
@@ -549,6 +556,7 @@ class RetailerProfilePage : AppCompatActivity() {
                 }
             }
         }
+
     }
 
 

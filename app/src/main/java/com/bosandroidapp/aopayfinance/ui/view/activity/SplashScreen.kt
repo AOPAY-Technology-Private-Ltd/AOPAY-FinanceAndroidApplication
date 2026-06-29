@@ -53,8 +53,8 @@ class SplashScreen : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        binding.uattext.visibility= View.GONE
 
+        binding.uattext.visibility= View.VISIBLE
 
         Handler(Looper.getMainLooper()).postDelayed({
             // Code to run after delay
@@ -71,7 +71,6 @@ class SplashScreen : AppCompatActivity() {
 
 
         }, 3000)
-
 
 
     }
