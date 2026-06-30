@@ -56,6 +56,7 @@ class SplashScreen : AppCompatActivity() {
 
         binding.uattext.visibility= View.VISIBLE
 
+
         Handler(Looper.getMainLooper()).postDelayed({
             // Code to run after delay
             if (preference.getBoolanValue(ConstantClass.LoggedIn, false)) {

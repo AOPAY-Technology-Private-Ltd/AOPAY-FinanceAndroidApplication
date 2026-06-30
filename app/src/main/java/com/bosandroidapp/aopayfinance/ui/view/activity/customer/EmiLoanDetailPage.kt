@@ -578,8 +578,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
                             Log.d("emiAmountWithFine", emiAmountWithFine)
                             Log.d("EMIAmount", emiAmountWithFine)
-                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
-                            )
+                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode))
+                             //val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
                             // HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
                             // delay(1000) // wait 1 second between calls
                         }
@@ -592,7 +592,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                             payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
                             customerEmailID = email,
                             registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                            payCartAmount = emiamount.toString(),
+                            payCartAmount = "1"/*emiamount.toString()*/,
                             eMINumbers = "EMI${emiNumbers}",
                             customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
                             payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
@@ -804,7 +804,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
 
 
-    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?,imageFile:File){
+    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?){
 
         var createdBy=""
 
@@ -823,7 +823,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
             mode = "UPDATE",
             loanCode = loanCode,
             paymentDate = getCurrentUtcTimestamp(),
-            paymentMode =  binding.paymentmode.selectedItem.toString(),
+            paymentMode =  "",
             utrNumber = "",
             remarks = binding.remarkEdt.text.toString(),
             createdBy = createdBy,
@@ -1037,7 +1037,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                         }
                                     }*/
 
-                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine,imageFile)
+                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
                                 }
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()

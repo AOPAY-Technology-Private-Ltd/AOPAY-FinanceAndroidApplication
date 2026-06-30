@@ -41,7 +41,6 @@ class Ledgerreport : AppCompatActivity() {
     private val myCalender1 = Calendar.getInstance()
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
-
     var LedgerReportList : List<LedgerReportDataItem?> = listOf()
     lateinit var ledgerAdapter : LedgerAdapter
 
@@ -58,9 +57,7 @@ class Ledgerreport : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        viewModel = ViewModelProvider(
-            this,
-            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
+        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
         preference = SharedPreference(this)
 

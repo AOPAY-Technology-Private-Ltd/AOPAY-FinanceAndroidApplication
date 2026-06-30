@@ -59,6 +59,7 @@ class CustomerReportsPage : AppCompatActivity() {
         hitApiForGetReports(binding.reporttype.selectedItem.toString())
     }
 
+
     fun setview() {
         val adapter = ArrayAdapter.createFromResource(this, R.array.customerreporttype, R.layout.mobilenamelayout)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -113,6 +114,7 @@ class CustomerReportsPage : AppCompatActivity() {
         )
         Log.d("ReportReq", Gson().toJson(reportreq))
         viewModel.getReportsReq(reportreq).observe(this) { resources ->
+
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {

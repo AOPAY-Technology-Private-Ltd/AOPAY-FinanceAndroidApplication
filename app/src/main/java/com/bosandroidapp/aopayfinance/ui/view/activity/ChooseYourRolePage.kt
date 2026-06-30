@@ -183,7 +183,7 @@ class ChooseYourRolePage : AppCompatActivity() {
                     }
                     else {
                         Toast.makeText(this,"Kindly transfer the ownership to AO Pay.",Toast.LENGTH_SHORT).show()
-                        //intentNextPage()
+                       // intentNextPage() // for testing purpose
                     }
                 }
 

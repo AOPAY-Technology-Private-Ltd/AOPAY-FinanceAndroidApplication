@@ -116,23 +116,25 @@ class PGWebViewActivity : AppCompatActivity() {
 
                     // Handle PayU response URLs
                     when {
-
                         // Payment Success
                         url.contains("status=success", ignoreCase = true) || url.contains("/success", ignoreCase = true) -> {
 
                             Handler(Looper.getMainLooper()).postDelayed({
+
                                 showingSuccessPopUp()
+
                             }, 1000)
+
                             return true
 
                            /* isSuccessPage = true
                               return false*/
                            // Let WebView load the success page
+
                         }
 
                         // Payment Failed
                         url.contains("status=failure", ignoreCase = true) || url.contains("/failure", ignoreCase = true) -> {
-
                             Log.d("PAYU", "Payment Failed : $url")
                             showingRejectionePGPopUp()
                             return true

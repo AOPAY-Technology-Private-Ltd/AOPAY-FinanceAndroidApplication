@@ -34,9 +34,11 @@ class CustomerEMIStatusReport : AppCompatActivity() {
     var customerLoanEmiDetailsList : MutableList<CustomerEMIDataItem?>? = mutableListOf()
     lateinit var adapter : CustomerEmiStatusAdapter
 
+
     companion object{
         var loanCode : String = ""
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +58,7 @@ class CustomerEMIStatusReport : AppCompatActivity() {
 
     }
 
+
     fun  setonClickListner(){
 
         binding.back.setOnClickListener {
@@ -63,6 +66,7 @@ class CustomerEMIStatusReport : AppCompatActivity() {
         }
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -130,5 +134,6 @@ class CustomerEMIStatusReport : AppCompatActivity() {
         binding.showingLoanList.adapter = adapter
         adapter.notifyDataSetChanged()
     }
+
 
 }

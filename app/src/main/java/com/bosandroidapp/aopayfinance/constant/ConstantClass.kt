@@ -105,14 +105,13 @@ object ConstantClass {
 
      // Procustion  API
 
-   /* const val BASE_URL = "https://api.aopay.finance/"
+     /* const val BASE_URL = "https://api.aopay.finance/"
      const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
 
 
      // UAT API
      const val BASE_URL = "https://uatapi.aopay.co.in/"
      const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
