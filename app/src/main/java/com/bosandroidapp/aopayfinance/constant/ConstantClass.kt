@@ -129,6 +129,7 @@ object ConstantClass {
 
      const val Admin = "admin"
 
+
      const val RetailerCode = "retailerCode"
      const val ForgotPasswordType = "Retailer forgot password"
      const val OTPTYPE = "VerifyUser"
