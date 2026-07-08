@@ -23,6 +23,7 @@ import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.ForgotPasswordReq
@@ -267,5 +268,8 @@ class AuthRepository(private val apiInterface: ApiInterface) {
   }
 
   suspend fun getMakePaymentReportReq(req: MakePaymentAdminReportRequest) = apiInterface.getMakePaymentReportReq(req)
+
+
+  suspend fun getRequestKitOption(req: KitOptionRequest) = apiInterface.getRequestKitOption(req)
 
 }

@@ -191,30 +191,39 @@ class PanCardVerificationPage : AppCompatActivity() {
         }
 
         binding.verifybuttonlayout.setOnClickListener {
-            var panNumber = binding.pannumber.text.toString()
-            // PAN validation (Regex: 5 letters, 4 digits, 1 letter)
-            val panRegex = Regex("[A-Z]{5}[0-9]{4}[A-Z]{1}")
-
-            if (panNumber.isBlank() || !panRegex.matches(panNumber.uppercase())) {
-                Toast.makeText(this, "Enter a valid PAN number (e.g., ABCDE1234F)", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
+                PanNumber = ""
+                PanNumberVerified = "no"
+                PanFrontImageUri = null
+                finish()
             }
+            else{
+                var panNumber = binding.pannumber.text.toString()
+                // PAN validation (Regex: 5 letters, 4 digits, 1 letter)
+                val panRegex = Regex("[A-Z]{5}[0-9]{4}[A-Z]{1}")
 
-            if(!checkPanNumber){
-                Toast.makeText(this, "Enter a valid PAN number ", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
-                // Image URI validation
-                if (photoFrontUri == null || photoFrontUri == null) {
-                    Toast.makeText(this, "Please upload  Pan image", Toast.LENGTH_SHORT).show()
+                if (panNumber.isBlank() || !panRegex.matches(panNumber.uppercase())) {
+                    Toast.makeText(this, "Enter a valid PAN number (e.g., ABCDE1234F)", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
+                if(!checkPanNumber){
+                    Toast.makeText(this, "Enter a valid PAN number ", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
+                    // Image URI validation
+                    if (photoFrontUri == null || photoFrontUri == null) {
+                        Toast.makeText(this, "Please upload  Pan image", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                }
+
+                hitApiForCheckIsEligibleOrNotForLoan(panNumber)
             }
 
-            hitApiForCheckIsEligibleOrNotForLoan(panNumber)
 
         }
 
@@ -355,15 +364,15 @@ class PanCardVerificationPage : AppCompatActivity() {
                                 Log.d("CheckEligibleResp", Gson().toJson(response))
 
                                 if(response!!.statuss.equals("True")){
-                                    if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
+                                    if (CheckOnlineOrOffline.equals(ConstantClass.online)) {
+                                        hitApiForPanVerification(pannumber)
+                                    }
+                                    else {
                                         ConstantClass.dialog.dismiss()
                                         PanNumber = pannumber
                                         PanNumberVerified = "no"
                                         PanFrontImageUri = photoFrontUri
                                         finish()
-                                    }
-                                    else {
-                                        hitApiForPanVerification(pannumber)
                                     }
 
                                 }

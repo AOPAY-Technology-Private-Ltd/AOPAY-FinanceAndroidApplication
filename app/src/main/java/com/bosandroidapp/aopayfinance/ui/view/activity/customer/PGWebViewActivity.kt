@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bos.payment.appName.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimestamp
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
@@ -121,7 +122,12 @@ class PGWebViewActivity : AppCompatActivity() {
 
                             Handler(Looper.getMainLooper()).postDelayed({
 
-                                showingSuccessPopUp()
+                                val uri = Uri.parse(url)
+                                val utrNumber = uri.getQueryParameter("utrNumber")
+                                Log.d("UTR", utrNumber ?: "")
+                                showingSuccessPopUp(utrNumber!!)
+
+
 
                             }, 1000)
 
@@ -193,8 +199,7 @@ class PGWebViewActivity : AppCompatActivity() {
     }
 
 
-
-    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String,dialog: Dialog){
+    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String,dialog: Dialog,utrNumber: String){
 
         var  createdBy = preference.getStringValue(ConstantClass.CustomerCode, "")
         var customercode =  preference.getStringValue(ConstantClass.CustomerCode, "")
@@ -204,14 +209,14 @@ class PGWebViewActivity : AppCompatActivity() {
             mode = "UPDATE",
             loanCode = loanCode,
             paymentDate = getCurrentUtcTimestamp(),
-            paymentMode = "",
-            utrNumber = "",
-            remarks = "",
+            paymentMode = "Online",
+            utrNumber = utrNumber,
+            remarks = "Payment",
             createdBy = createdBy,
             receiptNo = "",
-            customerCode = customercode,
+            customerCode =customercode,
             retailerCode = retailercode,
-            bankName = "",
+            bankName = "PG",
             receiptImagePath = ""/*,
             imageFile = imageFile*/
         )
@@ -238,9 +243,7 @@ class PGWebViewActivity : AppCompatActivity() {
                                     val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
-                                    if(dialog!=null && dialog.isShowing){
-                                        dialog.dismiss()
-                                    }
+
                                 }
 
                             }
@@ -276,6 +279,7 @@ class PGWebViewActivity : AppCompatActivity() {
         WebStorage.getInstance().deleteAllData()
     }
 
+
     fun showingRejectionePGPopUp(){
         dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -292,9 +296,18 @@ class PGWebViewActivity : AppCompatActivity() {
 
         var Ok = dialog.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
 
-        Ok.setOnClickListener {
+        /*Ok.setOnClickListener {
             finish()
             dialog.dismiss()
+        }*/
+
+        Ok.setOnClickListener {
+            isPgClosing = true
+            dialog.dismiss()
+            closePg()
+            window.decorView.post {
+                finish()
+            }
         }
 
         dialog.setCanceledOnTouchOutside(false)
@@ -303,7 +316,15 @@ class PGWebViewActivity : AppCompatActivity() {
 
     }
 
-    fun showingSuccessPopUp(){
+    private fun closePg() {
+        binding.pgwebview.stopLoading()
+        binding.pgwebview.loadUrl("about:blank")
+        binding.pgwebview.clearHistory()
+        binding.pgwebview.removeAllViews()
+        binding.pgwebview.destroy()
+    }
+
+    fun showingSuccessPopUp(utrNumber: String){
         dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(com.bosandroidapp.aopayfinance.R.layout.payment_success_alert)
@@ -326,7 +347,7 @@ class PGWebViewActivity : AppCompatActivity() {
         Ok.setOnClickListener {
             if(emiList.size>0){
                 for(i in 0 until emiList.size){
-                    HitApiForPayEmiAmount(emiList[i].selectedNoofEmi, emiList[i].emiNo, emiList[i].emiAmount,emiList[i].lateFine,emiList[i].loancode,dialog )
+                    HitApiForPayEmiAmount(emiList[i].selectedNoofEmi, emiList[i].emiNo, emiList[i].emiAmount,emiList[i].lateFine,emiList[i].loancode,dialog,utrNumber)
                 }
             }
         }

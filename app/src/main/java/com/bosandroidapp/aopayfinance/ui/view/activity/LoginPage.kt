@@ -164,6 +164,7 @@ class LoginPage : AppCompatActivity() {
             finish()
         }*/
 
+
         binding.signupText.setOnClickListener{
             val mainIntent = Intent(this@LoginPage, SignupPage::class.java)
             startActivity(mainIntent)
@@ -203,7 +204,6 @@ class LoginPage : AppCompatActivity() {
                }
            }
 
-
         }
 
         binding.forgetpageLayout.setOnClickListener {
@@ -234,6 +234,7 @@ class LoginPage : AppCompatActivity() {
             }
 
         }
+
 
     }
 

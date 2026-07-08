@@ -1,5 +1,6 @@
 package com.bosandroidapp.aopayfinance.kioskmode
 
+import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
@@ -29,6 +30,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isLockTaskStarted
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerProfileReq
@@ -100,7 +103,6 @@ class KioskActivity : AppCompatActivity() {
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
 
         hitapiforGetUpdateProfile()
-
         HitApiForEmiList()
 
         val apps = findViewById<RecyclerView>(R.id.paymentApps)
@@ -117,12 +119,6 @@ class KioskActivity : AppCompatActivity() {
             apps.visibility=View.GONE
         }
 
-        // for testing transferOwnerShip.....................................................
-        val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-        if (dpm.isLockTaskPermitted(packageName)) {
-            startLockTask() // 🔒 Enter kiosk mode
-        }
 
         setOnClickListner()
 
@@ -138,6 +134,27 @@ class KioskActivity : AppCompatActivity() {
 
             HitApiForEmiList()
         }
+
+        hitapiforGetUpdateProfile()
+
+        // for testing transferOwnerShip.....................................................
+        val dpm = getSystemService(DevicePolicyManager::class.java)
+        val admin = ComponentName(this, KioskDeviceAdminReceiver::class.java)
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        if (dpm.isDeviceOwnerApp(packageName)) {
+
+            // Whitelist the app for Lock Task Mode (typically done once during provisioning)
+            dpm.setLockTaskPackages(admin, arrayOf(packageName))
+
+            // Start Lock Task only if not already active
+            if (!isLockTaskStarted &&activityManager.lockTaskModeState == ActivityManager.LOCK_TASK_MODE_NONE) {
+                startLockTask()
+                isLockTaskStarted = true
+            }
+        }
+
+        isPgClosing = false
     }
 
 
@@ -147,9 +164,8 @@ class KioskActivity : AppCompatActivity() {
 
             emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
 
-            if(isInternetAvailable(this@KioskActivity)) {
-
-                    lifecycleScope.launch {
+                 if(isInternetAvailable(this@KioskActivity)) {
+                     lifecycleScope.launch {
                         selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
                         // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
                         // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
@@ -205,10 +221,10 @@ class KioskActivity : AppCompatActivity() {
 
 
                     }
-
-                }
-
-
+                 }
+                else{
+                     Toast.makeText(this@KioskActivity,"Please connect with internet", Toast.LENGTH_SHORT).show()
+                 }
         }
     }
 
@@ -424,6 +440,8 @@ class KioskActivity : AppCompatActivity() {
                                 if (response!!.status?.toLowerCase().equals("true",ignoreCase = true) && !response.preparePOSTForm.isNullOrEmpty()) {
                                     // Open WebView with the provided URL
                                     ConstantClass.dialog.dismiss()
+                                    isLockTaskStarted = false
+                                    stopLockTask()
                                     val intent = Intent(this@KioskActivity, PGWebViewActivity::class.java)
                                     intent.putExtra("pgurl", response.preparePOSTForm)
                                     startActivity(intent)

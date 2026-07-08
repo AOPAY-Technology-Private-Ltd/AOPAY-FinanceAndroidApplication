@@ -81,6 +81,7 @@ class PayoutReports : Fragment() {
 
     }
 
+
     fun setDataOnView(status: String){
 
         if(!reportDataList.isNullOrEmpty()){
@@ -115,6 +116,7 @@ class PayoutReports : Fragment() {
         }
 
     }
+
 
     fun hitApiForReports(reportType:String){
 

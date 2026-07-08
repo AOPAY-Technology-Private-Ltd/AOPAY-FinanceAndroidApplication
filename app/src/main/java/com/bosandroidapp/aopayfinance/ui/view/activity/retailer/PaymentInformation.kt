@@ -615,23 +615,33 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     else{
-                        val (isValid, errorMessage) = isReferenceValidForm(
-                            referName = binding.refername.text.toString().trim(),
-                            referRelation = binding.referrelatinonship.text.toString().trim(),
-                            refMobile = binding.refmobno.text.toString().trim(),
-                            refAddress = binding.refaddress.text.toString().trim())
-
-                        if (!isValid) {
-                            Toast.makeText(this@PaymentInformation, errorMessage, Toast.LENGTH_SHORT).show()
-                        }
-                        else
-                        {
+                        if(ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.kit)){
                             RefName = binding.refername.text.toString().trim()
                             RefRelationShip = binding.referrelatinonship.text.toString().trim()
                             RefmobileNo = binding.refmobno.text.toString().trim()
                             RefAddress =  binding.refaddress.text.toString().trim()
                             startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
                         }
+                        else{
+                            val (isValid, errorMessage) = isReferenceValidForm(
+                                referName = binding.refername.text.toString().trim(),
+                                referRelation = binding.referrelatinonship.text.toString().trim(),
+                                refMobile = binding.refmobno.text.toString().trim(),
+                                refAddress = binding.refaddress.text.toString().trim())
+
+                            if (!isValid) {
+                                Toast.makeText(this@PaymentInformation, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                            else
+                            {
+                                RefName = binding.refername.text.toString().trim()
+                                RefRelationShip = binding.referrelatinonship.text.toString().trim()
+                                RefmobileNo = binding.refmobno.text.toString().trim()
+                                RefAddress =  binding.refaddress.text.toString().trim()
+                                startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
+                            }
+                        }
+
                     }
 
 

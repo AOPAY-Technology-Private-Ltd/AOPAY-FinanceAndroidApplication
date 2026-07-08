@@ -672,11 +672,11 @@ class QRCodePage : AppCompatActivity() {
 
         else {
 
-            if (ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.offline)) {
-                userScore = 0.0f
+            if (ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.online)) {
+
             }
             else {
-
+                userScore = 0.0f
             }
 
             val requestMap = hashMapOf(
@@ -740,227 +740,8 @@ class QRCodePage : AppCompatActivity() {
 
             Log.d("RequestRegis", requestMap.toString())
 
-            if (ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.offline)) {
-                lifecycleScope.launch {
-                    try {
-                        val response = api.getRegisterCustomerReq(
-                            requestMap["Mode"]!!,
-                            requestMap["FirstName"]!!,
-                            requestMap["MiddleName"]!!,
-                            requestMap["LastName"]!!,
-                            requestMap["PrimaryMobileNumber"]!!,
-                            requestMap["PrimaryOTP"]!!,
-                            requestMap["PrimaryMobileVerified"]!!,
-                            requestMap["AlternateMobileNumber"]!!,
-                            requestMap["AlternateMobileOTP"]!!,
-                            requestMap["PAlternateMobileVerified"]!!,
-                            requestMap["EMailID"]!!,
-                            requestMap["FlatNo"]!!,
-                            requestMap["AearSector"]!!,
-                            requestMap["PinCode"]!!,
-                            requestMap["CurrentAddress"]!!,
-                            requestMap["StateName"]!!,
-                            requestMap["CityName"]!!,
-                            requestMap["Country"]!!,
-                            requestMap["AadharNumber"]!!,
-                            requestMap["AadharNumberVerified"]!!,
-                            requestMap["PANNumber"]!!,
-                            requestMap["PANNumberVerified"]!!,
-                            requestMap["BrandName"]!!,
-                            requestMap["ModelName"]!!,
-                            requestMap["ModelVariant"]!!,
-                            requestMap["Color"]!!,
-                            requestMap["SellingPrice"]!!,
-                            requestMap["DownPayment"]!!,
-                            requestMap["Tenure"]!!,
-                            requestMap["EMIAmount"]!!,
-                            requestMap["IMEINumber1"]!!,
-                            requestMap["IMEINumber2"]!!,
-                            requestMap["AccountNumber"]!!,
-                            requestMap["BankIFSCCode"]!!,
-                            requestMap["BankName"]!!,
-                            requestMap["AccountType"]!!,
-                            requestMap["BranchName"]!!,
-                            requestMap["RefName"]!!,
-                            requestMap["RefRelationShip"]!!,
-                            requestMap["RefmobileNo"]!!,
-                            requestMap["RefAddress"]!!,
-                            requestMap["DebitOrCreditCard"]!!,
-                            requestMap["UPIMandate"]!!,
-                            requestMap["CreatedBy"]!!,
-                            requestMap["MemberShipFees"]!!,
-                            requestMap["RetailerCode"]!!,
-                            requestMap["CibilScore"]!!,
-                            requestMap["IsAggrementVerified"]!!,
-                            requestMap["IsRetailerAggrementVerified"]!!,
-                            custPhotoPart!!,
-                            imei1SealPart!!,
-                            imei2SealPart!!,
-                            imeiPhotoPart!!,
-                            invoicePart!!,
-                            aadharFrontPart!!,
-                            aadharBackPart!!,
-                            PanFrontPart!!
-                        )
+            if (ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.online)) {
 
-
-                        if (response.isSuccessful) {
-                            // Handle success
-                            val body = response.body()
-
-                            var message = body?.message ?: "Success"
-
-                            Log.d("createcustresp", Gson().toJson(body))
-
-
-                            if (body!!.statuss.equals("FAILED")) {
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
-                                }
-                                CheckOnlineOrOffline =""
-                                binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
-                                binding.nextlayout.visibility = View.VISIBLE
-                                Log.d("customer create", body.message)
-                                Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
-                                startActivity(Intent(this@QRCodePage, DashBoard::class.java))
-                                finish()
-                                clearData()
-                            }
-                            else if (body!!.statuss.equals("401")) {
-                                binding.validateKeyLayout.visibility = View.GONE
-                                binding.nextlayout.visibility = View.VISIBLE
-                                if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
-                                }
-                                binding.nextlayout.isEnabled= true
-                                Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
-                            }
-                            else {
-                                var customerCode = body?.customerCode
-                                if (body.statuss.equals("218")) {
-                                    if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
-                                    }
-                                    binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
-                                    binding.nextlayout.visibility = View.VISIBLE
-                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
-
-                                } else if (body.statuss.equals("219")) {
-                                    if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
-                                    }
-                                    binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
-                                    binding.nextlayout.visibility = View.VISIBLE
-                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
-                                }
-                                else if(body.statuss.equals("226")){
-                                    if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
-                                    }
-                                    binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
-                                    binding.nextlayout.visibility = View.VISIBLE
-                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
-                                }
-                                else if(body.statuss.equals("213")){
-                                    if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
-                                    }
-                                    binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
-                                    binding.nextlayout.visibility = View.VISIBLE
-                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
-                                }
-                                else {
-                                    val safecustomerCode = if (!customerCode.isNullOrBlank() && customerCode != "null") customerCode else ""
-                                    if(safecustomerCode.isNullOrBlank()){
-                                        if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
-                                        }
-                                        binding.nextlayout.isEnabled= true
-                                        binding.validateKeyLayout.visibility = View.GONE
-                                        binding.nextlayout.visibility = View.VISIBLE
-                                        Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
-                                    }else{
-                                        val startDate = getCurrentStartDate()
-                                        val endDate = calculateEmiEndDateFromNow(Tenure.toInt())
-
-                                        loancreatedreq = LoanCreatedReq(
-                                            modetype = "INSERT",
-                                            rid = 0,
-                                            customerCode = safecustomerCode,
-                                            loanAmount = ConstantClass.LoanAmount.toDouble(),
-                                            downPayment = downPayment.toDouble(),
-                                            emiAmount = EmiAmount.toDouble(),
-                                            tenure = Tenure.toInt(),
-                                            interestRate = InterestRate.toDouble(),
-                                            startDate = startDate,
-                                            endDate = endDate,
-                                            imeiNumber = ImeiNumber1,
-                                            createdBy = createdBy,
-                                            brandname = BrandName,
-                                            modelname = ModelName,
-                                            variantname = ModelVarient,
-                                            avlcolor = ModelColor,
-                                            retailerCode = retailercode,
-                                            processingFees = ProcessingFees,
-                                            interestAmt = InterestAmt,
-                                            remarks = "",
-                                            recordStatus = ConstantClass.CustomerLoanStatus,
-                                            creditScore = userScore.toString(),
-                                            validateKey = binding.accesstoken.text.toString(),
-                                            defaultEmidebit = DefaulterEmiDebitPending,
-                                            sellingPrice = ConstantClass.SellingPrice.toDouble(),
-                                            loanMode = ConstantClass.offline
-                                        )
-                                        Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
-
-                                        if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
-                                        }
-
-                                        binding.validateKeyLayout.visibility = View.VISIBLE
-                                        binding.nextlayout.visibility = View.GONE
-                                    }
-                                }
-
-                            }
-
-                        }
-                        else {
-                            val errorMsg = response.errorBody()?.string()
-                            handleApiError(response.code(), errorMsg)
-                        }
-                    } catch (e: Exception) {
-                        if (ConstantClass.dialog?.isShowing == true) {
-                            ConstantClass.dialog.dismiss()
-                        }
-                        binding.nextlayout.isEnabled= true
-
-                        val errorMsg = when (e) {
-                            is java.net.SocketTimeoutException ->
-                                "Connection timed out. Please check internet."
-
-                            is java.net.UnknownHostException ->
-                                "No internet connection."
-
-                            is java.io.IOException ->
-                                "Network error. Please try again."
-
-                            else ->
-                                "Unexpected error occurred."
-                        }
-
-                        Log.e("API_EXCEPTION", e.message ?: "Unknown Exception")
-
-                        Toast.makeText(this@QRCodePage, errorMsg, Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-            else {
                 lifecycleScope.launch {
                     try {
                         val response = api.getRegisterOnlineCustomerReq(
@@ -1167,6 +948,227 @@ class QRCodePage : AppCompatActivity() {
 
                     }
 
+                }
+
+            }
+            else {
+                lifecycleScope.launch {
+                    try {
+                        val response = api.getRegisterCustomerReq(
+                            requestMap["Mode"]!!,
+                            requestMap["FirstName"]!!,
+                            requestMap["MiddleName"]!!,
+                            requestMap["LastName"]!!,
+                            requestMap["PrimaryMobileNumber"]!!,
+                            requestMap["PrimaryOTP"]!!,
+                            requestMap["PrimaryMobileVerified"]!!,
+                            requestMap["AlternateMobileNumber"]!!,
+                            requestMap["AlternateMobileOTP"]!!,
+                            requestMap["PAlternateMobileVerified"]!!,
+                            requestMap["EMailID"]!!,
+                            requestMap["FlatNo"]!!,
+                            requestMap["AearSector"]!!,
+                            requestMap["PinCode"]!!,
+                            requestMap["CurrentAddress"]!!,
+                            requestMap["StateName"]!!,
+                            requestMap["CityName"]!!,
+                            requestMap["Country"]!!,
+                            requestMap["AadharNumber"]!!,
+                            requestMap["AadharNumberVerified"]!!,
+                            requestMap["PANNumber"]!!,
+                            requestMap["PANNumberVerified"]!!,
+                            requestMap["BrandName"]!!,
+                            requestMap["ModelName"]!!,
+                            requestMap["ModelVariant"]!!,
+                            requestMap["Color"]!!,
+                            requestMap["SellingPrice"]!!,
+                            requestMap["DownPayment"]!!,
+                            requestMap["Tenure"]!!,
+                            requestMap["EMIAmount"]!!,
+                            requestMap["IMEINumber1"]!!,
+                            requestMap["IMEINumber2"]!!,
+                            requestMap["AccountNumber"]!!,
+                            requestMap["BankIFSCCode"]!!,
+                            requestMap["BankName"]!!,
+                            requestMap["AccountType"]!!,
+                            requestMap["BranchName"]!!,
+                            requestMap["RefName"]!!,
+                            requestMap["RefRelationShip"]!!,
+                            requestMap["RefmobileNo"]!!,
+                            requestMap["RefAddress"]!!,
+                            requestMap["DebitOrCreditCard"]!!,
+                            requestMap["UPIMandate"]!!,
+                            requestMap["CreatedBy"]!!,
+                            requestMap["MemberShipFees"]!!,
+                            requestMap["RetailerCode"]!!,
+                            requestMap["CibilScore"]!!,
+                            requestMap["IsAggrementVerified"]!!,
+                            requestMap["IsRetailerAggrementVerified"]!!,
+                            custPhotoPart ?: null,
+                            imei1SealPart ?: null,
+                            imei2SealPart ?: null,
+                            imeiPhotoPart ?: null,
+                            invoicePart ?: null,
+                            aadharFrontPart ?: null,
+                            aadharBackPart ?: null,
+                            PanFrontPart ?: null
+                        )
+
+                        if (response.isSuccessful) {
+                            // Handle success
+                            val body = response.body()
+
+                            var message = body?.message ?: "Success"
+
+                            Log.d("createcustresp", Gson().toJson(body))
+
+
+                            if (body!!.statuss.equals("FAILED")) {
+                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
+                                    ConstantClass.dialog.dismiss()
+                                }
+                                CheckOnlineOrOffline =""
+                                binding.nextlayout.isEnabled= true
+                                binding.validateKeyLayout.visibility = View.GONE
+                                binding.nextlayout.visibility = View.VISIBLE
+                                Log.d("customer create", body.message)
+                                Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
+                                startActivity(Intent(this@QRCodePage, DashBoard::class.java))
+                                finish()
+                                clearData()
+                            }
+                            else if (body!!.statuss.equals("401")) {
+                                binding.validateKeyLayout.visibility = View.GONE
+                                binding.nextlayout.visibility = View.VISIBLE
+                                if (ConstantClass.dialog?.isShowing == true) {
+                                    ConstantClass.dialog.dismiss()
+                                }
+                                binding.nextlayout.isEnabled= true
+                                Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
+                            }
+                            else {
+                                var customerCode = body?.customerCode
+                                if (body.statuss.equals("218")) {
+                                    if (ConstantClass.dialog?.isShowing == true) {
+                                        ConstantClass.dialog.dismiss()
+                                    }
+                                    binding.nextlayout.isEnabled= true
+                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.nextlayout.visibility = View.VISIBLE
+                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
+
+                                } else if (body.statuss.equals("219")) {
+                                    if (ConstantClass.dialog?.isShowing == true) {
+                                        ConstantClass.dialog.dismiss()
+                                    }
+                                    binding.nextlayout.isEnabled= true
+                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.nextlayout.visibility = View.VISIBLE
+                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
+                                }
+                                else if(body.statuss.equals("226")){
+                                    if (ConstantClass.dialog?.isShowing == true) {
+                                        ConstantClass.dialog.dismiss()
+                                    }
+                                    binding.nextlayout.isEnabled= true
+                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.nextlayout.visibility = View.VISIBLE
+                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
+                                }
+                                else if(body.statuss.equals("213")){
+                                    if (ConstantClass.dialog?.isShowing == true) {
+                                        ConstantClass.dialog.dismiss()
+                                    }
+                                    binding.nextlayout.isEnabled= true
+                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.nextlayout.visibility = View.VISIBLE
+                                    Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
+                                }
+                                else {
+                                    val safecustomerCode = if (!customerCode.isNullOrBlank() && customerCode != "null") customerCode else ""
+                                    if(safecustomerCode.isNullOrBlank()){
+                                        if (ConstantClass.dialog?.isShowing == true) {
+                                            ConstantClass.dialog.dismiss()
+                                        }
+                                        binding.nextlayout.isEnabled= true
+                                        binding.validateKeyLayout.visibility = View.GONE
+                                        binding.nextlayout.visibility = View.VISIBLE
+                                        Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
+                                    }
+                                    else{
+                                        val startDate = getCurrentStartDate()
+                                        val endDate = calculateEmiEndDateFromNow(Tenure.toInt())
+
+                                        loancreatedreq = LoanCreatedReq(
+                                            modetype = "INSERT",
+                                            rid = 0,
+                                            customerCode = safecustomerCode,
+                                            loanAmount = ConstantClass.LoanAmount.toDouble(),
+                                            downPayment = downPayment.toDouble(),
+                                            emiAmount = EmiAmount.toDouble(),
+                                            tenure = Tenure.toInt(),
+                                            interestRate = InterestRate.toDouble(),
+                                            startDate = startDate,
+                                            endDate = endDate,
+                                            imeiNumber = ImeiNumber1,
+                                            createdBy = createdBy,
+                                            brandname = BrandName,
+                                            modelname = ModelName,
+                                            variantname = ModelVarient,
+                                            avlcolor = ModelColor,
+                                            retailerCode = retailercode,
+                                            processingFees = ProcessingFees,
+                                            interestAmt = InterestAmt,
+                                            remarks = "",
+                                            recordStatus = ConstantClass.CustomerLoanStatus,
+                                            creditScore = userScore.toString(),
+                                            validateKey = binding.accesstoken.text.toString(),
+                                            defaultEmidebit = DefaulterEmiDebitPending,
+                                            sellingPrice = ConstantClass.SellingPrice.toDouble(),
+                                            loanMode = ConstantClass.CheckOnlineOrOffline
+                                        )
+                                        Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
+
+                                        if (ConstantClass.dialog?.isShowing == true) {
+                                            ConstantClass.dialog.dismiss()
+                                        }
+
+                                        binding.validateKeyLayout.visibility = View.VISIBLE
+                                        binding.nextlayout.visibility = View.GONE
+                                    }
+                                }
+
+                            }
+
+                        }
+                        else {
+                            val errorMsg = response.errorBody()?.string()
+                            handleApiError(response.code(), errorMsg)
+                        }
+                    } catch (e: Exception) {
+                        if (ConstantClass.dialog?.isShowing == true) {
+                            ConstantClass.dialog.dismiss()
+                        }
+                        binding.nextlayout.isEnabled= true
+
+                        val errorMsg = when (e) {
+                            is java.net.SocketTimeoutException ->
+                                "Connection timed out. Please check internet."
+
+                            is java.net.UnknownHostException ->
+                                "No internet connection."
+
+                            is java.io.IOException ->
+                                "Network error. Please try again."
+
+                            else ->
+                                "Unexpected error occurred."
+                        }
+
+                        Log.e("API_EXCEPTION", e.message ?: "Unknown Exception")
+
+                        Toast.makeText(this@QRCodePage, errorMsg, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 

@@ -661,87 +661,122 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
         binding.createaccount.setOnClickListener {
 
-            val (isValid, errorMessage) = isValidForm(
-                firstName = binding.firstName.text.toString().trim(),
-                middleName = binding.middleName.text.toString().trim(),
-                lastName = binding.lastName.text.toString().trim(),
-                mobileNumber = binding.mobileNumber.text.toString().trim(),
-                alternateMobile = binding.alternatemobileNumber.text.toString().trim(),
-                houseNumber = binding.flathouseno.text.toString().trim(),
-                areaSector = binding.areasector.text.toString().trim(),
-                pinCode = binding.pincode.text.toString().trim(),
-                currentAddress = binding.currentaddress.text.toString().trim(),
-                state = binding.statename.text.toString(),
-                city = binding.cityname.text.toString(),
-                imagepath = customerImagePath,
-                isAccepted = binding.acceptTermConditionCheck.isChecked,
-                primarymobverified = CustPrimaryMobileVerified
-            )
-
-            if (!isValid) {
-                Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
-
-            }
-            else {
-                CustPhotoPath = photoUri
-                CustFirstName = binding.firstName.text.toString().trim()
-                CustMiddleName = binding.middleName.text.toString().trim()
-                CustLastName = binding.lastName.text.toString().trim()
-                CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
-                CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
-                isAggrementVerified = "yes"
-                CusteMailID = binding.emailId.text.toString().trim()
-                CustFlatNo = binding.flathouseno.text.toString().trim()
-                CustAreaSector = binding.areasector.text.toString().trim()
-                CustCurrentAddress = binding.currentaddress.text.toString().trim()
-                CustPinCode = binding.pincode.text.toString().trim()
-                CustStateName = binding.statename.text.toString()
-                CustCityName = binding.cityname.text.toString()
-                ConstantClass.ClickOnCardDashboard = "Customer"
-
-                if(CheckOnlineOrOffline.equals(ConstantClass.offline)){
-                    if(!CustAlternateMobileNumber.isNullOrBlank()){
-                        CustomerLoanStatus =  CustomerLoanStatusPending
-                        startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
-                 }
-                 else {
-                        binding.alternatemobileNumber.error= "Please enter alternate mobile number ."
-                        scrollToView(binding.detaillayout,  binding.alternatemobileNumber)
-                 }
-
-
+            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
+                val (isValid, errorMessage) = isKitValidForm(
+                    firstName = binding.firstName.text.toString().trim(),
+                    lastName = binding.lastName.text.toString().trim(),
+                    mobileNumber = binding.mobileNumber.text.toString().trim(),
+                    primarymobverified = CustPrimaryMobileVerified)
+                if (!isValid) {
+                    Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
                 }
-
                 else{
+                    CustPhotoPath = null
+                    CustFirstName = binding.firstName.text.toString().trim()
+                    CustMiddleName = binding.middleName.text.toString().trim()
+                    CustLastName = binding.lastName.text.toString().trim()
+                    CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
+                    CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
+                    isAggrementVerified = "no"
+                    CusteMailID = binding.emailId.text.toString().trim()
+                    CustFlatNo = binding.flathouseno.text.toString().trim()
+                    CustAreaSector = binding.areasector.text.toString().trim()
+                    CustCurrentAddress = binding.currentaddress.text.toString().trim()
+                    CustPinCode = binding.pincode.text.toString().trim()
+                    CustStateName = binding.statename.text.toString()
+                    CustCityName = binding.cityname.text.toString()
+                    ConstantClass.ClickOnCardDashboard = "Customer"
+                    CustomerLoanStatus =  CustomerLoanStatusPending
+                    startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
+                }
 
-                    if (CustPrimaryMobileNumber.isNullOrBlank()) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Primary mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+
+            }
+            else{
+                val (isValid, errorMessage) = isValidForm(
+                    firstName = binding.firstName.text.toString().trim(),
+                    middleName = binding.middleName.text.toString().trim(),
+                    lastName = binding.lastName.text.toString().trim(),
+                    mobileNumber = binding.mobileNumber.text.toString().trim(),
+                    alternateMobile = binding.alternatemobileNumber.text.toString().trim(),
+                    houseNumber = binding.flathouseno.text.toString().trim(),
+                    areaSector = binding.areasector.text.toString().trim(),
+                    pinCode = binding.pincode.text.toString().trim(),
+                    currentAddress = binding.currentaddress.text.toString().trim(),
+                    state = binding.statename.text.toString(),
+                    city = binding.cityname.text.toString(),
+                    imagepath = customerImagePath,
+                    isAccepted = binding.acceptTermConditionCheck.isChecked,
+                    primarymobverified = CustPrimaryMobileVerified
+                )
+
+                if (!isValid) {
+                    Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
+
+                }
+                else {
+                    CustPhotoPath = photoUri
+                    CustFirstName = binding.firstName.text.toString().trim()
+                    CustMiddleName = binding.middleName.text.toString().trim()
+                    CustLastName = binding.lastName.text.toString().trim()
+                    CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
+                    CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
+                    isAggrementVerified = "yes"
+                    CusteMailID = binding.emailId.text.toString().trim()
+                    CustFlatNo = binding.flathouseno.text.toString().trim()
+                    CustAreaSector = binding.areasector.text.toString().trim()
+                    CustCurrentAddress = binding.currentaddress.text.toString().trim()
+                    CustPinCode = binding.pincode.text.toString().trim()
+                    CustStateName = binding.statename.text.toString()
+                    CustCityName = binding.cityname.text.toString()
+                    ConstantClass.ClickOnCardDashboard = "Customer"
+
+                    if(CheckOnlineOrOffline.equals(ConstantClass.online)){
+
+                        if (CustPrimaryMobileNumber.isNullOrBlank()) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Primary mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (CustPrimaryMobileNumber.length != 10) {
+
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit primary mobile number.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (CustAlternateMobileNumber.isNullOrBlank()) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Alternate mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (!CustAlternateMobileNumber.isNullOrBlank() && CustAlternateMobileNumber.length != 10) {
+
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit alternate mobile number.", Toast.LENGTH_SHORT).show()
+
+                        } else if (!CustAlternateMobileNumber.isNullOrBlank() && CustPrimaryMobileNumber == CustAlternateMobileNumber) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Primary and alternate mobile numbers should not be the same.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else {
+                            hitApiForCibilReport()
+                        }
 
                     }
-                    else if (CustPrimaryMobileNumber.length != 10) {
 
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit primary mobile number.", Toast.LENGTH_SHORT).show()
+                    else{
 
-                    }
-                    else if (CustAlternateMobileNumber.isNullOrBlank()) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Alternate mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+                        if(!CustAlternateMobileNumber.isNullOrBlank()){
+                            CustomerLoanStatus =  CustomerLoanStatusPending
+                            startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
+                        }
+                        else {
+                            binding.alternatemobileNumber.error= "Please enter alternate mobile number ."
+                            scrollToView(binding.detaillayout,  binding.alternatemobileNumber)
+                        }
 
-                    }
-                    else if (!CustAlternateMobileNumber.isNullOrBlank() && CustAlternateMobileNumber.length != 10) {
-
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit alternate mobile number.", Toast.LENGTH_SHORT).show()
-
-                    } else if (!CustAlternateMobileNumber.isNullOrBlank() && CustPrimaryMobileNumber == CustAlternateMobileNumber) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Primary and alternate mobile numbers should not be the same.", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else {
-                        hitApiForCibilReport()
                     }
 
                 }
-
             }
+
+
 
         }
 
@@ -837,6 +872,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
     }
 
+
     fun startOtpTimer(resendtxt: TextView, timer: TextView) {
         resendtxt.visibility = View.INVISIBLE
         timer.visibility = View.VISIBLE
@@ -856,6 +892,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         }
         countDownTimer.start()
     }
+
 
     private fun createImageFile(): File {
         val fileName = "IMG_${System.currentTimeMillis()}"
@@ -1226,6 +1263,72 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         if (!isAccepted) return Pair(false, "Please accept the terms and conditions.")
 
 
+
+        return Pair(true, null)
+    }
+
+
+
+    fun isKitValidForm(
+        firstName: String,
+        lastName: String,
+        mobileNumber: String,
+        primarymobverified: String
+    ): Pair<Boolean, String?> {
+
+        if (firstName.isBlank()) {
+            binding.firstName.error= "Please enter your first name."
+            scrollToView(binding.detaillayout,  binding.firstName)
+            return Pair(false, "Please enter your first name.")
+        }
+        else{
+            binding.firstName.error = null
+        }
+
+
+        if (!checkFirstName){
+            return Pair(false, "Please enter a valid first name.")
+        }
+
+
+        if (lastName.isBlank()) {
+            binding.lastName.error= "Please enter your last name."
+            scrollToView(binding.detaillayout,  binding.lastName)
+            return Pair(false, "Please enter your last name.")
+        }
+        else {
+            binding.lastName.error = null
+        }
+
+
+        if (!checkLastName) return Pair(false, "Please enter a valid last name.")
+
+
+        if (!mobileNumber.matches(Regex("^[6-9]\\d{9}$"))) {
+            binding.mobileNumber.error= "Please enter a valid 10-digit mobile number."
+            scrollToView(binding.detaillayout,  binding.mobileNumber)
+            return Pair(false, "Please enter a valid mobile number.")
+        }
+        else{
+            binding.mobileNumber.error = null
+        }
+
+        if (primarymobverified.isBlank()|| primarymobverified.isNotBlank() && !primarymobverified.equals("yes")){
+            binding.mobileNumber.error= "Please verify your primary mobile number first."
+            scrollToView(binding.detaillayout,  binding.mobileNumber)
+            return Pair(false, "Please verify your primary mobile number first.")
+        }else{
+            binding.mobileNumber.error = null
+        }
+
+        if(binding.emailId.text.isNotEmpty()){
+
+            if (!binding.emailId.text.toString().matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")))
+                return Pair(false, "Enter valid email address")
+
+            if (!checkEmailId)
+                return Pair(false, "Enter valid email address")
+        }
 
         return Pair(true, null)
     }

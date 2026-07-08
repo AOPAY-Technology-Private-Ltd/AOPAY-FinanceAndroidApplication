@@ -464,54 +464,94 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
 
         binding.submitpayment.setOnClickListener {
+            if(isInternetAvailable(this@EmiLoanDetailPage)) {
+                emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
 
-            emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
-
-            if(binding.paymentmode.selectedItem.toString().equals("Cash")){
-                if(checkpaynow){
-                    Toast.makeText(this,"Please enter valid remarks.",Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                Log.d("emiamount", " $emiamount $WalletBalance")
-
-                if(emiamount <= WalletBalance.toDouble()) {
-                    OpenAlertForEmiRequest(customerCode)
-                    //HitApiForRetailerWalletPayoutAmount(emiamount)
-                }
-                else{
-                    Toast.makeText(this, "You don't have sufficient balance for raise emi.", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-            else
-            {
-                /*if(isInternetAvailable(this@EmiLoanDetailPage)) {
-
-                    if (imagepath!!.isBlank()) {
-                        Toast.makeText(this, "Please upload receipt photo", Toast.LENGTH_SHORT).show()
+                if(binding.paymentmode.selectedItem.toString().equals("Cash")){
+                    if(checkpaynow){
+                        Toast.makeText(this,"Please enter valid remarks.",Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
 
-                    if(binding.txnNumber.text.toString().equals("")){
-                        Toast.makeText(this, "Please enter transaction number", Toast.LENGTH_SHORT).show()
+                    Log.d("emiamount", " $emiamount $WalletBalance")
+
+                    if(emiamount <= WalletBalance.toDouble()) {
+                        OpenAlertForEmiRequest(customerCode)
+                        //HitApiForRetailerWalletPayoutAmount(emiamount)
                     }
                     else{
-                        if(checktxnNumber){
-                            Toast.makeText(this, "Please enter valid transaction number", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "You don't have sufficient balance for raise emi.", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+                else
+                {
+                    /*if(isInternetAvailable(this@EmiLoanDetailPage)) {
+
+                        if (imagepath!!.isBlank()) {
+                            Toast.makeText(this, "Please upload receipt photo", Toast.LENGTH_SHORT).show()
                             return@setOnClickListener
                         }
 
-                        if(binding.remarkEdt.text.toString().trim().equals("")){
-                            Toast.makeText(this, "Please enter remarks", Toast.LENGTH_SHORT).show()
-                            return@setOnClickListener
+                        if(binding.txnNumber.text.toString().equals("")){
+                            Toast.makeText(this, "Please enter transaction number", Toast.LENGTH_SHORT).show()
                         }
+                        else{
+                            if(checktxnNumber){
+                                Toast.makeText(this, "Please enter valid transaction number", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            if(binding.remarkEdt.text.toString().trim().equals("")){
+                                Toast.makeText(this, "Please enter remarks", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            lifecycleScope.launch {
+                                var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                                ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                                var ForServerlatefine:String ?= ""
+
+                                for (j in 1..selectedNoofEmi) {
+
+                                    val emiIndex = j - 1
+
+                                    val emiAmountWithFine: String
+
+                                    if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
+                                        if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
+                                            emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                            BounceChargeApplicable = BounceCharge
+                                        }
+                                        else{
+                                            emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                            BounceChargeApplicable = "0"
+                                        }
+                                        ForServerlatefine = latefine
+                                    }
+                                    else {
+                                        emiAmountWithFine = emiAmount
+                                        ForServerlatefine = "0"
+                                        BounceChargeApplicable = "0"
+                                    }
+                                    Log.d("EMIAmount", emiAmountWithFine)
+                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine, file!!)
+                                    delay(1000) // wait 1 second between calls
+                                }
+
+                            }
+                        }
+                    }*/
+
+                    if(isInternetAvailable(this@EmiLoanDetailPage)) {
 
                         lifecycleScope.launch {
-                            var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                            val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                            ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                            selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                            // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                            // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
                             var ForServerlatefine:String ?= ""
+                            PGWebViewActivity.emiList.clear()
 
                             for (j in 1..selectedNoofEmi) {
 
@@ -535,76 +575,40 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                     ForServerlatefine = "0"
                                     BounceChargeApplicable = "0"
                                 }
+
+                                Log.d("emiAmountWithFine", emiAmountWithFine)
                                 Log.d("EMIAmount", emiAmountWithFine)
-                                HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine, file!!)
-                                delay(1000) // wait 1 second between calls
+                                emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode))
+                                //val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                                // HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
+                                // delay(1000) // wait 1 second between calls
                             }
 
-                        }
-                    }
-                }*/
+                            val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
+                            val emiNumbers=  (1..selectedNoofEmi).joinToString("")
+                            PGWebViewActivity.LoanCodePG = loanCode
 
-                if(isInternetAvailable(this@EmiLoanDetailPage)) {
+                            var req = PGRequestCall(
+                                payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                customerEmailID = email,
+                                registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                payCartAmount = "1"/*emiamount.toString()*/,
+                                eMINumbers = "EMI${emiNumbers}",
+                                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                loanCode = loanCode
+                            )
 
-                    lifecycleScope.launch {
-                        selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                        // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                        // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
-                        var ForServerlatefine:String ?= ""
-                        PGWebViewActivity.emiList.clear()
+                            hitApiForRequestPG(req)
 
-                        for (j in 1..selectedNoofEmi) {
-
-                            val emiIndex = j - 1
-
-                            val emiAmountWithFine: String
-
-                            if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
-                                if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
-                                    BounceChargeApplicable = BounceCharge
-                                }
-                                else{
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
-                                    BounceChargeApplicable = "0"
-                                }
-                                ForServerlatefine = latefine
-                            }
-                            else {
-                                emiAmountWithFine = emiAmount
-                                ForServerlatefine = "0"
-                                BounceChargeApplicable = "0"
-                            }
-
-                            Log.d("emiAmountWithFine", emiAmountWithFine)
-                            Log.d("EMIAmount", emiAmountWithFine)
-                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode))
-                             //val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                            // HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
-                            // delay(1000) // wait 1 second between calls
+                            // }
                         }
 
-                        val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
-                        val emiNumbers=  (1..selectedNoofEmi).joinToString("")
-                        PGWebViewActivity.LoanCodePG = loanCode
-
-                        var req = PGRequestCall(
-                            payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                            customerEmailID = email,
-                            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                            payCartAmount = "1"/*emiamount.toString()*/,
-                            eMINumbers = "EMI${emiNumbers}",
-                            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                            payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                            loanCode = loanCode
-                        )
-
-                        hitApiForRequestPG(req)
-
-                        // }
                     }
-
                 }
+            }
+            else{
+                Toast.makeText(this@EmiLoanDetailPage,"Please connect with internet", Toast.LENGTH_SHORT).show()
             }
 
         }

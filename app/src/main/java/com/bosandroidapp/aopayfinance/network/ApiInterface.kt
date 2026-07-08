@@ -45,6 +45,8 @@ import com.bosandroidapp.aopayfinance.data.model.ValidateSessionResp
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerResp
 import com.bosandroidapp.aopayfinance.data.model.cibilscore.CibilScroeResp
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionResponse
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.EligibleLoanResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.EmiSplitRes
@@ -632,5 +634,12 @@ interface ApiInterface {
 
     @POST("api/V1/AopayFinance/GetRetailerMakePaymentList")
     suspend fun getMakePaymentReportReq(@Body req : MakePaymentAdminReportRequest) : Response<MakePaymentAdminReportResponse>?
+
+
+
+    //retailer kit option
+    @POST("api/V1/AopayFinance/GetRetailerLoanModeDetails")
+    suspend fun getRequestKitOption(@Body req : KitOptionRequest) : Response<KitOptionResponse>?
+
 
 }

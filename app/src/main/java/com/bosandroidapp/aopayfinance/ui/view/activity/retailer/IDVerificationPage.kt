@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.Window.FEATURE_NO_TITLE
 import android.view.WindowManager
 import android.widget.Button
@@ -36,6 +37,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharFrontImageUri
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharTransactionIdNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CheckOnlineOrOffline
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryMobileVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryOTP
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ENTEREDCUSTOMERDOB
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
@@ -44,18 +47,24 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefAadharTransactionIdNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ReferenceAadharNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ReferenceAadharVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AadharVerificationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
+import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AadharCardWebViewDIGILockerPage.Companion.digilockerLink
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -67,6 +76,23 @@ class IDVerificationPage : AppCompatActivity() {
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
     lateinit var dialog: Dialog
+    lateinit var panViewModel: PanViewModel
+
+
+    companion object{
+        var isOnline : Boolean = false
+        var isOffline : Boolean = false
+        var isKit : Boolean = false
+
+        var onlineMaxLoanLimit: Int = 0
+        var availableOnlineBalance : Int =0
+        var offlineMaxLoanLimit : Int =0
+
+        var availableOfflineBalance : Int =0
+        var kitMaxLoanLimit : Int =0
+        var availableKitBalance : Int =0
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,21 +105,33 @@ class IDVerificationPage : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN)))[AuthenticationViewModel::class.java]
+        panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
+        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
+
         preference = SharedPreference(this)
+
+
 
         setOnClickListner()
 
     }
 
+
     fun setOnClickListner() {
+
+        binding.swiperefresh.setOnRefreshListener {
+            if (isInternetAvailable(this@IDVerificationPage)) {
+                hitApiForKitOption()
+                binding.swiperefresh.isRefreshing = true
+            }
+        }
 
         binding.back.setOnClickListener {
             onBackPressed()
         }
 
         binding.aadharcardlayout.setOnClickListener {
-            if (PanNumber.isBlank()) {
+            if (PanNumber.isBlank() && !CheckOnlineOrOffline.equals(ConstantClass.kit)) {
                 Toast.makeText(this@IDVerificationPage, "Please Verify Pan Card first!!", Toast.LENGTH_SHORT).show()
             }
             else {
@@ -106,10 +144,40 @@ class IDVerificationPage : AppCompatActivity() {
         }
 
         binding.pancardlayout.setOnClickListener {
+
             if (CheckOnlineOrOffline.isBlank()) {
                 Toast.makeText(this@IDVerificationPage, "Please select mode first!!", Toast.LENGTH_SHORT).show()
-            } else {
-                OpenPopUpForValidateDate()
+            }
+            else {
+                // 1. Kit validation (Mandatory)
+                if (!isKit ) {
+                    PopOpForKitPackageAlert("Kit is mandatory for loan creation. Please contact your administrator.")
+                }
+                else{
+                    // 2. Online validation (if Online is selected)
+                    if (CheckOnlineOrOffline == ConstantClass.online) {
+                        if (!isOnline || availableOnlineBalance <= 0 || onlineMaxLoanLimit <= 0) {
+                            PopOpForKitPackageAlert("Online loan limit is not available.")
+                            return@setOnClickListener
+                        }
+                    }
+
+                    // 3. Offline validation (if Offline is selected)
+                    if (CheckOnlineOrOffline == ConstantClass.offline) {
+                        if (!isOffline || availableOfflineBalance <= 0 || offlineMaxLoanLimit <= 0) {
+                            PopOpForKitPackageAlert("Offline loan limit is not available.")
+                            return@setOnClickListener
+                        }
+                    }
+
+                    // 3. Offline validation (if Offline is selected)
+                    if (!isKit || availableKitBalance <= 0 || kitMaxLoanLimit <= 0) {
+                        PopOpForKitPackageAlert("Kit limit is not available.Please contact your administrator.")
+                        return@setOnClickListener
+                    }
+
+                    OpenPopUpForValidateDate()
+                }
 
             }
 
@@ -151,6 +219,20 @@ class IDVerificationPage : AppCompatActivity() {
                         onResume()
                     }
 
+                    R.id.radioButton3 -> {
+                        CheckOnlineOrOffline = ConstantClass.kit
+                        PanNumber = ""
+                        PanFrontImageUri = null
+                        ConstantClass.AadharVerified = ""
+                        ConstantClass.ClickOnCardLowCibilScore = ""
+                        binding.pancardlayout.isEnabled = true
+                        AadharTransactionIdNo = ""
+                        RefAadharTransactionIdNo = ""
+                        ReferenceAadharVerified=""
+                        ReferenceAadharNumber=""
+                        onResume()
+                    }
+
                 }
             }
 
@@ -178,11 +260,13 @@ class IDVerificationPage : AppCompatActivity() {
 
         if (ConstantClass.AadharVerified.equals("no")&& ConstantClass.AadharVerified.isNullOrBlank() && ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.online)) {
             binding.doneaadhaar.visibility = View.VISIBLE
-        } else {
+        }
+        else {
             binding.doneaadhaar.visibility = View.GONE
         }
 
         hitApiForLogin()
+        hitApiForKitOption()
 
     }
 
@@ -202,7 +286,7 @@ class IDVerificationPage : AppCompatActivity() {
 
         Log.d("AadharVerificationreq", Gson().toJson(aadharverificationreq))
 
-        viewModel.getAadharVerificationReq(aadharverificationreq).observe(this) { resources ->
+        panViewModel.getAadharVerificationReq(aadharverificationreq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
@@ -260,8 +344,6 @@ class IDVerificationPage : AppCompatActivity() {
         super.onBackPressed()
     }
 
-
-
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForValidateDate() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
@@ -300,7 +382,6 @@ class IDVerificationPage : AppCompatActivity() {
         dialog.show()
 
     }
-
 
     private fun showDatePicker(dob: TextView, done: TextView) {
         val calendar = Calendar.getInstance()
@@ -433,6 +514,7 @@ class IDVerificationPage : AppCompatActivity() {
 
     }
 
+
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
@@ -468,6 +550,101 @@ class IDVerificationPage : AppCompatActivity() {
                 }
             }
         }
+
+    }
+
+
+
+    fun hitApiForKitOption(){
+
+        var request = KitOptionRequest(
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode,"")
+        )
+
+        viewModel.getRequestKitOption(request).observe(this) { resources ->
+            resources.let {
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data?.let { users ->
+                            users.body()?.let { response ->
+                                Log.d("ktResponse", Gson().toJson(response))
+
+                                 if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
+                                    ConstantClass.dialog.dismiss()
+                                 }
+
+                                 var getdata = response.data
+
+                                 getdata.let {
+                                     isOnline = it?.get(0)!!.isOnline!!
+                                     isOffline = it?.get(0)!!.isOffline!!
+                                     isKit = it?.get(0)!!.isKit!!
+
+                                     onlineMaxLoanLimit = it?.get(0)!!.onlineMaxLoanLimit!!
+                                     availableOnlineBalance = it?.get(0)!!.availableOnlineBalance!!
+
+                                     offlineMaxLoanLimit = it?.get(0)!!.offlineMaxLoanLimit!!
+                                     availableOfflineBalance = it?.get(0)!!.availableOfflineBalance!!
+
+                                     kitMaxLoanLimit = it?.get(0)!!.kitMaxLoanLimit!!
+                                     availableKitBalance = it?.get(0)!!.availableKitBalance!!
+
+                                     // view of ui option
+                                     binding.radioButton1.visibility = if (isOnline) View.VISIBLE else View.GONE
+                                     binding.radioButton2.visibility = if (isOffline) View.VISIBLE else View.GONE
+                                     binding.radioButton3.visibility = if (isKit) View.VISIBLE else View.GONE
+
+                                     binding.swiperefresh.isRefreshing = false
+
+                                 }
+                            }
+                        }
+                    }
+
+                    ApiStatus.ERROR -> {
+                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
+                            ConstantClass.dialog.dismiss()
+                        }
+                    }
+
+                    ApiStatus.LOADING -> {
+                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                    }
+
+                }
+            }
+        }
+
+
+    }
+
+
+    fun PopOpForKitPackageAlert(message : String){
+        dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.kitmessagealert)
+
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        }
+
+        dialog.setCanceledOnTouchOutside(false)
+
+
+        val done = dialog.findViewById<Button>(R.id.Ok)
+        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
+
+
+        txt.text = message
+
+
+        done.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
 
     }
 

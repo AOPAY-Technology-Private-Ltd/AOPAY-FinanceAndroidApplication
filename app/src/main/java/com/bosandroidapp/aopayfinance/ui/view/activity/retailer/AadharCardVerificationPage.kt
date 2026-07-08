@@ -161,22 +161,32 @@ class AadharCardVerificationPage : AppCompatActivity() {
         }
 
         binding.verifybuttonlayout.setOnClickListener {
-            val aadharNumber = binding.aadharnumberEdittxt.text.toString().trim()
 
-            // Aadhaar validation
-            if (aadharNumber.isBlank() || aadharNumber.length != 12 || !aadharNumber.all { it.isDigit() }) {
-                Toast.makeText(this, "Enter a valid 12-digit Aadhaar number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
+                AadharFrontImageUri = null
+                AadharBackImageUri = null
+                AadharNumber = ""
+                ConstantClass.AadharVerified = "no"
+                val intent = Intent(this, NewCustomerRegistrationPage::class.java)
+                startActivity(intent)
             }
+            else{
+                val aadharNumber = binding.aadharnumberEdittxt.text.toString().trim()
 
-            // Image URI validation
-            if (photoFrontUri == null || photoBackUri == null) {
-                Toast.makeText(this, "Please upload both front and back Aadhaar images", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+                // Aadhaar validation
+                if (aadharNumber.isBlank() || aadharNumber.length != 12 || !aadharNumber.all { it.isDigit() }) {
+                    Toast.makeText(this, "Enter a valid 12-digit Aadhaar number", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Image URI validation
+                if (photoFrontUri == null || photoBackUri == null) {
+                    Toast.makeText(this, "Please upload both front and back Aadhaar images", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                hitApiForCheckIsEligibleOrNotForLoan(aadharNumber)
             }
-
-            hitApiForCheckIsEligibleOrNotForLoan(aadharNumber)
-
 
         }
 

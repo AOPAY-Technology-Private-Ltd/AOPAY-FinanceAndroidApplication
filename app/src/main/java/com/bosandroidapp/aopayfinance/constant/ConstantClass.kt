@@ -106,12 +106,13 @@ object ConstantClass {
      // Procustion  API
 
      /* const val BASE_URL = "https://api.aopay.finance/"
-     const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
+      const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
 
 
      // UAT API
-     const val BASE_URL = "https://uatapi.aopay.co.in/"
-     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+      const val BASE_URL = "https://uatapi.aopay.co.in/"
+      const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
@@ -128,7 +129,6 @@ object ConstantClass {
      const val CustomerCode = "customerCode"
 
      const val Admin = "admin"
-
 
      const val RetailerCode = "retailerCode"
      const val ForgotPasswordType = "Retailer forgot password"
@@ -163,6 +163,10 @@ object ConstantClass {
      const val LoginType = "Logintype"
      const val online = "Online"
      const val offline = "Offline"
+     const val kit = "kit"
+
+    var isPgClosing = false
+    var isLockTaskStarted = false
      const val editprofile = "Edit Profile"
      const val cancel = "Cancel"
      const val paymentMode = "Select Payment Mode"
@@ -233,8 +237,8 @@ object ConstantClass {
      lateinit var  dialog : Dialog
 
      var PanNumber : String = ""
-     var CheckOnlineOrOffline : String = "Offline"
-     var PanNumberVerified : String = "yes"
+     var CheckOnlineOrOffline : String = ""
+     var PanNumberVerified : String = "no"
      var BrandName : String = ""
      var ModelName : String = ""
      var ModelVarient : String = ""
@@ -245,9 +249,8 @@ object ConstantClass {
      var Tenure : String = ""
      var LoanAmount : Double = 0.0
      var EmiAmount : String = ""
-
-    var LoanStartDate = ""
-    var LoanEndDate = ""
+     var LoanStartDate = ""
+     var LoanEndDate = ""
      var InterestRate : String = ""
      var ProcessingFees : String = ""
      var InterestAmt : String = ""

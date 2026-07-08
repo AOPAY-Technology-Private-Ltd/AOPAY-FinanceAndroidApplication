@@ -26,6 +26,7 @@ import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.ForgotPasswordReq
@@ -553,6 +554,17 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         emit(ApiResponse.loading(data = null))
         try {
             emit(ApiResponse.success(data = repository.getMakePaymentReportReq(req)))
+        }
+        catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
+        }
+    }
+
+
+    fun getRequestKitOption(req: KitOptionRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(ApiResponse.success(data = repository.getRequestKitOption(req)))
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))

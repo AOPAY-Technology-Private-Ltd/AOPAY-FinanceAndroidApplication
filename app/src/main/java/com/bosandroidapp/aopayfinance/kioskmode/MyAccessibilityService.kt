@@ -6,6 +6,8 @@ import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -79,6 +81,11 @@ class MyAccessibilityService : AccessibilityService() {
 
             val packageName = event?.packageName?.toString()
 
+
+            if(packageName==null){
+                refreshService()
+            }
+
             Log.d("packageName", packageName.toString())
 
             // Allow soft keyboard
@@ -92,7 +99,14 @@ class MyAccessibilityService : AccessibilityService() {
             }
 
 
-            if (isActivityRunning(this, PGWebViewActivity::class.java)) {
+            /*if (isActivityRunning(this, PGWebViewActivity::class.java)) {
+                return
+            }*/
+
+            if (ConstantClass.isPgClosing) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    ConstantClass.isPgClosing = false
+                }, 1000)
                 return
             }
 
@@ -135,7 +149,7 @@ class MyAccessibilityService : AccessibilityService() {
             && !((event?.packageName?.equals("sbi.mobile.apps.in")) ?: false)
             && !((event?.packageName?.equals("in.amazon.mShop.android.shopping")) ?: false)
             && !((event?.packageName?.equals("com.bosandroidapp.aopayfinance")) ?: false)
-            && !(event?.packageName == null) && !isActivityRunning(this, KioskActivity::class.java) && !isPaymentAppRunning()) {
+            && !(event?.packageName == null) &&!isMyAppOnTop()&& /*!isActivityRunning(this, KioskActivity::class.java)*/  event?.packageName != null && !isPaymentAppRunning()) {
 
             Logger.d(ACCESSIBILITYTAG, "${event.packageName}")
             Logger.d(ACCESSIBILITYTAG, "Performing KioskActivity Intent")
@@ -151,6 +165,47 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        val info = getServiceInfo()
+
+        // Fetch all installed packages on the device
+        val packages = getPackageManager().getInstalledPackages(0)
+        val packageNames = arrayOfNulls<String>(packages.size)
+        for (i in packages.indices) {
+            packageNames[i] = packages.get(i)!!.packageName
+        }
+
+        // Explicitly map them to the service info
+        info.packageNames = packageNames
+        setServiceInfo(info)
+    }
+
+
+    fun refreshService() {
+        val info = getServiceInfo()
+        if (info != null) {
+            // Re-applying the exact same info forces the system to refresh the channel
+            setServiceInfo(info)
+        }
+    }
+
+
+    // changes by me
+    private fun isMyAppOnTop(): Boolean {
+        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        for (task in am.appTasks) {
+            val top = task.taskInfo.topActivity
+            if (top?.packageName == packageName) {
+                return true
+            }
+        }
+        return false
+    }
+
+
     private fun isActivityRunning(context: Context, activityClass: Class<*>): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val tasks = activityManager.appTasks
@@ -163,6 +218,7 @@ class MyAccessibilityService : AccessibilityService() {
         }
         return false
     }
+
 
     private fun isMyAppInfoPage(): Boolean {
         val rootNode = rootInActiveWindow ?: return false
@@ -294,7 +350,9 @@ class MyAccessibilityService : AccessibilityService() {
                 packageName.equals("com.motorola.ccc.ota", true) ||
 
                 // Nothing
-                packageName.equals("com.nothing.smartcenter", true)
+                packageName.equals("com.nothing.smartcenter", true)||
+
+                packageName.equals("com.bosandroidapp.aopayfinance", true)
 
     }
 
