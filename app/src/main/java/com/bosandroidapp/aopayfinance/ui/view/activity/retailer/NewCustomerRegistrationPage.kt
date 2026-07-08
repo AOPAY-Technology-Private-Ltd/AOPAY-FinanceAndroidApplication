@@ -660,40 +660,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
 
         binding.createaccount.setOnClickListener {
-
-            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
-                val (isValid, errorMessage) = isKitValidForm(
-                    firstName = binding.firstName.text.toString().trim(),
-                    lastName = binding.lastName.text.toString().trim(),
-                    mobileNumber = binding.mobileNumber.text.toString().trim(),
-                    primarymobverified = CustPrimaryMobileVerified)
-                if (!isValid) {
-                    Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-                else{
-                    CustPhotoPath = null
-                    CustFirstName = binding.firstName.text.toString().trim()
-                    CustMiddleName = binding.middleName.text.toString().trim()
-                    CustLastName = binding.lastName.text.toString().trim()
-                    CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
-                    CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
-                    isAggrementVerified = "no"
-                    CusteMailID = binding.emailId.text.toString().trim()
-                    CustFlatNo = binding.flathouseno.text.toString().trim()
-                    CustAreaSector = binding.areasector.text.toString().trim()
-                    CustCurrentAddress = binding.currentaddress.text.toString().trim()
-                    CustPinCode = binding.pincode.text.toString().trim()
-                    CustStateName = binding.statename.text.toString()
-                    CustCityName = binding.cityname.text.toString()
-                    ConstantClass.ClickOnCardDashboard = "Customer"
-                    CustomerLoanStatus =  CustomerLoanStatusPending
-                    startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
-                }
-
-
-            }
-            else{
-                val (isValid, errorMessage) = isValidForm(
+            val (isValid, errorMessage) = isValidForm(
                     firstName = binding.firstName.text.toString().trim(),
                     middleName = binding.middleName.text.toString().trim(),
                     lastName = binding.lastName.text.toString().trim(),
@@ -710,11 +677,11 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     primarymobverified = CustPrimaryMobileVerified
                 )
 
-                if (!isValid) {
+            if (!isValid) {
                     Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
 
                 }
-                else {
+            else {
                     CustPhotoPath = photoUri
                     CustFirstName = binding.firstName.text.toString().trim()
                     CustMiddleName = binding.middleName.text.toString().trim()
@@ -761,7 +728,6 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                     else{
-
                         if(!CustAlternateMobileNumber.isNullOrBlank()){
                             CustomerLoanStatus =  CustomerLoanStatusPending
                             startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
@@ -774,7 +740,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                 }
-            }
+
 
 
 
@@ -2186,6 +2152,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
             }
         }
     }
+
 
 
     fun hitApiForRetailerWalletAmount() {

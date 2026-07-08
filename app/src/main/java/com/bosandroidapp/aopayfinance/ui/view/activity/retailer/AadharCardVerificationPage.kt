@@ -105,6 +105,14 @@ class AadharCardVerificationPage : AppCompatActivity() {
             }
 
         }
+        else{
+            if(front){
+                photoFrontUri=null
+            }
+            else{
+                photoBackUri=null
+            }
+        }
 
 
     }
@@ -162,15 +170,6 @@ class AadharCardVerificationPage : AppCompatActivity() {
 
         binding.verifybuttonlayout.setOnClickListener {
 
-            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
-                AadharFrontImageUri = null
-                AadharBackImageUri = null
-                AadharNumber = ""
-                ConstantClass.AadharVerified = "no"
-                val intent = Intent(this, NewCustomerRegistrationPage::class.java)
-                startActivity(intent)
-            }
-            else{
                 val aadharNumber = binding.aadharnumberEdittxt.text.toString().trim()
 
                 // Aadhaar validation
@@ -188,7 +187,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
                 hitApiForCheckIsEligibleOrNotForLoan(aadharNumber)
             }
 
-        }
+
 
 
 

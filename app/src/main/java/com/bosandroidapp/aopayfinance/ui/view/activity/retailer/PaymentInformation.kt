@@ -615,14 +615,6 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     else{
-                        if(ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.kit)){
-                            RefName = binding.refername.text.toString().trim()
-                            RefRelationShip = binding.referrelatinonship.text.toString().trim()
-                            RefmobileNo = binding.refmobno.text.toString().trim()
-                            RefAddress =  binding.refaddress.text.toString().trim()
-                            startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
-                        }
-                        else{
                             val (isValid, errorMessage) = isReferenceValidForm(
                                 referName = binding.refername.text.toString().trim(),
                                 referRelation = binding.referrelatinonship.text.toString().trim(),
@@ -640,7 +632,6 @@ class PaymentInformation : AppCompatActivity() {
                                 RefAddress =  binding.refaddress.text.toString().trim()
                                 startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
                             }
-                        }
 
                     }
 

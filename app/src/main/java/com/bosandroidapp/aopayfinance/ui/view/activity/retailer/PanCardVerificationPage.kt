@@ -115,6 +115,9 @@ class PanCardVerificationPage : AppCompatActivity() {
                 )
 
             }
+            else{
+                photoFrontUri=null
+            }
 
 
         }
@@ -191,13 +194,6 @@ class PanCardVerificationPage : AppCompatActivity() {
         }
 
         binding.verifybuttonlayout.setOnClickListener {
-            if(CheckOnlineOrOffline.equals(ConstantClass.kit)){
-                PanNumber = ""
-                PanNumberVerified = "no"
-                PanFrontImageUri = null
-                finish()
-            }
-            else{
                 var panNumber = binding.pannumber.text.toString()
                 // PAN validation (Regex: 5 letters, 4 digits, 1 letter)
                 val panRegex = Regex("[A-Z]{5}[0-9]{4}[A-Z]{1}")
@@ -222,10 +218,9 @@ class PanCardVerificationPage : AppCompatActivity() {
                 }
 
                 hitApiForCheckIsEligibleOrNotForLoan(panNumber)
+
             }
 
-
-        }
 
         binding.uploadtextfront.setOnClickListener {
             checkCameraPermissionAndOpenCamera()

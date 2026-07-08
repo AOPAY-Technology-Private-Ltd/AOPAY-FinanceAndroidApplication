@@ -51,7 +51,6 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
-import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AadharVerificationReq
@@ -79,26 +78,13 @@ class IDVerificationPage : AppCompatActivity() {
     lateinit var panViewModel: PanViewModel
 
 
-    companion object{
-        var isOnline : Boolean = false
-        var isOffline : Boolean = false
-        var isKit : Boolean = false
-
-        var onlineMaxLoanLimit: Int = 0
-        var availableOnlineBalance : Int =0
-        var offlineMaxLoanLimit : Int =0
-
-        var availableOfflineBalance : Int =0
-        var kitMaxLoanLimit : Int =0
-        var availableKitBalance : Int =0
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityIdverificationPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
@@ -110,28 +96,22 @@ class IDVerificationPage : AppCompatActivity() {
 
         preference = SharedPreference(this)
 
-
-
         setOnClickListner()
+
 
     }
 
 
     fun setOnClickListner() {
 
-        binding.swiperefresh.setOnRefreshListener {
-            if (isInternetAvailable(this@IDVerificationPage)) {
-                hitApiForKitOption()
-                binding.swiperefresh.isRefreshing = true
-            }
-        }
 
         binding.back.setOnClickListener {
             onBackPressed()
         }
 
+
         binding.aadharcardlayout.setOnClickListener {
-            if (PanNumber.isBlank() && !CheckOnlineOrOffline.equals(ConstantClass.kit)) {
+            if (PanNumber.isBlank() ) {
                 Toast.makeText(this@IDVerificationPage, "Please Verify Pan Card first!!", Toast.LENGTH_SHORT).show()
             }
             else {
@@ -143,44 +123,15 @@ class IDVerificationPage : AppCompatActivity() {
             }
         }
 
+
         binding.pancardlayout.setOnClickListener {
 
             if (CheckOnlineOrOffline.isBlank()) {
                 Toast.makeText(this@IDVerificationPage, "Please select mode first!!", Toast.LENGTH_SHORT).show()
             }
             else {
-                // 1. Kit validation (Mandatory)
-                if (!isKit ) {
-                    PopOpForKitPackageAlert("Kit is mandatory for loan creation. Please contact your administrator.")
+                OpenPopUpForValidateDate()
                 }
-                else{
-                    // 2. Online validation (if Online is selected)
-                    if (CheckOnlineOrOffline == ConstantClass.online) {
-                        if (!isOnline || availableOnlineBalance <= 0 || onlineMaxLoanLimit <= 0) {
-                            PopOpForKitPackageAlert("Online loan limit is not available.")
-                            return@setOnClickListener
-                        }
-                    }
-
-                    // 3. Offline validation (if Offline is selected)
-                    if (CheckOnlineOrOffline == ConstantClass.offline) {
-                        if (!isOffline || availableOfflineBalance <= 0 || offlineMaxLoanLimit <= 0) {
-                            PopOpForKitPackageAlert("Offline loan limit is not available.")
-                            return@setOnClickListener
-                        }
-                    }
-
-                    // 3. Offline validation (if Offline is selected)
-                    if (!isKit || availableKitBalance <= 0 || kitMaxLoanLimit <= 0) {
-                        PopOpForKitPackageAlert("Kit limit is not available.Please contact your administrator.")
-                        return@setOnClickListener
-                    }
-
-                    OpenPopUpForValidateDate()
-                }
-
-            }
-
         }
 
 
@@ -207,20 +158,6 @@ class IDVerificationPage : AppCompatActivity() {
 
                     R.id.radioButton2 -> {
                         CheckOnlineOrOffline = ConstantClass.offline
-                        PanNumber = ""
-                        PanFrontImageUri = null
-                        ConstantClass.AadharVerified = ""
-                        ConstantClass.ClickOnCardLowCibilScore = ""
-                        binding.pancardlayout.isEnabled = true
-                        AadharTransactionIdNo = ""
-                        RefAadharTransactionIdNo = ""
-                        ReferenceAadharVerified=""
-                        ReferenceAadharNumber=""
-                        onResume()
-                    }
-
-                    R.id.radioButton3 -> {
-                        CheckOnlineOrOffline = ConstantClass.kit
                         PanNumber = ""
                         PanFrontImageUri = null
                         ConstantClass.AadharVerified = ""
@@ -266,7 +203,6 @@ class IDVerificationPage : AppCompatActivity() {
         }
 
         hitApiForLogin()
-        hitApiForKitOption()
 
     }
 
@@ -553,100 +489,6 @@ class IDVerificationPage : AppCompatActivity() {
 
     }
 
-
-
-    fun hitApiForKitOption(){
-
-        var request = KitOptionRequest(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode,"")
-        )
-
-        viewModel.getRequestKitOption(request).observe(this) { resources ->
-            resources.let {
-                when (it.apiStatus) {
-                    ApiStatus.SUCCESS -> {
-                        it.data?.let { users ->
-                            users.body()?.let { response ->
-                                Log.d("ktResponse", Gson().toJson(response))
-
-                                 if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
-                                 }
-
-                                 var getdata = response.data
-
-                                 getdata.let {
-                                     isOnline = it?.get(0)!!.isOnline!!
-                                     isOffline = it?.get(0)!!.isOffline!!
-                                     isKit = it?.get(0)!!.isKit!!
-
-                                     onlineMaxLoanLimit = it?.get(0)!!.onlineMaxLoanLimit!!
-                                     availableOnlineBalance = it?.get(0)!!.availableOnlineBalance!!
-
-                                     offlineMaxLoanLimit = it?.get(0)!!.offlineMaxLoanLimit!!
-                                     availableOfflineBalance = it?.get(0)!!.availableOfflineBalance!!
-
-                                     kitMaxLoanLimit = it?.get(0)!!.kitMaxLoanLimit!!
-                                     availableKitBalance = it?.get(0)!!.availableKitBalance!!
-
-                                     // view of ui option
-                                     binding.radioButton1.visibility = if (isOnline) View.VISIBLE else View.GONE
-                                     binding.radioButton2.visibility = if (isOffline) View.VISIBLE else View.GONE
-                                     binding.radioButton3.visibility = if (isKit) View.VISIBLE else View.GONE
-
-                                     binding.swiperefresh.isRefreshing = false
-
-                                 }
-                            }
-                        }
-                    }
-
-                    ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
-                        }
-                    }
-
-                    ApiStatus.LOADING -> {
-                        ConstantClass.OpenPopUpForVeryfyOTP(this)
-                    }
-
-                }
-            }
-        }
-
-
-    }
-
-
-    fun PopOpForKitPackageAlert(message : String){
-        dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.kitmessagealert)
-
-        dialog.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        }
-
-        dialog.setCanceledOnTouchOutside(false)
-
-
-        val done = dialog.findViewById<Button>(R.id.Ok)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-
-
-        txt.text = message
-
-
-        done.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-
-    }
 
 
 }

@@ -163,7 +163,7 @@ object ConstantClass {
      const val LoginType = "Logintype"
      const val online = "Online"
      const val offline = "Offline"
-     const val kit = "kit"
+
 
     var isPgClosing = false
     var isLockTaskStarted = false
