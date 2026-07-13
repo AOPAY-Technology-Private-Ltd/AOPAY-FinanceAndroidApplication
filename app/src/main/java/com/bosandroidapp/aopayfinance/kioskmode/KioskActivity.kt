@@ -165,62 +165,65 @@ class KioskActivity : AppCompatActivity() {
             emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
 
                  if(isInternetAvailable(this@KioskActivity)) {
-                     lifecycleScope.launch {
-                        selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                        // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                        // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
-                        var ForServerlatefine:String ?= ""
-                        PGWebViewActivity.emiList.clear()
+                     if(emiamount>0.0){
+                         lifecycleScope.launch {
+                             selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                             // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                             // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                             var ForServerlatefine:String ?= ""
+                             PGWebViewActivity.emiList.clear()
 
-                        for (j in 1..selectedNoofEmi) {
+                             for (j in 1..selectedNoofEmi) {
 
-                            val emiIndex = j - 1
+                                 val emiIndex = j - 1
 
-                            val emiAmountWithFine: String
+                                 val emiAmountWithFine: String
 
-                            if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
-                                if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
-                                    BounceChargeApplicable = BounceCharge
-                                }
-                                else{
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
-                                    BounceChargeApplicable = "0"
-                                }
-                                ForServerlatefine = latefine
-                            }
-                            else {
-                                emiAmountWithFine = emiAmount
-                                ForServerlatefine = "0"
-                                BounceChargeApplicable = "0"
-                            }
+                                 if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
+                                     if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
+                                         emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                         BounceChargeApplicable = BounceCharge
+                                     }
+                                     else{
+                                         emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                         BounceChargeApplicable = "0"
+                                     }
+                                     ForServerlatefine = latefine
+                                 }
+                                 else {
+                                     emiAmountWithFine = emiAmount
+                                     ForServerlatefine = "0"
+                                     BounceChargeApplicable = "0"
+                                 }
 
-                            Log.d("emiAmountWithFine", emiAmountWithFine)
-                            Log.d("EMIAmount", emiAmountWithFine)
-                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
-                            )
-                        }
+                                 Log.d("emiAmountWithFine", emiAmountWithFine)
+                                 Log.d("EMIAmount", emiAmountWithFine)
+                                 emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
+                                 )
+                             }
 
-                        val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
-                        val emiNumbers=  (1..selectedNoofEmi).joinToString("")
+                             val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
+                             val emiNumbers=  (1..selectedNoofEmi).joinToString("")
 
-                        PGWebViewActivity.LoanCodePG = loanCode
+                             PGWebViewActivity.LoanCodePG = loanCode
 
-                        var req = PGRequestCall(
-                            payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                            customerEmailID = email,
-                            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                            payCartAmount = emiamount.toString(),
-                            eMINumbers = "EMI${emiNumbers}",
-                            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                            payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                            loanCode = loanCode
-                        )
+                             var req = PGRequestCall(
+                                 payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                 customerEmailID = email,
+                                 registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                 payCartAmount = emiamount.toString(),
+                                 eMINumbers = "EMI${emiNumbers}",
+                                 customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                 payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                 loanCode = loanCode
+                             )
 
-                        hitApiForRequestPG(req)
+                             hitApiForRequestPG(req)
 
 
-                    }
+                         }
+                     }
+
                  }
                 else{
                      Toast.makeText(this@KioskActivity,"Please connect with internet", Toast.LENGTH_SHORT).show()

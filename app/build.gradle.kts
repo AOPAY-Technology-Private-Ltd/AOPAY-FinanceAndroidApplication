@@ -8,7 +8,6 @@ android {
     namespace = "com.bosandroidapp.aopayfinance"
     compileSdk = 34
 
-
     defaultConfig {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
