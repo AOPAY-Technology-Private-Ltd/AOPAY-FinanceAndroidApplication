@@ -22,6 +22,7 @@ import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLedgerreportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.LowCibilScoreCustomerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.LedgerAdapter
@@ -33,7 +34,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class Ledgerreport : AppCompatActivity() {
+class Ledgerreport : BaseActivity() {
     lateinit var binding : ActivityLedgerreportBinding
     var FromDate: String= ""
     var ToDate: String =""

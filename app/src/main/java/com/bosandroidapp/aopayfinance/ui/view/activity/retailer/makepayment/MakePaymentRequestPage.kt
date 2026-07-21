@@ -31,6 +31,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.RegistrationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityMakePaymentRequestPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
@@ -39,7 +40,7 @@ import com.google.gson.Gson
 import java.io.File
 import kotlin.toString
 
-class MakePaymentRequestPage : AppCompatActivity() {
+class MakePaymentRequestPage : BaseActivity() {
     lateinit var binding: ActivityMakePaymentRequestPageBinding
     lateinit var preference: SharedPreference
     var photoUri: Uri? = null

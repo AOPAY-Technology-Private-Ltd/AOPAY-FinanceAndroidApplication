@@ -58,6 +58,7 @@ import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureN
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLoginPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.ForgetPasswordPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.SignupPage
@@ -67,7 +68,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
-class LoginPage : AppCompatActivity() {
+class LoginPage : BaseActivity() {
     lateinit var binding: ActivityLoginPageBinding
     private lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference
@@ -169,6 +170,7 @@ class LoginPage : AppCompatActivity() {
             val mainIntent = Intent(this@LoginPage, SignupPage::class.java)
             startActivity(mainIntent)
         }
+
 
         binding.emailormobilenumber.addTextChangedListener(object : TextWatcher {
 

@@ -25,6 +25,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.GetReportsReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.RetailerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -36,7 +37,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class RetailerCustomerReportsPage : AppCompatActivity() {
+class RetailerCustomerReportsPage : BaseActivity() {
     lateinit var binding : ActivityRetailerCustomerReportsPageBinding
     lateinit var preference : SharedPreference
     lateinit var viewModel: AuthenticationViewModel

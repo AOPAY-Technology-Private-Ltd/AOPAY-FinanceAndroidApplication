@@ -8,8 +8,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityReportSelectionPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 
-class ReportSelectionPage : AppCompatActivity() {
+class ReportSelectionPage : BaseActivity() {
 
     lateinit var binding : ActivityReportSelectionPageBinding
 

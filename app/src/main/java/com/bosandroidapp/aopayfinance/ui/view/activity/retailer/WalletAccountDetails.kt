@@ -50,6 +50,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerProfileReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerWalletPayoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.fragment.PayoutPage.Companion.CheckActiveStatus
@@ -65,7 +66,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import java.util.Locale
 
-class WalletAccountDetails : AppCompatActivity() {
+class WalletAccountDetails : BaseActivity() {
     lateinit var binding : ActivityWalletAccountDetailsBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference

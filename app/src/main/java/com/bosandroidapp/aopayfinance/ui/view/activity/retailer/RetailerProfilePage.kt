@@ -63,6 +63,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.VerifyOTPReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.SendOtpReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -70,7 +71,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
-class RetailerProfilePage : AppCompatActivity() {
+class RetailerProfilePage : BaseActivity() {
     lateinit var binding: ActivityRetailerProfilePageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var api: ApiInterface

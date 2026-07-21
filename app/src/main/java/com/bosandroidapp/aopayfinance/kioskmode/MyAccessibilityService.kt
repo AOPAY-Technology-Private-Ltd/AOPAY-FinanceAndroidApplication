@@ -14,6 +14,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.SETTINGS_PKG
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.gpsSettingsOpened
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.internetSettingsOpened
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity
 import com.bosandroidapp.aopayfinance.utils.ACCESSIBILITYTAG
 import com.bosandroidapp.aopayfinance.utils.Logger
@@ -29,7 +31,9 @@ class MyAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            syncEmis()
+            if(isInternetAvailable(this@MyAccessibilityService)){
+                syncEmis()
+            }
         }
 
         if (isMyAppInfoPage() && !isEMIsCompleted()) {
@@ -79,6 +83,21 @@ class MyAccessibilityService : AccessibilityService() {
 
         if (isLocked()) {
 
+            if (!isInternetAvailable(this) && isInternetAlertSituationCompleted()) {
+                // Open Internet settings ONLY ONCE
+                if (!internetSettingsOpened) {
+                    internetSettingsOpened = true
+                    showToast("Please connect with internet")
+                    openInternetSettings()
+                    return
+                }
+                if (!currentPkg.contains(SETTINGS_PKG)) {
+                    openInternetSettings()   // FORCE BACK
+                }
+
+                return // STOP all other processing
+            }
+
             val packageName = event?.packageName?.toString()
 
 
@@ -97,7 +116,6 @@ class MyAccessibilityService : AccessibilityService() {
             if (isAllowedSystemPackage(packageName)) {
                 return
             }
-
 
             /*if (isActivityRunning(this, PGWebViewActivity::class.java)) {
                 return
@@ -165,7 +183,6 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
-
     override fun onServiceConnected() {
         super.onServiceConnected()
         val info = getServiceInfo()
@@ -181,7 +198,6 @@ class MyAccessibilityService : AccessibilityService() {
         info.packageNames = packageNames
         setServiceInfo(info)
     }
-
 
     fun refreshService() {
         val info = getServiceInfo()
@@ -256,6 +272,12 @@ class MyAccessibilityService : AccessibilityService() {
     private fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
         return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+    }
+
+    fun openInternetSettings() {
+        val intent = Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
 

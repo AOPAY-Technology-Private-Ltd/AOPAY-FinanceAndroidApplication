@@ -11,12 +11,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityMakePaymentPage2Binding
 import com.bosandroidapp.aopayfinance.databinding.ActivityMakePaymentPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.ui.view.adapter.MakePaymentPagerAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.WalletPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MakePaymentPage : AppCompatActivity() {
+class MakePaymentPage : BaseActivity() {
     lateinit var binding : ActivityMakePaymentPage2Binding
     lateinit var  viewPager: ViewPager2
     lateinit var  tabLayout: TabLayout

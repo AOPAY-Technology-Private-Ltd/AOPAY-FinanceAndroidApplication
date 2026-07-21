@@ -19,6 +19,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDeta
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityCustomerEmistatusReportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.CustomerEMIDetailsAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.CustomerEmiStatusAdapter
@@ -26,7 +27,7 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class CustomerEMIStatusReport : AppCompatActivity() {
+class CustomerEMIStatusReport : BaseActivity() {
 
     lateinit var binding: ActivityCustomerEmistatusReportBinding
     lateinit var viewModel: AuthenticationViewModel

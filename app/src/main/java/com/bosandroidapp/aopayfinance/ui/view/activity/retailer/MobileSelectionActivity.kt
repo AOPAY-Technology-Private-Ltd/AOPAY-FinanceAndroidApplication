@@ -40,6 +40,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.MobileListAdapter
@@ -50,7 +51,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.GridSpacingItemDecoration
 import com.google.gson.Gson
 
-class MobileSelectionActivity : AppCompatActivity() {
+class MobileSelectionActivity : BaseActivity() {
 
     lateinit var binding : ActivityMobileselectionBinding
     lateinit var adapter : MobileListAdapter

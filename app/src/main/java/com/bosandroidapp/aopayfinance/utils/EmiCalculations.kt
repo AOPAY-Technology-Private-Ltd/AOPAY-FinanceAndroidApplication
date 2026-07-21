@@ -24,7 +24,9 @@ import com.bosandroidapp.aopayfinance.kioskmode.isLocked
 import com.bosandroidapp.aopayfinance.kioskmode.removeRestrictions
 import com.bosandroidapp.aopayfinance.kioskmode.setEMICompleted
 import com.bosandroidapp.aopayfinance.kioskmode.setEMINotCompleted
+import com.bosandroidapp.aopayfinance.kioskmode.startInternetAlertSituation
 import com.bosandroidapp.aopayfinance.kioskmode.startLockSituation
+import com.bosandroidapp.aopayfinance.kioskmode.stopInternetAlertSituation
 import com.bosandroidapp.aopayfinance.kioskmode.stopLockSituation
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.google.gson.Gson
@@ -173,8 +175,10 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
         if (emiDues != null) {
             if (emiDues!! > 0) {
                 this@isEMIDue.setEMINotCompleted()
+                this@isEMIDue.startInternetAlertSituation()
             } else {
                 this@isEMIDue.setEMICompleted()
+                this@isEMIDue.stopInternetAlertSituation()
             }
         }
 

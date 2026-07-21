@@ -23,6 +23,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDeta
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPendingEmisPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.DueOverdueCustomerReports
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MobileSelectionActivity.Companion.FilterDataList
@@ -34,7 +35,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
-class DuesEMIPage : AppCompatActivity() {
+class DuesEMIPage : BaseActivity() {
     lateinit var binding : ActivityPendingEmisPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference

@@ -36,6 +36,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth
 import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth.Companion.startActivityForAuth
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
@@ -45,7 +46,7 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class ChooseYourRolePage : AppCompatActivity() {
+class ChooseYourRolePage : BaseActivity() {
    lateinit var binding : ActivityChooseYourRolePageBinding
     lateinit var viewModel: AuthenticationViewModel
 
@@ -183,7 +184,7 @@ class ChooseYourRolePage : AppCompatActivity() {
                     }
                     else {
                         Toast.makeText(this,"Kindly transfer the ownership to AO Pay.",Toast.LENGTH_SHORT).show()
-                       // intentNextPage() // for testing purpose
+                        //intentNextPage() // for testing purpose
                     }
                 }
 

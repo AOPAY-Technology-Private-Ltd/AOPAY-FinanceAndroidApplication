@@ -75,6 +75,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -105,7 +106,7 @@ import kotlin.sequences.ifEmpty
 import kotlin.text.equals
 import kotlin.toString
 
-class EmiLoanDetailPage : AppCompatActivity() {
+class EmiLoanDetailPage : BaseActivity() {
     lateinit var binding : ActivityEmiLoanDetailPageBinding
     lateinit var dialog : Dialog
     lateinit var viewModel: AuthenticationViewModel
@@ -850,6 +851,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                     response ->
                                 Log.d("loanEmiReceiveResp", response.toString())
                                 if(loopcount==emicount){
+
                                     if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
                                         ConstantClass.dialog.dismiss()
                                     }
@@ -991,7 +993,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
             customerCommissionGST = 0,
             commissionWithoutGST = 0,
             transferFromMsg = "Your Account is debited by ${amount}Rs.Due to Paid EMI on customer code :${customerCode}",
-            registrationId = retailercode,
+            registrationId = ConstantClass.PENNYDROP_REGISTRATION_ID,
             tdsAmount = 0,
             serviceschargeGSTAmount = 0,
             transactionStatus = "Approved",

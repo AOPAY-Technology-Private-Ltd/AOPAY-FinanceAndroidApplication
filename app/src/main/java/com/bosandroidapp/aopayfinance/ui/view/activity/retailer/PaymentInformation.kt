@@ -96,6 +96,7 @@ import com.bosandroidapp.aopayfinance.data.pennydrop.PennyDropRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -112,7 +113,7 @@ import java.util.Locale
 import kotlin.text.clear
 import kotlin.text.equals
 
-class PaymentInformation : AppCompatActivity() {
+class PaymentInformation : BaseActivity() {
     lateinit var  binding : ActivityPaymentInformationBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var api: ApiInterface

@@ -24,6 +24,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.databinding.ActivityBankDetailsPageBinding
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.adapter.BankPagerAdapter
@@ -34,7 +35,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 
-class BankDetailsPage : AppCompatActivity() {
+class BankDetailsPage : BaseActivity() {
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference
     lateinit var binding : ActivityBankDetailsPageBinding

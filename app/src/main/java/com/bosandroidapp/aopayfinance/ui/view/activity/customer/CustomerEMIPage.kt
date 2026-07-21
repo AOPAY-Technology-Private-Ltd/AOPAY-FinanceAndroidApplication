@@ -16,13 +16,14 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.CustomerEMIDetailsAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class CustomerEMIPage : AppCompatActivity() {
+class CustomerEMIPage : BaseActivity() {
     lateinit var binding : ActivityCustomerEmipageBinding
     lateinit var adapter : CustomerEMIDetailsAdapter
     lateinit var viewModel: AuthenticationViewModel

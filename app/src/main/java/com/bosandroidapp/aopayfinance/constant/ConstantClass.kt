@@ -1,6 +1,7 @@
 package com.bosandroidapp.aopayfinance.constant
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -50,6 +51,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import  com.bosandroidapp.aopayfinance.R
+import com.bosandroidapp.aopayfinance.internetchecker.NetworkMonitor
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.workmanager.LocationUploadWorker
@@ -105,22 +107,24 @@ object ConstantClass {
 
      // Procustion  API
 
-     /* const val BASE_URL = "https://api.aopay.finance/"
+      /*const val BASE_URL = "https://api.aopay.finance/"
       const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
 
-
      // UAT API
-      const val BASE_URL = "https://uatapi.aopay.co.in/"
-      const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+     const val BASE_URL = "https://uatapi.aopay.co.in/"
+     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
 
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
-
+/*
      const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
+     const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
+
+     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
+     const val PENNYDROP_REGISTRATION_ID = "AOP-554"
 
      const val OLD_FRP_MAIL_ID = "info@aopay.in"
 
@@ -343,6 +347,29 @@ object ConstantClass {
     var eMandate = "accepted"
     var eMandatepending = "pending"
     var isMandate = "Yes"
+    var internetSettingsOpened = false
+
+    private var noInternetDialog: AlertDialog? = null
+
+    fun showNoInternetDialog(context: Context) {
+        if (noInternetDialog?.isShowing == true) return
+
+        noInternetDialog = AlertDialog.Builder(context)
+            .setTitle("No Internet")
+            .setMessage("Please check your Wi-Fi or mobile data connection.")
+            .setCancelable(false)
+            .setPositiveButton("Open Settings") { _, _ ->
+                if (NetworkMonitor(context).isConnected()) noInternetDialog?.dismiss() else {
+                    val intent = Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                }
+
+            }
+            .create()
+
+        noInternetDialog?.show()
+    }
 
 
 

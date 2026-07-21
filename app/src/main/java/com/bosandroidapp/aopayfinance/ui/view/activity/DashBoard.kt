@@ -85,6 +85,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.kioskmode.initiateBlocking
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -119,7 +120,7 @@ import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 
-class DashBoard : AppCompatActivity() {
+class DashBoard : BaseActivity() {
     private lateinit var binding: ActivityDashBoardBinding
     private lateinit var headerBinding: NavHeaderDashBoardBinding
     lateinit var preference: SharedPreference

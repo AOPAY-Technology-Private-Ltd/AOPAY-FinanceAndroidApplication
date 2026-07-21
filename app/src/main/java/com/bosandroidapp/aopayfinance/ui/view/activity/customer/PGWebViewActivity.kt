@@ -36,6 +36,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiRece
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPgwebViewBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.customerCode
@@ -44,7 +45,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 
 import com.google.gson.Gson
 
-class PGWebViewActivity : AppCompatActivity() {
+class PGWebViewActivity : BaseActivity() {
     lateinit var binding : ActivityPgwebViewBinding
     lateinit var dialog: Dialog
     lateinit var preference : SharedPreference
@@ -126,8 +127,6 @@ class PGWebViewActivity : AppCompatActivity() {
                                 val utrNumber = uri.getQueryParameter("utrNumber")
                                 Log.d("UTR", utrNumber ?: "")
                                 showingSuccessPopUp(utrNumber!!)
-
-
 
                             }, 1000)
 

@@ -49,6 +49,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.uriToFile
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RegistrationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.LoginPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -58,7 +59,7 @@ import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
 
-class SignupPage : AppCompatActivity() {
+class SignupPage : BaseActivity() {
     lateinit var binding : ActivitySignupPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference

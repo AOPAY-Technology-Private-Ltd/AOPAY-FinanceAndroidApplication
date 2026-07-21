@@ -62,6 +62,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.Aadhar
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.PanVerificationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AadharCardWebViewDIGILockerPage.Companion.digilockerLink
@@ -70,7 +71,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 import java.io.File
 
-class AadharCardVerificationPage : AppCompatActivity() {
+class AadharCardVerificationPage : BaseActivity() {
     lateinit var binding : ActivityAadharCardVerificationPageBinding
     private val CAMERA_REQUEST_CODE_FRONT = 1001
     private  var photoFrontUri: Uri? = null
