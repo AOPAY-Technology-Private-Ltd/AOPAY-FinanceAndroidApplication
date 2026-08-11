@@ -107,8 +107,9 @@ object ConstantClass {
 
      // Procustion  API
 
-      /*const val BASE_URL = "https://api.aopay.finance/"
+     /* const val BASE_URL = "https://api.aopay.finance/"
       const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
+
 
      // UAT API
      const val BASE_URL = "https://uatapi.aopay.co.in/"
@@ -119,8 +120,8 @@ object ConstantClass {
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
-/*
-     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
+
+    /* const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
      const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
 
      const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
@@ -238,7 +239,7 @@ object ConstantClass {
 
      var LoanSecurityHoldAmount : String = ""
 
-     lateinit var  dialog : Dialog
+     var dialog : Dialog? = null
 
      var PanNumber : String = ""
      var CheckOnlineOrOffline : String = ""
@@ -390,11 +391,12 @@ object ConstantClass {
 
 
     fun OpenPopUpForVeryfyOTP(context: Context){
-        dialog = Dialog(context)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.loader)
+        val d = Dialog(context)
+        dialog = d
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        d.setContentView(R.layout.loader)
 
-        dialog.window?.apply {
+        d.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -403,9 +405,9 @@ object ConstantClass {
             decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        d.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        d.show()
 
     }
 

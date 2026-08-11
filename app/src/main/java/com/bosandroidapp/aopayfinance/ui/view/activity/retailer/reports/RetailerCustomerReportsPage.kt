@@ -257,7 +257,7 @@ class RetailerCustomerReportsPage : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes",Gson().toJson(response) )
                             ReportDataList = response.data!!.toMutableList()
                             //ReportDataList =  allReportList.filter { !it.recordStatus.equals("Disbursed", ignoreCase = true) }.toMutableList()
@@ -279,7 +279,7 @@ class RetailerCustomerReportsPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -326,8 +326,8 @@ class RetailerCustomerReportsPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@RetailerCustomerReportsPage, response.status, preference)
                             }

@@ -121,7 +121,7 @@ class CustomerReportsPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 ReportDataList = response.data!!.toMutableList()
                                 Log.d("ReportResponse", Gson().toJson(ReportDataList))
                                 if (ReportDataList.size > 0) {
@@ -140,7 +140,7 @@ class CustomerReportsPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

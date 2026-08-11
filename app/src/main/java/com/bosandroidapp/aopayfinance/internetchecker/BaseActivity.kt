@@ -28,7 +28,17 @@ open class BaseActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
+
+
+    override fun onPause() {
+        super.onPause()
+        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+            ConstantClass.dialog?.dismiss()
+        }
+    }
+
 
 
 }

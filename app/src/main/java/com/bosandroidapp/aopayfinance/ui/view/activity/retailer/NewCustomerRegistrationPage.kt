@@ -753,10 +753,10 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
     fun OpenPopUpForVeryfyOTP(EmailID: String, otp: String) {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -766,17 +766,17 @@ class NewCustomerRegistrationPage : BaseActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val title = dialog.findViewById<TextView>(R.id.text_subtitle)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val title = dialog!!.findViewById<TextView>(R.id.text_subtitle)
 
         startOtpTimer(resendtxt, timer)
 
@@ -788,7 +788,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -835,7 +835,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -900,7 +900,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
                                 if(response.statuss.equals("True")){
                                     if (clickemailId) {
@@ -917,14 +917,14 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 }
                                 else{
                                 Toast.makeText(this@NewCustomerRegistrationPage,response.message,Toast.LENGTH_SHORT).show()
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -964,21 +964,21 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                     }
 
                                     if (clickemailId) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
                                         OpenPopUpForVeryfyOTP(mailidormobile, "")
                                     }
                                 }
                                 else{
                                     Toast.makeText(this@NewCustomerRegistrationPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1005,7 +1005,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
                                     if (clickemailId) {
@@ -1034,8 +1034,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                         binding.alternateverifymobilenumber.visibility = View.GONE
                                     }
 
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                 } else {
                                     binding.emailId.isEnabled = true
@@ -1049,7 +1049,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1303,28 +1303,28 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
     fun OpenPopUpForTermCondition() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.term_condition_layout)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.term_condition_layout)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.btnAccept)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.btnAccept)
 
 
         verifyButton.setOnClickListener {
             iisAggrementVerified = true
             binding.acceptTermConditionCheck.isChecked = true
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.setOnDismissListener {
+        dialog!!.setOnDismissListener {
             // Called when dialog is dismissed by back press or programmatically
             if (iisAggrementVerified) {
 
@@ -1336,7 +1336,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1359,8 +1359,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     Toast.makeText(this@NewCustomerRegistrationPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                         OpenPopUpForVeryfyOTP(mobnumber, OTP)
                     }
 
@@ -1395,8 +1395,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     Toast.makeText(this@NewCustomerRegistrationPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                     }
                     Log.d("API_SUCCESS", loanData.toString())
                 } else {
@@ -1427,23 +1427,23 @@ class NewCustomerRegistrationPage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -1457,10 +1457,10 @@ class NewCustomerRegistrationPage : BaseActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1630,8 +1630,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@NewCustomerRegistrationPage, response.status, preference)
                             }
@@ -1760,14 +1760,14 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 }
                                 else {
                                     Toast.makeText(this@NewCustomerRegistrationPage, response.message, Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1819,7 +1819,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 var otp = response.value
                                 Log.d("cibilresp", Gson().toJson(response))
 
@@ -1872,7 +1872,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -2054,22 +2054,22 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
     fun PopOpForCibileScoreRequestToAdmin(cibilScore : String,title:String,check:Boolean){
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val titletxt = dialog.findViewById<TextView>(R.id.title)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val titletxt = dialog!!.findViewById<TextView>(R.id.title)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
 
         cancel.visibility=View.GONE
@@ -2102,16 +2102,16 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 binding.mobileNumber.isEnabled = true
                 binding.verifyiconphonenumber.visibility = View.GONE
                 binding.verifymobilenumber.visibility = View.VISIBLE
-                dialog.dismiss()
+                dialog!!.dismiss()
             }
 
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -2128,7 +2128,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("verifycustomerresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
 
                                 if(response.statuss!!.toLowerCase().equals("true", ignoreCase = true)){
                                     hitApiForSendOTP(binding.mobileNumber.text.toString().trim(), OTPTYPE) //"Mobile"
@@ -2142,7 +2142,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -2199,8 +2199,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details

@@ -71,7 +71,7 @@ class SettlementLoanReport : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes", Gson().toJson(response) )
                             var ReportDataList = response.data!!.toMutableList()
                             if(ReportDataList.size>0){
@@ -90,7 +90,7 @@ class SettlementLoanReport : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {

@@ -487,7 +487,7 @@ class DashBoard : BaseActivity() {
                             users.body()?.let { response ->
                                 Log.d("tokenresp", response.message!!)
                                 Log.d("tokenmessage",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog?.dismiss()
                                 uploadDataOnFirebaseConsole(Gson().toJson(response),"CurrentLocation")
                                 if(response.success!!){
                                     binding.appBarDashBoard.deskdesign.generatedkey.visibility= View.VISIBLE
@@ -500,7 +500,7 @@ class DashBoard : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog?.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -536,20 +536,20 @@ class DashBoard : BaseActivity() {
 
     fun OpenPopUpForVeryfyOTP() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
 
         done.setOnClickListener {
             if (logintype.equals(Retailer)){
@@ -568,10 +568,10 @@ class DashBoard : BaseActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -629,8 +629,8 @@ class DashBoard : BaseActivity() {
                         }
 
                         ApiStatus.ERROR -> {
-                            if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                ConstantClass.dialog.dismiss()
+                            if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+                                ConstantClass.dialog?.dismiss()
                             }
                             binding.appBarDashBoard.swiperefresh.isRefreshing = false
                             hitApiForRetailerWalletAmount()
@@ -801,8 +801,8 @@ class DashBoard : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog?.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@DashBoard, response.status, preference)
                             }
@@ -1013,7 +1013,7 @@ class DashBoard : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
 

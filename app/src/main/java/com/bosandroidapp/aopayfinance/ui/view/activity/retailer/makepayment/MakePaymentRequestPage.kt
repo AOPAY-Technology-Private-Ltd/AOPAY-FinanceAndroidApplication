@@ -268,7 +268,7 @@ class MakePaymentRequestPage : BaseActivity() {
                         ApiStatus.SUCCESS -> {
                             it.data.let { users ->
                                 users!!.body().let { response ->
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     if (response!!.statuss!!.toLowerCase().equals("true", ignoreCase = true)) {
                                         Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
                                         finish()
@@ -284,7 +284,7 @@ class MakePaymentRequestPage : BaseActivity() {
                         }
 
                         ApiStatus.ERROR -> {
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         ApiStatus.LOADING -> {

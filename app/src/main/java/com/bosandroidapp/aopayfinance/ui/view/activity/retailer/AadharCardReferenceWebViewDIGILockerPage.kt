@@ -185,8 +185,8 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AadharCardReferenceWebViewDIGILockerPage, response.status, preference)
                             }
@@ -295,7 +295,7 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharDetailsResp", Gson().toJson(response))
                                 if (response!!.code.equals("200")) {
                                     checkKYC = true
@@ -324,7 +324,7 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

@@ -552,7 +552,7 @@ class SignupPage : BaseActivity() {
                     ApiStatus.SUCCESS ->{
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AirPortListResponse", Gson().toJson(response))
                                 if(response.statuss){
                                     preference.setStringValue(ConstantClass.CustomerCode, response.customerCode.toString())
@@ -574,7 +574,7 @@ class SignupPage : BaseActivity() {
                     }
                     ApiStatus.ERROR -> {
                         binding.createaccount.isEnabled=true
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

@@ -242,8 +242,8 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                             users!!.body().let { response ->
                                 Log.d("eMandateStatusRes", Gson().toJson(response))
 
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                 }
 
                                 var statusCode =  response!!.statusCode
@@ -290,7 +290,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
                         Log.e("API_ERROR_CODE", resources.data?.code().toString())
@@ -434,10 +434,10 @@ class RetailerEMandateVerifyPage : BaseActivity() {
 
     fun showingRejectioneMandatePopUp(){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.enach_reject_alert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.enach_reject_alert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -446,7 +446,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var Ok = dialog.findViewById<Button>(R.id.btnOk)
+        var Ok = dialog!!.findViewById<Button>(R.id.btnOk)
 
 
         Ok.setOnClickListener {
@@ -468,13 +468,13 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                 hitApiForUploadEnachMandateDataResponse(request,isEmandateVerified)
             }
 
-            dialog.dismiss()
+            dialog!!.dismiss()
 
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 

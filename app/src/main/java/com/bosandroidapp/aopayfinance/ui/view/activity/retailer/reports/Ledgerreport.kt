@@ -170,11 +170,11 @@ class Ledgerreport : BaseActivity() {
                                 var LedgerReportList = response.data
 
                                 if(response.status.equals("True" ,ignoreCase = true)){
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     setDataOnUI(LedgerReportList!!)
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     binding.ledgerreports.visibility = View.GONE
                                     binding.notfoundimage.visibility = View.VISIBLE
                                     Toast.makeText(this,response.message, Toast.LENGTH_SHORT).show()
@@ -185,7 +185,7 @@ class Ledgerreport : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

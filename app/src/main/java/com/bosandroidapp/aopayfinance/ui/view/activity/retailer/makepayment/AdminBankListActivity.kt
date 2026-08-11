@@ -59,7 +59,7 @@ class AdminBankListActivity : Fragment() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.status!!.toLowerCase().equals("true",ignoreCase = true)){
                                     Log.d("BankListRes",Gson().toJson(response))
                                     bankList= response.data!!
@@ -85,7 +85,7 @@ class AdminBankListActivity : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

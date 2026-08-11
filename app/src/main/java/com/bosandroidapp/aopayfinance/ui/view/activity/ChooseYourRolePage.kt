@@ -46,8 +46,10 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
+
+
 class ChooseYourRolePage : BaseActivity() {
-   lateinit var binding : ActivityChooseYourRolePageBinding
+    lateinit var binding : ActivityChooseYourRolePageBinding
     lateinit var viewModel: AuthenticationViewModel
 
 
@@ -63,6 +65,7 @@ class ChooseYourRolePage : BaseActivity() {
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
+
         GoogleAuth.initialize(this)
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
 
@@ -129,7 +132,6 @@ class ChooseYourRolePage : BaseActivity() {
 
     }
 
-
     fun hitApiForUploadCustomerDeviceInfo(){
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         try {
@@ -175,7 +177,7 @@ class ChooseYourRolePage : BaseActivity() {
                 }
 
                 ApiStatus.SUCCESS -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     val response = it.data?.body()
                     Log.d("DeviceInfoResponse", Gson().toJson(response))
 
@@ -189,7 +191,7 @@ class ChooseYourRolePage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
                     Log.e("LoginError", errorMessage)
@@ -200,13 +202,13 @@ class ChooseYourRolePage : BaseActivity() {
 
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         GoogleAuth.onActivityResult(requestCode, data)?.let { details ->
             Toast.makeText(this, details, Toast.LENGTH_LONG).show()
         }
     }
-
 
 
 }

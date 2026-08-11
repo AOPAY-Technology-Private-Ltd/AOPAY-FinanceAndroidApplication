@@ -98,9 +98,9 @@ class PayoutReports : Fragment() {
             if(!filteredList.isNullOrEmpty()){
                 binding.notfoundimage.visibility= View.GONE
                 binding.showreports.visibility = View.VISIBLE
-                var list = filteredList.reversed()
-                Log.d("reversereportList", Gson().toJson( filteredList.reversed()))
-                var adapter = RetailerWalletAdapter(requireContext(), list)
+                /*var list = filteredList.reversed()
+                Log.d("reversereportList", Gson().toJson( filteredList.reversed()))*/
+                var adapter = RetailerWalletAdapter(requireContext(), filteredList)
                 binding.showreports.adapter = adapter
                 adapter.notifyDataSetChanged()
             }
@@ -136,7 +136,7 @@ class PayoutReports : Fragment() {
                         it.data.let { users ->
                             users!!.body().let {
                                     response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("payoutreportres",Gson().toJson(response))
                                 if(response!!.status.equals("True")){
                                     if(!response.data.isNullOrEmpty()){
@@ -157,7 +157,7 @@ class PayoutReports : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -169,6 +169,7 @@ class PayoutReports : Fragment() {
         }
 
     }
+
 
 
 }

@@ -136,7 +136,7 @@ class ForgetPasswordPage : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("SendRes",Gson().toJson(response) )
 
                             if(response.statuss.equals("True")){
@@ -152,7 +152,7 @@ class ForgetPasswordPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -177,7 +177,7 @@ class ForgetPasswordPage : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("SendRes", response.message)
                             Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show()
 
@@ -187,7 +187,7 @@ class ForgetPasswordPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -201,10 +201,10 @@ class ForgetPasswordPage : BaseActivity() {
 
     fun OpenPopUpForVeryfyOTP(mobileOrEmailID: String){
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -213,22 +213,22 @@ class ForgetPasswordPage : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
         // Access views inside the custom layout
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
 
         startOtpTimer(resendtxt,timer)
 
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -255,7 +255,7 @@ class ForgetPasswordPage : BaseActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -273,14 +273,14 @@ class ForgetPasswordPage : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("VerifyOTPRes", response.message)
                             if(response.statuss.equals("True")){
                                 EmailId=mobileOrEmailID
                                 binding.forgetpagelayout.visibility=View.GONE
                                 binding.changepasswordmainlayout.visibility=View.VISIBLE
-                                if(dialog!=null && dialog.isShowing){
-                                    dialog.dismiss()
+                                if(dialog!=null && dialog!!.isShowing){
+                                    dialog!!.dismiss()
                                 }
                             }
                             Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show()
@@ -291,7 +291,7 @@ class ForgetPasswordPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -320,7 +320,7 @@ class ForgetPasswordPage : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("ChangePassRes", response.message)
                             Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show()
 
@@ -336,7 +336,7 @@ class ForgetPasswordPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {

@@ -105,24 +105,24 @@ class BankListAdapter(var context: Context, var bankDataList: List<AdminBankData
 
     fun popupforshowingraiseticketstatus(item:AdminBankDataItem){
         dialog = Dialog(context, R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(com.bosandroidapp.aopayfinance.R.layout.qrlayout)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(com.bosandroidapp.aopayfinance.R.layout.qrlayout)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val qrimage = dialog.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.qrimage)
-        val crossicon = dialog.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.crossicon)
-        val bankName = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.bankName)
-        val accountNo = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.accountNo)
-        val ifsc = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.ifsc)
-        val branch = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.branch)
+        val qrimage = dialog!!.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.qrimage)
+        val crossicon = dialog!!.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.crossicon)
+        val bankName = dialog!!.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.bankName)
+        val accountNo = dialog!!.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.accountNo)
+        val ifsc = dialog!!.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.ifsc)
+        val branch = dialog!!.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.branch)
 
 
         bankName.text = item.bankName
@@ -131,12 +131,12 @@ class BankListAdapter(var context: Context, var bankDataList: List<AdminBankData
         branch.text = item.branchName
 
         crossicon.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         Glide.with(context).load(item.qrCodePath).into(qrimage)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 

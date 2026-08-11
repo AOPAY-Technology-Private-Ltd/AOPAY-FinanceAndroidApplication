@@ -360,4 +360,13 @@ CLIENT shall access your Credit Information as your authorized representative an
     <string name="customer_app_install">Customer App Install</string>
 
 
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="retailer_name">Retailer Name</string>
+    <string name="transaction_id">Transaction ID</string>
+    <string name="date">Date</string>
+    <string name="retailer_code">Retailer Code</string>
+    <string name="payment_mode_label">Payment Mode</string>
+    <string name="payout_mode_label">Payout Mode</string>
+    <string name="remarks">Remarks</string>
 </resources>

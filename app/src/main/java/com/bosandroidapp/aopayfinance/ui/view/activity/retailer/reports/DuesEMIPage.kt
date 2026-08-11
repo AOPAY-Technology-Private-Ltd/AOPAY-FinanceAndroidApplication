@@ -146,7 +146,7 @@ class DuesEMIPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("dueoverduewresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 val dueOverdueList = response.data
                                 dueOverdueDataList!!.clear()
 
@@ -171,7 +171,7 @@ class DuesEMIPage : BaseActivity() {
                     ApiStatus.ERROR -> {
                         binding.notfoundimage.visibility=View.VISIBLE
                         binding.showreports.visibility=View.GONE
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
 

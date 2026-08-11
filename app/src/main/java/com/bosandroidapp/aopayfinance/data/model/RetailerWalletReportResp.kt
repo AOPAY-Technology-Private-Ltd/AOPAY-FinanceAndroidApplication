@@ -35,5 +35,12 @@ data class DataItem(
 	val transactionID: String? = null,
 
 	@field:SerializedName("remarks")
-	val remarks: String? = null
+	val remarks: String? = null,
+
+	@field:SerializedName("paymentMode")
+	val paymentMode: String? = null,
+
+	@field:SerializedName("payoutMode")
+	val payoutMode: String? = null
+
 )

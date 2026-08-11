@@ -179,7 +179,7 @@ class AllTransactionHistory : BaseActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes", Gson().toJson(response) )
                             transactionHistory = response.data!!.toMutableList()
                             if(transactionHistory!!.size>0){
@@ -199,7 +199,7 @@ class AllTransactionHistory : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {

@@ -430,9 +430,11 @@ interface ApiInterface {
     suspend fun getRetailerWalletReport(@Body req : RetailerWalletReportReq): Response<RetailerWalletReportResp>?
 
 
+
     // api for both addbank and get bank list.............................................................................
     @POST("api/V1/AopayFinance/RetailerBankAccountManage")
     suspend fun addBankAccounts(@Body req : com.bosandroidapp.aopayfinance.data.model.AddBankAccountReq): Response<AddedBankListResp>?
+
 
 
     // api for hold amount request .............................................................................
@@ -535,7 +537,7 @@ interface ApiInterface {
 
 
     // link for download apk file
-    @GET("api/V1/AopayFinance/generate-qr")
+    @GET("api/V1/AopayFinance/generate-download-aopay-qr")
     suspend fun getApkUrlLink(): Response<ResponseBody>?
 
 

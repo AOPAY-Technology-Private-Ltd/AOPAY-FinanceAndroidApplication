@@ -232,8 +232,8 @@ class PGWebViewActivity : BaseActivity() {
                                 Log.d("loanEmiReceiveResp", response.toString())
 
                                 if(loopcount==emicount){
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                      emiList .clear()
                                      EMIamountPG  =""
@@ -251,8 +251,8 @@ class PGWebViewActivity : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -281,10 +281,10 @@ class PGWebViewActivity : BaseActivity() {
 
     fun showingRejectionePGPopUp(){
         dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(com.bosandroidapp.aopayfinance.R.layout.payment_reject_alert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(com.bosandroidapp.aopayfinance.R.layout.payment_reject_alert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -293,25 +293,25 @@ class PGWebViewActivity : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var Ok = dialog.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
+        var Ok = dialog!!.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
 
         /*Ok.setOnClickListener {
             finish()
-            dialog.dismiss()
+            dialog!!.dismiss()
         }*/
 
         Ok.setOnClickListener {
             isPgClosing = true
-            dialog.dismiss()
+            dialog!!.dismiss()
             closePg()
             window.decorView.post {
                 finish()
             }
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -325,10 +325,10 @@ class PGWebViewActivity : BaseActivity() {
 
     fun showingSuccessPopUp(utrNumber: String){
         dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(com.bosandroidapp.aopayfinance.R.layout.payment_success_alert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(com.bosandroidapp.aopayfinance.R.layout.payment_success_alert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -337,8 +337,8 @@ class PGWebViewActivity : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var Ok = dialog.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
-        var textmessage = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.loancodewithamount)
+        var Ok = dialog!!.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
+        var textmessage = dialog!!.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.loancodewithamount)
 
         val message = "Your EMI payment of ${EMIamountPG} for Loan Code ${LoanCodePG} has been successfully processed."
         textmessage.text = message
@@ -351,9 +351,9 @@ class PGWebViewActivity : BaseActivity() {
             }
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 

@@ -285,7 +285,7 @@ class KioskActivity : AppCompatActivity() {
 
                                 if (response!!.statuss.equals("True")) {
                                     Log.d("retailerDetailsResponse", Gson().toJson(response))
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     EmailId= response.emailid.toString()
                                     MobileNumber= response.mobileNo.toString()
                                     FName= response.firstName.toString()
@@ -338,7 +338,7 @@ class KioskActivity : AppCompatActivity() {
                                 isApiRunning = false
 
                                 resources.data?.body()?.let { response ->
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
                                     LoanEmiList = response.data
                                     previousLoanData = response.data
                                     previousCurrentDate = response.indiaTimeIST ?: ""
@@ -352,8 +352,8 @@ class KioskActivity : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                           ConstantClass.dialog!!.dismiss()
                         }
                         HitApiForEmiList()
                     }
@@ -454,7 +454,7 @@ class KioskActivity : AppCompatActivity() {
 
                                 if (response!!.status?.toLowerCase().equals("true",ignoreCase = true) && !response.preparePOSTForm.isNullOrEmpty()) {
                                     // Open WebView with the provided URL
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
                                     isLockTaskStarted = false
                                     stopLockTask()
                                     val intent = Intent(this@KioskActivity, PGWebViewActivity::class.java)
@@ -462,7 +462,7 @@ class KioskActivity : AppCompatActivity() {
                                     startActivity(intent)
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
                                     Toast.makeText(this@KioskActivity, response.message, Toast.LENGTH_SHORT).show()
                                 }
 
@@ -473,7 +473,7 @@ class KioskActivity : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                       ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

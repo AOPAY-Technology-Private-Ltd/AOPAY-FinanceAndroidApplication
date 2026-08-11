@@ -181,8 +181,8 @@ class QRCodePage : BaseActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        if (IMEIDetailsPage.dialog != null && IMEIDetailsPage.dialog.isShowing) {
-            IMEIDetailsPage.dialog.dismiss()
+        if (IMEIDetailsPage.dialog != null && IMEIDetailsPage.dialog!!.isShowing) {
+            IMEIDetailsPage.dialog!!.dismiss()
         }
 
         preference = SharedPreference(this)
@@ -307,31 +307,31 @@ class QRCodePage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForQRScanAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.appdownloadqrlayout)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.appdownloadqrlayout)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnClose)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnClose)
 
-        val provisioningQR = dialog.findViewById<ImageView>(R.id.qr_code_provising)
-        val progressbar = dialog.findViewById<ProgressBar>(R.id.progressbar)
+        val provisioningQR = dialog!!.findViewById<ImageView>(R.id.qr_code_provising)
+        val progressbar = dialog!!.findViewById<ProgressBar>(R.id.progressbar)
 
         hitApiForDownloadAppUrlLinkQR(provisioningQR,progressbar)
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -538,8 +538,8 @@ class QRCodePage : BaseActivity() {
                             Log.d("createcustresp", Gson().toJson(body))
 
                             if (body!!.statuss.equals("FAILED")) {
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
@@ -552,7 +552,7 @@ class QRCodePage : BaseActivity() {
                             }
                             else if (body!!.statuss.equals("401")) {
                                 if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
                                 binding.validateKeyLayout.visibility = View.GONE
@@ -564,7 +564,7 @@ class QRCodePage : BaseActivity() {
 
                                 if (body.statuss.equals("218")) {
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -572,7 +572,7 @@ class QRCodePage : BaseActivity() {
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 } else if (body.statuss.equals("219")) {
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -581,7 +581,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 else if(body.statuss.equals("226")){
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -590,7 +590,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 else if(body.statuss.equals("213")){
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -601,7 +601,7 @@ class QRCodePage : BaseActivity() {
                                     val safecustomerCode = if (!customerCode.isNullOrBlank() && customerCode != "null") customerCode else ""
                                     if(safecustomerCode.isNullOrBlank()){
                                         if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
+                                            ConstantClass.dialog!!.dismiss()
                                         }
                                         binding.nextlayout.isEnabled= true
                                         binding.validateKeyLayout.visibility = View.GONE
@@ -642,7 +642,7 @@ class QRCodePage : BaseActivity() {
                                         Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
                                         if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
+                                            ConstantClass.dialog!!.dismiss()
                                         }
 
                                         binding.validateKeyLayout.visibility = View.VISIBLE
@@ -810,7 +810,7 @@ class QRCodePage : BaseActivity() {
                         if (response.isSuccessful) {
                             // Handle success
                             val body = response.body()
-                            /* ConstantClass.dialog.dismiss()
+                            /* ConstantClass.dialog!!.dismiss()
                              startActivity(Intent(this@QRCodePage,CongratulationPage::class.java))*/
                             var message = body?.message ?: "Success"
 
@@ -818,8 +818,8 @@ class QRCodePage : BaseActivity() {
 
 
                             if (body!!.statuss.equals("FAILED")) {
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 CheckOnlineOrOffline =""
                                 binding.nextlayout.isEnabled= true
@@ -833,7 +833,7 @@ class QRCodePage : BaseActivity() {
 
                             else if (body!!.statuss.equals("401")) {
                                 if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
@@ -842,7 +842,7 @@ class QRCodePage : BaseActivity() {
 
                             else if(body.statuss.equals("226")){
                                 if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
                                 binding.validateKeyLayout.visibility = View.GONE
@@ -851,7 +851,7 @@ class QRCodePage : BaseActivity() {
                             }
                             else if(body.statuss.equals("213")){
                                 if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
                                 binding.validateKeyLayout.visibility = View.GONE
@@ -866,7 +866,7 @@ class QRCodePage : BaseActivity() {
 
                                 if(safecustomerCode.isNullOrBlank()){
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -908,7 +908,7 @@ class QRCodePage : BaseActivity() {
                                     Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
 
                                     binding.validateKeyLayout.visibility = View.VISIBLE
@@ -925,7 +925,7 @@ class QRCodePage : BaseActivity() {
                     catch (e: Exception) {
 
                         if (ConstantClass.dialog?.isShowing == true) {
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                         }
                         binding.nextlayout.isEnabled= true
                         val errorMsg = when (e) {
@@ -1025,8 +1025,8 @@ class QRCodePage : BaseActivity() {
 
 
                             if (body!!.statuss.equals("FAILED")) {
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 CheckOnlineOrOffline =""
                                 binding.nextlayout.isEnabled= true
@@ -1042,7 +1042,7 @@ class QRCodePage : BaseActivity() {
                                 binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 if (ConstantClass.dialog?.isShowing == true) {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
@@ -1051,7 +1051,7 @@ class QRCodePage : BaseActivity() {
                                 var customerCode = body?.customerCode
                                 if (body.statuss.equals("218")) {
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -1060,7 +1060,7 @@ class QRCodePage : BaseActivity() {
 
                                 } else if (body.statuss.equals("219")) {
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -1069,7 +1069,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 else if(body.statuss.equals("226")){
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -1078,7 +1078,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 else if(body.statuss.equals("213")){
                                     if (ConstantClass.dialog?.isShowing == true) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
                                     binding.validateKeyLayout.visibility = View.GONE
@@ -1089,7 +1089,7 @@ class QRCodePage : BaseActivity() {
                                     val safecustomerCode = if (!customerCode.isNullOrBlank() && customerCode != "null") customerCode else ""
                                     if(safecustomerCode.isNullOrBlank()){
                                         if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
+                                            ConstantClass.dialog!!.dismiss()
                                         }
                                         binding.nextlayout.isEnabled= true
                                         binding.validateKeyLayout.visibility = View.GONE
@@ -1131,7 +1131,7 @@ class QRCodePage : BaseActivity() {
                                         Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
                                         if (ConstantClass.dialog?.isShowing == true) {
-                                            ConstantClass.dialog.dismiss()
+                                            ConstantClass.dialog!!.dismiss()
                                         }
 
                                         binding.validateKeyLayout.visibility = View.VISIBLE
@@ -1148,7 +1148,7 @@ class QRCodePage : BaseActivity() {
                         }
                     } catch (e: Exception) {
                         if (ConstantClass.dialog?.isShowing == true) {
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                         }
                         binding.nextlayout.isEnabled= true
 
@@ -1180,7 +1180,7 @@ class QRCodePage : BaseActivity() {
 
     private fun handleApiError(responseCode: Int, errorBody: String?) {
         if (ConstantClass.dialog?.isShowing == true) {
-            ConstantClass.dialog.dismiss()
+            ConstantClass.dialog!!.dismiss()
         }
         binding.nextlayout.isEnabled= true
 
@@ -1258,8 +1258,8 @@ class QRCodePage : BaseActivity() {
                                     }
 
                                 } else {
-                                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                 }
 
@@ -1268,8 +1268,8 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details
@@ -1388,7 +1388,7 @@ class QRCodePage : BaseActivity() {
                                 if (response != null) {
                                     Log.d("PanVerificationResp", Gson().toJson(response))
                                     if (response!!.statuss.equals("True")) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         binding.membershipfee.text = "₹ ".plus(response.membershipFee?.toDouble())
                                         Log.d("membership", ":".plus(response.membershipFee))
                                         binding.username.text = CustFirstName.plus(" ").plus(CustLastName)
@@ -1409,13 +1409,13 @@ class QRCodePage : BaseActivity() {
                                         membershipAmt = "$membership"
                                     }
                                     else {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         Log.d("API_TIME", "Failed after: ${System.currentTimeMillis() - startTime} ms")
                                         finish()
                                     }
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     hitApiForMemberShipFee()
                                 }
 
@@ -1426,7 +1426,7 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         Log.d("API_TIME", "Failed after: ${System.currentTimeMillis() - startTime} ms")
                     }
 
@@ -1485,23 +1485,23 @@ class QRCodePage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -1516,10 +1516,10 @@ class QRCodePage : BaseActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1538,8 +1538,8 @@ class QRCodePage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(
                                     this@QRCodePage,
@@ -1651,7 +1651,7 @@ class QRCodePage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("LoginResponse", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
 
                                 if (response.success!! && response.statusCode == 200) {
                                     binding.accesstoken.isEnabled= false
@@ -1672,7 +1672,7 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         binding.validatekeylayout.visibility = View.VISIBLE
                         binding.accesstoken.isEnabled = true
                         binding.nextlayout.visibility = View.GONE
@@ -1701,8 +1701,8 @@ class QRCodePage : BaseActivity() {
                             users!!.body().let { response ->
                                 Log.d("eMandateRes", Gson().toJson(response))
 
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
 
                                 if (response!!.data?.customer != null) {
@@ -1710,7 +1710,7 @@ class QRCodePage : BaseActivity() {
                                     startActivity(Intent(this@QRCodePage, RetailerEMandateVerifyPage::class.java))
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     isEmandateVerified= "No"
                                     isEnachCancelled = true
                                     Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
@@ -1739,7 +1739,7 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
                         Log.e("API_ERROR_CODE", resources.data?.code().toString())
@@ -1787,8 +1787,8 @@ class QRCodePage : BaseActivity() {
                                     hitApiForRetailerCreatedLoan(loancreatedreq)
                                 }
                                 else {
-                                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
                                 }
@@ -1800,8 +1800,8 @@ class QRCodePage : BaseActivity() {
                     ApiStatus.ERROR -> {
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
                     }
 
@@ -1869,8 +1869,8 @@ class QRCodePage : BaseActivity() {
                       it.data.let { users ->
                           users!!.body().let { response ->
                               Log.d("eMandateStatusRes", Gson().toJson(response))
-                              if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                  ConstantClass.dialog.dismiss()
+                              if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                  ConstantClass.dialog!!.dismiss()
                               }
                               if (response!!.statusCode.equals("NP000")) {
                                   CheckOnlineOrOffline =""
@@ -1890,7 +1890,7 @@ class QRCodePage : BaseActivity() {
                   }
 
                   ApiStatus.ERROR -> {
-                      ConstantClass.dialog.dismiss()
+                      ConstantClass.dialog!!.dismiss()
                       // ✅ Print the full error details
                       Log.e("API_ERROR", "Status: ERROR")
                       Log.e("API_ERROR_CODE", resources.data?.code().toString())

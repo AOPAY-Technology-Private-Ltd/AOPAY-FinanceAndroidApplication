@@ -326,7 +326,6 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
-
     fun getRetailerWalletPayoutReq(req: RetailerWalletPayoutReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -336,6 +335,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
 
     fun loanSettlementReportReq(req: LoanSettlementReportReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))

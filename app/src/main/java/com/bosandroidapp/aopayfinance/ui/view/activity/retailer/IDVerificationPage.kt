@@ -229,7 +229,7 @@ class IDVerificationPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharVerificationResp", Gson().toJson(response))
 
                                 if (response!!.code == null) {
@@ -259,7 +259,7 @@ class IDVerificationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -284,22 +284,22 @@ class IDVerificationPage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForValidateDate() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
-        val dobfield = dialog.findViewById<TextView>(R.id.dob)
-        val calendarlayout = dialog.findViewById<LinearLayout>(R.id.calendarlayout)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
+        val dobfield = dialog!!.findViewById<TextView>(R.id.dob)
+        val calendarlayout = dialog!!.findViewById<LinearLayout>(R.id.calendarlayout)
 
         cancel.visibility = View.VISIBLE
         image.visibility = View.VISIBLE
@@ -313,10 +313,10 @@ class IDVerificationPage : BaseActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -345,9 +345,9 @@ class IDVerificationPage : BaseActivity() {
                 val age = today.get(Calendar.YEAR) - selectedYear
 
                 // Adjust if birthday hasn't occurred yet this year
-                val hasBirthdayPassed = (today.get(Calendar.DAY_OF_YEAR) >= selectedCalendar.get(Calendar.DAY_OF_YEAR))
+                val hasBirthdayPassed =
+                    (today.get(Calendar.DAY_OF_YEAR) >= selectedCalendar.get(Calendar.DAY_OF_YEAR))
                 exactAge = if (hasBirthdayPassed) age else age - 1
-
 
 
             }, year, month, day
@@ -356,22 +356,22 @@ class IDVerificationPage : BaseActivity() {
 
         // Set min age 18
         calendar.add(Calendar.YEAR, -18)
-        datePickerDialog.datePicker.maxDate = calendar.timeInMillis
+        datePickerDialog!!.datePicker.maxDate = calendar.timeInMillis
 
         // Set max age 65
         val minCalendar = Calendar.getInstance()
         minCalendar.add(Calendar.YEAR, -65)
-        datePickerDialog.datePicker.minDate = minCalendar.timeInMillis
+        datePickerDialog!!.datePicker.minDate = minCalendar.timeInMillis
 
 
-        datePickerDialog.show()
+        datePickerDialog!!.show()
 
         done.setOnClickListener {
 
             if (exactAge in 18..65) {
                 startActivity(Intent(this@IDVerificationPage, PanCardVerificationPage::class.java))
-                if(dialog!=null && dialog.isShowing){
-                    dialog.dismiss()
+                if(dialog!=null && dialog!!.isShowing){
+                    dialog!!.dismiss()
                 }
             }
             else {
@@ -398,8 +398,8 @@ class IDVerificationPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@IDVerificationPage, response.status, preference)
                             }

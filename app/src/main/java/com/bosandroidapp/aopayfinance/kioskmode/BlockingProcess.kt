@@ -62,6 +62,6 @@ fun Activity.startBlocking() {
 
 
 fun Activity.stopBlocking() {
-    if (isDeviceAdmin()) showExitPinAdminDialog()
-    else showExitPinDialog()
+    /*if (isDeviceAdmin()) showExitPinAdminDialog()
+    else showExitPinDialog()*/
 }

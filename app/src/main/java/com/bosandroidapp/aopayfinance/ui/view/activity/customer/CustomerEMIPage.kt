@@ -118,8 +118,8 @@ class CustomerEMIPage : BaseActivity() {
                                 response ->
                                 Log.d("customerLoanemiresp", Gson().toJson(response))
 
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     customerLoanEmiDetailsList = LoanEmiList as MutableList<CustomerDataItem?>?
                                     setDataOnView(customerLoanEmiDetailsList)
@@ -131,8 +131,8 @@ class CustomerEMIPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }

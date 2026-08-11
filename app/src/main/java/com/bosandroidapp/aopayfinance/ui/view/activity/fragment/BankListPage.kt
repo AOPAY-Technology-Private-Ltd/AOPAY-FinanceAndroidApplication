@@ -87,7 +87,7 @@ class BankListPage : Fragment() {
                         it.data.let { users ->
                             users!!.body().let {
                                     response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.statuss.equals("True")){
                                     Log.d("BankListRes",Gson().toJson(response))
                                     bankDataList = response?.data!!
@@ -115,7 +115,7 @@ class BankListPage : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

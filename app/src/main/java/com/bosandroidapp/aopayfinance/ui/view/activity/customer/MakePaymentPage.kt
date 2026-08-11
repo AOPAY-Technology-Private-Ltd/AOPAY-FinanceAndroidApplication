@@ -392,8 +392,8 @@ class MakePaymentPage : AppCompatActivity() {
                             users.body()?.let {
                                     response ->
                                 Log.d("customerLoanemiresp", response.toString())
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     val loanCodelist: Array<String> = LoanEmiList!!.map { it!!.loanCode }.toTypedArray()
 
@@ -412,8 +412,8 @@ class MakePaymentPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
                     }
 
@@ -480,8 +480,8 @@ class MakePaymentPage : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val body = response.body()
                     Log.d("ResponseReceipt", body!!.message)
-                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                        ConstantClass.dialog.dismiss()
+                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                        ConstantClass.dialog!!.dismiss()
                     }
                     binding.paidamount.text=""
 

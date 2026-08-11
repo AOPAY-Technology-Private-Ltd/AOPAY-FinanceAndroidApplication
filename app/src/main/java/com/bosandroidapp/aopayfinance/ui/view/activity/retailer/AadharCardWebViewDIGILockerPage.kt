@@ -177,8 +177,8 @@ class AadharCardWebViewDIGILockerPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AadharCardWebViewDIGILockerPage, response.status, preference)
                             }
@@ -287,7 +287,7 @@ class AadharCardWebViewDIGILockerPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharDetailsResp", Gson().toJson(response))
                                 if (response!!.code.equals("200")) {
                                     ConstantClass.AadharDOB = response.model!!.dob!!
@@ -328,7 +328,7 @@ class AadharCardWebViewDIGILockerPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

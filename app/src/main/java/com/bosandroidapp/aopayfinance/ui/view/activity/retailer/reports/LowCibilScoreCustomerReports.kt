@@ -198,7 +198,7 @@ class LowCibilScoreCustomerReports : BaseActivity() {
                             users.body()?.let { response ->
                                 Log.d("cibilreportsresponse", Gson().toJson(response))
                                 if(response.status.equals("True" ,ignoreCase = true)){
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     if(response.data!!.size>0){
                                         LowCibilReportList = response.data!!
                                         binding.showreports.visibility = View.VISIBLE
@@ -207,7 +207,7 @@ class LowCibilScoreCustomerReports : BaseActivity() {
                                         setDataOnUI(LowCibilReportList)
                                         setview()
                                     }else{
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         binding.showreports.visibility = View.GONE
                                         binding.spinnerlayout.visibility = View.GONE
                                         binding.notfoundimage.visibility = View.VISIBLE
@@ -215,7 +215,7 @@ class LowCibilScoreCustomerReports : BaseActivity() {
                                     }
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     binding.showreports.visibility = View.GONE
                                     binding.spinnerlayout.visibility = View.GONE
                                     binding.notfoundimage.visibility = View.VISIBLE
@@ -227,7 +227,7 @@ class LowCibilScoreCustomerReports : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                      ConstantClass.dialog.dismiss()
+                      ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

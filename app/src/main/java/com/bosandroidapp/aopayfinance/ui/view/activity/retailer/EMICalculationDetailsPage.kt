@@ -181,8 +181,8 @@ class EMICalculationDetailsPage : BaseActivity() {
                                 isApiRunning = false
                                 if (response.status.equals("True", true) && !response.data.isNullOrEmpty()){
                                     emiRetryCount = 0
-                                    if (ConstantClass.dialog.isShowing) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (ConstantClass.dialog?.isShowing==true) {
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     EmiSplitDataModel = response.data
 
@@ -211,8 +211,8 @@ class EMICalculationDetailsPage : BaseActivity() {
                                     else{
                                         emiRetryCount = 0
 
-                                        if (ConstantClass.dialog.isShowing) {
-                                            ConstantClass.dialog.dismiss()
+                                        if (ConstantClass.dialog?.isShowing==true) {
+                                            ConstantClass.dialog!!.dismiss()
                                         }
 
                                         Toast.makeText(this, response.message ?: "No data found", Toast.LENGTH_SHORT).show()
@@ -220,7 +220,7 @@ class EMICalculationDetailsPage : BaseActivity() {
                                 }
 
                                 /* if (response.status.equals("True")) {
-                                     ConstantClass.dialog.dismiss()
+                                     ConstantClass.dialog!!.dismiss()
                                      var EmiDataList = response.data
                                      if (EmiDataList!!.size > 0) {
                                          EmiSplitDataModel = EmiDataList
@@ -232,7 +232,7 @@ class EMICalculationDetailsPage : BaseActivity() {
                                      }
                                  }
                                  else {
-                                     ConstantClass.dialog.dismiss()
+                                     ConstantClass.dialog!!.dismiss()
                                      Toast.makeText(this@EMICalculationDetailsPage, response.message, Toast.LENGTH_SHORT).show()
                                  }*/
                             }
@@ -240,7 +240,7 @@ class EMICalculationDetailsPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         isApiRunning = false
                         if (emiRetryCount < MAX_RETRY_COUNT) {
                             emiRetryCount++
@@ -258,8 +258,8 @@ class EMICalculationDetailsPage : BaseActivity() {
 
                             emiRetryCount = 0
 
-                            if (ConstantClass.dialog.isShowing) {
-                                ConstantClass.dialog.dismiss()
+                            if (ConstantClass.dialog?.isShowing==true) {
+                                ConstantClass.dialog!!.dismiss()
                             }
 
                             Toast.makeText(this, "Unable to load EMI details. Please try again.", Toast.LENGTH_SHORT).show()
@@ -631,23 +631,23 @@ class EMICalculationDetailsPage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -662,10 +662,10 @@ class EMICalculationDetailsPage : BaseActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -685,8 +685,8 @@ class EMICalculationDetailsPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@EMICalculationDetailsPage, response.status, preference)
                             }

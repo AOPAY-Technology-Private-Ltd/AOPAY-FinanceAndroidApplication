@@ -34,6 +34,7 @@ class PayoutReport : BaseActivity() {
     var payoutReportList: List<PayoutDataItem?>? = mutableListOf()
     lateinit var adapter : PayoutReportAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPayoutReportBinding.inflate(layoutInflater)
@@ -51,9 +52,9 @@ class PayoutReport : BaseActivity() {
         setOnClickListner()
     }
 
+
     override fun onResume() {
         super.onResume()
-
         setSpinner()
     }
 
@@ -96,7 +97,7 @@ class PayoutReport : BaseActivity() {
             status = status
         )
 
-        Log.d("payoutreq", Gson().toJson(payoutreq))
+        Log.d("payoutreportreq", Gson().toJson(payoutreq))
 
         viewModel.getPayoutReportReq(payoutreq).observe(this) { resources ->
             resources.let {
@@ -105,7 +106,7 @@ class PayoutReport : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("payoutresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 payoutReportList = response.data!!
 
                                 if(payoutReportList!!.isNotEmpty()){
@@ -131,7 +132,7 @@ class PayoutReport : BaseActivity() {
                     ApiStatus.ERROR -> {
                         binding.notfoundimage.visibility=View.VISIBLE
                         binding.showreports.visibility=View.GONE
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
 

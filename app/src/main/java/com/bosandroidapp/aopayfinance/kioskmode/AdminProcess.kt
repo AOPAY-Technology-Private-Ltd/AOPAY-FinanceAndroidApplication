@@ -17,7 +17,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -239,11 +238,12 @@ fun Activity.enterImmersiveMode() {
 }
 
 
+/*
 fun Activity.showExitPinAdminDialog() {
     val view = layoutInflater.inflate(R.layout.dialog_pin, null)
     val input = view.findViewById<TextView>(R.id.etPin)
 
-    AlertDialog.Builder(this)
+    AlertDialog!!.Builder(this)
         .setTitle("Exit Kiosk")
         .setView(view)
         .setPositiveButton("Unlock") { d, _ ->
@@ -261,4 +261,4 @@ fun Activity.showExitPinAdminDialog() {
         .setNegativeButton("Cancel", null)
         .setCancelable(false)
         .show()
-}
+}*/

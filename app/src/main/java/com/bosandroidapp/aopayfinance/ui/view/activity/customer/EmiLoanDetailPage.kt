@@ -251,8 +251,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details
@@ -632,13 +632,13 @@ class EmiLoanDetailPage : BaseActivity() {
 
                                 if (response!!.status?.toLowerCase().equals("true",ignoreCase = true) && !response.preparePOSTForm.isNullOrEmpty()) {
                                     // Open WebView with the provided URL
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     val intent = Intent(this@EmiLoanDetailPage, PGWebViewActivity::class.java)
                                     intent.putExtra("pgurl", response.preparePOSTForm)
                                     startActivity(intent)
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     Toast.makeText(this@EmiLoanDetailPage, response.message, Toast.LENGTH_SHORT).show()
                                 }
 
@@ -649,7 +649,7 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -714,8 +714,8 @@ class EmiLoanDetailPage : BaseActivity() {
                             users.body()?.let {
                                     response ->
                                 Log.d("customerLoanemiresp", response.toString())
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     var currentDate = response.indiaTimeIST
 
@@ -792,8 +792,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -852,8 +852,8 @@ class EmiLoanDetailPage : BaseActivity() {
                                 Log.d("loanEmiReceiveResp", response.toString())
                                 if(loopcount==emicount){
 
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
                                     finish()
@@ -875,8 +875,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -894,10 +894,10 @@ class EmiLoanDetailPage : BaseActivity() {
 
     fun OpenPopUpForVeryfyOTP(){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.layout_for_payment)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.layout_for_payment)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -906,8 +906,8 @@ class EmiLoanDetailPage : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var exitbutton = dialog.findViewById<LinearLayout>(R.id.exitlayout)
-        var shareImage = dialog.findViewById<ImageView>(R.id.shareimage)
+        var exitbutton = dialog!!.findViewById<LinearLayout>(R.id.exitlayout)
+        var shareImage = dialog!!.findViewById<ImageView>(R.id.shareimage)
 
         shareImage.setOnClickListener {
             shareImageFromDrawable(this, R.drawable.bosqrimage)
@@ -915,7 +915,7 @@ class EmiLoanDetailPage : BaseActivity() {
 
 
         exitbutton.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
             val intent = Intent(this@EmiLoanDetailPage, DashBoard::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -923,17 +923,17 @@ class EmiLoanDetailPage : BaseActivity() {
         }
 
 
-        dialog.setOnDismissListener{
-            dialog.dismiss()
+        dialog!!.setOnDismissListener{
+            dialog!!.dismiss()
             val intent = Intent(this@EmiLoanDetailPage, DashBoard::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1056,8 +1056,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
@@ -1088,10 +1088,10 @@ class EmiLoanDetailPage : BaseActivity() {
     fun OpenAlertForEmiRequest(customerCode : String){
 
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.emialert_retailer)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.emialert_retailer)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -1100,15 +1100,15 @@ class EmiLoanDetailPage : BaseActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var textmsg = dialog.findViewById<TextView>(R.id.dialog_message)
-        var btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
-        var Ok = dialog.findViewById<Button>(R.id.Ok)
+        var textmsg = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        var btnCancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        var Ok = dialog!!.findViewById<Button>(R.id.Ok)
 
         textmsg.text = "Are you sure you want to proceed with the EMI payment for this customer (${customerCode})?"
 
 
         btnCancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
 
@@ -1121,9 +1121,9 @@ class EmiLoanDetailPage : BaseActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1146,24 +1146,24 @@ class EmiLoanDetailPage : BaseActivity() {
                                 Log.d("OTP", otp)
 
                                 if (response.statuss.equals("True")) {
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
-                                    dialog.dismiss()
+                                    dialog!!.dismiss()
                                     var customerName = "${preference.getStringValue(ConstantClass.FirstName,"")} ${preference.getStringValue(ConstantClass.LastName, "")}"
                                     Log.d("RetailerName", customerName)
                                     hitApiForMobVerify(mailidormobile, customerName, otp)
                                 }
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1212,11 +1212,11 @@ class EmiLoanDetailPage : BaseActivity() {
 
     fun OpenPopUpForVeryfyOTP(EmailID: String, otp: String) {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -1226,24 +1226,24 @@ class EmiLoanDetailPage : BaseActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val title = dialog.findViewById<TextView>(R.id.text_subtitle)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val title = dialog!!.findViewById<TextView>(R.id.text_subtitle)
 
         startOtpTimer(resendtxt, timer)
 
         title.text = "Please enter the 4-digit OTP sent to your registered mobile number."
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -1272,7 +1272,7 @@ class EmiLoanDetailPage : BaseActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1311,7 +1311,7 @@ class EmiLoanDetailPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
                                 if(response.statuss.equals("True")){
                                     var otp = response.value
@@ -1321,14 +1321,14 @@ class EmiLoanDetailPage : BaseActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1354,11 +1354,11 @@ class EmiLoanDetailPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                     var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
 
@@ -1416,7 +1416,7 @@ class EmiLoanDetailPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1449,8 +1449,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     Toast.makeText(this@EmiLoanDetailPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                     }
                     Log.d("API_SUCCESS", loanData.toString())
                 } else {
