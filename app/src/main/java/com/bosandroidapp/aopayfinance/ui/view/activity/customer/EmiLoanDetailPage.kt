@@ -476,6 +476,7 @@ class EmiLoanDetailPage : BaseActivity() {
 
                     Log.d("emiamount", " $emiamount $WalletBalance")
 
+
                     if(emiamount <= WalletBalance.toDouble()) {
                         OpenAlertForEmiRequest(customerCode)
                         //HitApiForRetailerWalletPayoutAmount(emiamount)
@@ -606,6 +607,7 @@ class EmiLoanDetailPage : BaseActivity() {
                         }
 
                     }
+
                 }
             }
             else{
@@ -823,12 +825,11 @@ class EmiLoanDetailPage : BaseActivity() {
         var customercode =  customerCode
         var retailercode =  preference.getStringValue(ConstantClass.RetailerCode, "")
 
-
         val request = CustomerLoanEmiReceiveReq(
             mode = "UPDATE",
             loanCode = loanCode,
             paymentDate = getCurrentUtcTimestamp(),
-            paymentMode =  "",
+            paymentMode =  "Wallet", // as per Naim Khan Changes 17/08/2026
             utrNumber = "",
             remarks = binding.remarkEdt.text.toString(),
             createdBy = createdBy,
@@ -1045,6 +1046,7 @@ class EmiLoanDetailPage : BaseActivity() {
 
                                     HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
                                 }
+
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
                                 }

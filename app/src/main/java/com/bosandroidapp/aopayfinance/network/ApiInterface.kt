@@ -426,6 +426,7 @@ interface ApiInterface {
     suspend fun getPayoutReportReq(@Body req : PayoutReportReq): Response<PayoutReportResp>?
 
 
+
     @POST("api/V1/AopayFinance/GetLookupReports")
     suspend fun getRetailerWalletReport(@Body req : RetailerWalletReportReq): Response<RetailerWalletReportResp>?
 

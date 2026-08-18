@@ -261,7 +261,8 @@ class LoginPage : BaseActivity() {
             password = password,
             logintype = loginType,
             deviceId = deviceId,
-            token = FireBaseToken
+            token = FireBaseToken,
+            imeiNumber =  ConstantClass.IMEI
         )
 
         Log.d("LoginReq", Gson().toJson(loginRequest))

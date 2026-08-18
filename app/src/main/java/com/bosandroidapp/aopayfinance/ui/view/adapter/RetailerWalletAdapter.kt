@@ -46,7 +46,6 @@ class RetailerWalletAdapter (var context: Context, var retailerWalletReportList 
     override fun getItemCount(): Int = retailerWalletReportList!!.size
 
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = retailerWalletReportList!![position]!!
         val statusStr = item.transactionStatus?.toLowerCase() ?: ""

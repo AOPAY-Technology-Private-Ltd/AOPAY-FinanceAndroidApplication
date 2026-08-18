@@ -326,7 +326,9 @@ class PayoutPage : Fragment() {
                 val adapter = ArrayAdapter.createFromResource(requireContext(), R.array.paymentmodeRetailer, R.layout.mobilenamelayout)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentmode.adapter = adapter
-            } else {
+                binding.paymentmode.isEnabled = false
+            }
+            else {
                 isOffline = false
                 binding.bankdetailslayout.visibility = if (bankDataList.isNullOrEmpty()) View.GONE else View.VISIBLE
                 binding.addBankdetails.visibility = if (bankDataList.isNullOrEmpty()) View.VISIBLE else View.GONE
@@ -334,7 +336,9 @@ class PayoutPage : Fragment() {
                 val adapter = ArrayAdapter.createFromResource(requireContext(), R.array.walletpaymentmode, R.layout.mobilenamelayout)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.paymentmode.adapter = adapter
+                binding.paymentmode.isEnabled = true
             }
+
         }
 
 

@@ -107,13 +107,14 @@ object ConstantClass {
 
      // Procustion  API
 
-     /* const val BASE_URL = "https://api.aopay.finance/"
-      const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
+      const val BASE_URL = "https://api.aopay.finance/"
+      const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
 
-     // UAT API
+  /*   // UAT API
      const val BASE_URL = "https://uatapi.aopay.co.in/"
-     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
+
 
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
@@ -121,11 +122,14 @@ object ConstantClass {
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
 
-    /* const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
 
-     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-554"
+     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
+     const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
+
+
+ /*  const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
+     const val PENNYDROP_REGISTRATION_ID = "AOP-554"*/
+
 
      const val OLD_FRP_MAIL_ID = "info@aopay.in"
 
