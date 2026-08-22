@@ -36,6 +36,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.MinHoldingAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.dialog
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatToMMDDYYYY
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimestamp
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getDeviceIpAddress
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
@@ -593,7 +594,7 @@ class PayoutPage : Fragment() {
        RetailerWalletPayoutReq(
            registrationId = preference.getStringValue(ConstantClass.RetailerCode, ""),
            paymentMode = binding.paymentmode.selectedItem.toString().trim(),
-           paymentDate = currentDate!!,
+           paymentDate = getCurrentUtcTimestamp(),
            transferAmount = totalamnt,
            beneId = "",
            accountHolder = binding.retailername.text.toString(),
@@ -607,7 +608,7 @@ class PayoutPage : Fragment() {
        RetailerWalletPayoutReq(
            registrationId = preference.getStringValue(ConstantClass.RetailerCode, ""),
            paymentMode = binding.paymentmode.selectedItem.toString().trim(),
-           paymentDate = currentDate!!,
+           paymentDate = getCurrentUtcTimestamp(),
            transferAmount = totalamnt,
            beneId = binding.accountnumber.selectedItem.toString().trim(),
            accountHolder = binding.accountholdername.text.toString(),
@@ -625,28 +626,35 @@ class PayoutPage : Fragment() {
            when (it.apiStatus) {
                ApiStatus.SUCCESS -> {
                    it.data.let { users ->
-                       users!!.body().let { response ->
 
-                           if(dialog!=null && dialog?.isShowing == true){
-                               dialog?.dismiss()
-                           }
-
-                           if (response!!.statuss.equals("True")) {
-                               Log.d("WalletpayoutResp", Gson().toJson(response))
-                               ConstantClass.dialog?.dismiss()
+                       if(users!!.isSuccessful){
+                           users!!.body().let { response ->
 
                                if(dialog!=null && dialog?.isShowing == true){
                                    dialog?.dismiss()
                                }
-                               hitApiForRetailerWalletAmount()
-                               clearEditPage()
-                               Toast.makeText(requireContext(),"The request has been successfully raised with the admin",Toast.LENGTH_SHORT).show()
+
+                               if (response!!.statuss.equals("True")) {
+                                   Log.d("WalletpayoutResp", Gson().toJson(response))
+                                   ConstantClass.dialog?.dismiss()
+
+                                   if(dialog!=null && dialog?.isShowing == true){
+                                       dialog?.dismiss()
+                                   }
+                                   hitApiForRetailerWalletAmount()
+                                   clearEditPage()
+                                   Toast.makeText(requireContext(),"The request has been successfully raised with the admin",Toast.LENGTH_SHORT).show()
+
+                               }
+                               else {
+                                   ConstantClass.dialog?.dismiss()
+                                   Toast.makeText(requireContext(),response.message,Toast.LENGTH_SHORT).show()
+                               }
 
                            }
-                           else {
-                               ConstantClass.dialog?.dismiss()
-                               Toast.makeText(requireContext(),response.message,Toast.LENGTH_SHORT).show()
-                           }
+                       }
+
+                       else{
 
                        }
 

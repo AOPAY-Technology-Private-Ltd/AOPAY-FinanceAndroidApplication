@@ -44,7 +44,7 @@ import java.util.Date
 import java.util.Locale
 
 
-private var currentDate: String? = null
+public var currentDate: String? = null
 const val ACCESSIBILITYTAG = "Accessibility Service"
 
 
@@ -70,14 +70,18 @@ suspend fun String.getCurrentLastPaidDueDate(context: Context?, paidMonths: Long
 }
 
 
+
 private suspend fun getCustomerLoanEmiDetailsReq(req: GetCustomerLoanDetailsReq) =
     RetrofitClient.apiInterface.getCustomerLoanDetailsList(req)
 
 
+
+@RequiresApi(Build.VERSION_CODES.R)
 suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+    currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
 
-   /* if (hasDateChanged()) {*/
+    if (hasDateChanged()) {
         Logger.d(ACCESSIBILITYTAG, "Date Changed")
         val preference = SharedPreference(this@syncEmis)
 
@@ -89,21 +93,26 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
             Logger.d(ACCESSIBILITYTAG, "Syncing EMIs")
             Log.d("Loanreq",Gson().toJson(loanemireq))
             val loanDetails = getCustomerLoanEmiDetailsReq(loanemireq)
-            currentDate = loanDetails?.body()?.indiaTimeIST!!.convertDate()
-            val list = loanDetails?.body()?.data?.toList()
+            if (loanDetails != null && loanDetails.isSuccessful) {
+                currentDate = loanDetails.body()?.indiaTimeIST?.convertDate() ?: currentDate
+                val list = loanDetails.body()?.data?.toList()
 
-            list?.let { loans ->
-                val obj = loans.getLoansStringObject()
-                Logger.d(ACCESSIBILITYTAG, obj)
-                sharedPref.edit().putString("LoanData", obj).apply()
+                list?.let { loans ->
+                    val obj = loans.getLoansStringObject()
+                    Logger.d(ACCESSIBILITYTAG, obj)
+                    sharedPref.edit().putString("LoanData", obj).apply()
+                }
+                
+                // Mark as synced only on successful API response
+                sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
+                Logger.d(ACCESSIBILITYTAG, "Loan data synced for date: $currentDate")
             }
-
         }
         catch (e: Exception) {
             Logger.d(ACCESSIBILITYTAG, e.localizedMessage ?: "")
         }
 
-  /*  }*/
+    }
 
     isEMIDue(sharedPref)
 
@@ -168,9 +177,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
             }
         }
 
-
         Logger.d(ACCESSIBILITYTAG,"EMIDUES: $emiDues")
-
 
         if (emiDues != null) {
             if (emiDues!! > 0) {
@@ -181,7 +188,6 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
                 this@isEMIDue.stopInternetAlertSituation()
             }
         }
-
 
         if (lateEMIs > 0) {
             Logger.d(ACCESSIBILITYTAG, "Late EMIs Count: $lateEMIs")
@@ -197,6 +203,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
     }
 
 }
+
 
 
 /*private suspend fun Context.defaultedLoansList(sharedPref: SharedPreferences): List<LocalLoanData> = withContext(Dispatchers.IO) {
@@ -231,6 +238,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
     defaultedEmis
 
 }*/
+
 
 
 fun String.toFormattedDate(): String {
@@ -458,6 +466,7 @@ private fun String.getGrossDate(grossPeriod: Int): String {
 }*/
 
 
+
 private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
 
     if (currentDateStr.isNullOrEmpty()) return false
@@ -483,15 +492,13 @@ private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
 }
 
 
+
 fun Context.hasDateChanged(): Boolean {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     val lastSync = sharedPref.getString("LoanSyncDate", "")
-    if (lastSync != currentDate) {
-        sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
-        Logger.d(ACCESSIBILITYTAG, currentDate.toString())
-        return true
-    }
-    return false
+    Log.d("LastSyncDate", lastSync.toString())
+    Log.d("CurrentDate", currentDate.toString())
+    return lastSync != currentDate
 }
 
 

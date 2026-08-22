@@ -19,11 +19,15 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity
 import com.bosandroidapp.aopayfinance.utils.ACCESSIBILITYTAG
 import com.bosandroidapp.aopayfinance.utils.Logger
+import com.bosandroidapp.aopayfinance.utils.currentDate
 import com.bosandroidapp.aopayfinance.utils.syncEmis
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MyAccessibilityService : AccessibilityService() {
 

@@ -655,17 +655,25 @@ class QRCodePage : BaseActivity() {
                             }
                         }
                         else {
-                            val err = response.errorBody()?.string()
-                            binding.nextlayout.isEnabled= true
-                            Log.e("API_RESPONSE_ERROR", err ?: "Unknown error")
+                            val errorMsg = response.errorBody()?.string()
+                            handleApiError(response.code(), errorMsg)
                         }
 
                     }
 
                 } catch (e: Exception) {
-                    binding.nextlayout.isEnabled= true
-                    ConstantClass.dialog?.takeIf { it.isShowing }?.dismiss()
+                    if (ConstantClass.dialog?.isShowing == true) {
+                        ConstantClass.dialog!!.dismiss()
+                    }
+                    binding.nextlayout.isEnabled = true
+                    val errorMsg = when (e) {
+                        is java.net.SocketTimeoutException -> "Connection timed out. Please check internet."
+                        is java.net.UnknownHostException -> "No internet connection."
+                        is java.io.IOException -> "Network error. Please try again."
+                        else -> "Unexpected error occurred."
+                    }
                     Log.e("API_EXCEPTION", "Error: ${e.localizedMessage}", e)
+                    Toast.makeText(this@QRCodePage, errorMsg, Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -1185,12 +1193,12 @@ class QRCodePage : BaseActivity() {
         binding.nextlayout.isEnabled= true
 
         val message = when (responseCode) {
-            400 -> "Bad request. Please check entered data with code 400."
-            401 -> "Session expired. Please login again with code 401."
-            403 -> "You are not authorized to perform this action with code 403."
-            404 -> "Service not found. Please try again later with code 404."
-            500 -> "Server error. Please try after some time with code 500."
-            else -> "Something went wrong. Please try again."
+            400 -> "Bad request (400). Please check entered data."
+            401 -> "Session expired (401). Please login again."
+            403 -> "You are not authorized to perform this action (403)."
+            404 -> "Service not found (404). Please try again later."
+            500 -> "Server error (500). Please try after some time."
+            else -> "Something went wrong. Please try again (Error: $responseCode)."
         }
 
         Log.e("API_ERROR", "Code: $responseCode Body: $errorBody")
@@ -1257,33 +1265,22 @@ class QRCodePage : BaseActivity() {
                                         finish()
                                     }
 
-                                } else {
+                                }
+                                else {
                                     if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
+                                    Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
+
                                 }
 
                             }
                         }
+                        Toast.makeText(this@QRCodePage,it.message.toString(), Toast.LENGTH_SHORT).show()
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
-                            ConstantClass.dialog!!.dismiss()
-                        }
-
-                        // ✅ Print the full error details
-                        Log.e("API_ERROR", "Status: ERROR")
-                        Log.e("API_ERROR_CODE", resources.data?.code().toString())
-                        Log.e("API_ERROR_MSG", resources.message ?: "Unknown Error")
-
-                        Toast.makeText(this, "Server error occurred (Code: ${resources.data?.code() ?: "Unknown"})", Toast.LENGTH_LONG).show()
-
-                        // Optional: Handle specific 500 error
-                        if (resources.data?.code() == 500) {
-                            Log.e("API_ERROR", "Internal Server Error from backend.")
-                        }
-
+                        handleApiError(it.data?.code() ?: 0, it.message)
                     }
 
                     ApiStatus.LOADING -> {
@@ -1471,13 +1468,13 @@ class QRCodePage : BaseActivity() {
 
                 e.printStackTrace()
 
-            } finally {
+            }
+            finally {
 
                 progressBar.visibility = View.GONE
                 qrCodeProvising.visibility = View.VISIBLE
             }
         }
-
 
     }
 
@@ -1488,13 +1485,11 @@ class QRCodePage : BaseActivity() {
         dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog!!.setContentView(R.layout.signoutalert)
 
-
         dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
-
 
         dialog!!.setCanceledOnTouchOutside(false)
 
@@ -1511,8 +1506,6 @@ class QRCodePage : BaseActivity() {
 
         done.setOnClickListener {
             finish()
-
-
         }
 
         cancel.setOnClickListener {
@@ -1698,39 +1691,49 @@ class QRCodePage : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
-                            users!!.body().let { response ->
-                                Log.d("eMandateRes", Gson().toJson(response))
+                            if(users!!.isSuccessful){
+                                users!!.body().let { response ->
+                                    Log.d("eMandateRes", Gson().toJson(response))
 
-                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
-                                    ConstantClass.dialog!!.dismiss()
-                                }
+                                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                        ConstantClass.dialog!!.dismiss()
+                                    }
 
-                                if (response!!.data?.customer != null) {
-                                    webUrl = response!!.data!!.url
-                                    startActivity(Intent(this@QRCodePage, RetailerEMandateVerifyPage::class.java))
-                                }
-                                else {
-                                    ConstantClass.dialog!!.dismiss()
-                                    isEmandateVerified= "No"
-                                    isEnachCancelled = true
-                                    Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
-                                }
+                                    if (response!!.data?.customer != null) {
+                                        webUrl = response!!.data!!.url
+                                        startActivity(Intent(this@QRCodePage, RetailerEMandateVerifyPage::class.java))
+                                    }
+                                    else {
+                                        ConstantClass.dialog!!.dismiss()
+                                        isEmandateVerified= "No"
+                                        isEnachCancelled = true
+                                        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
+                                    }
 
-                                if(!isEmandateVerified.isNullOrBlank()){
-                                    var request = EnachDateUploadReq(
-                                        isEmandateVerified = isEmandateVerified,
-                                        emAccountType = AccountType,
-                                        isPannydropVerified = isPannydropVerified,
-                                        emAccountNumber = AccountNumber,
-                                        customerCode = CustomerCodeForEnach,
-                                        retailerCode= RetailerCodeForEnach,
-                                        loanCode= loaneCode,
-                                        emBankName=BankName,
-                                        emIfscCode =BankIFSCCode
-                                    )
+                                    if(!isEmandateVerified.isNullOrBlank()){
+                                        var request = EnachDateUploadReq(
+                                            isEmandateVerified = isEmandateVerified,
+                                            emAccountType = AccountType,
+                                            isPannydropVerified = isPannydropVerified,
+                                            emAccountNumber = AccountNumber,
+                                            customerCode = CustomerCodeForEnach,
+                                            retailerCode= RetailerCodeForEnach,
+                                            loanCode= loaneCode,
+                                            emBankName=BankName,
+                                            emIfscCode =BankIFSCCode
+                                        )
 
-                                    hitApiForUploadEnachMandateDataResponse(request)
+                                        hitApiForUploadEnachMandateDataResponse(request)
+                                    }
+
                                 }
+                                val error = users.body()?.statusDesc ?: users.message() ?: "Something went wrong"
+                                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                            }
+
+                            else {
+                                var error = resources.data.toString()
+                                Toast.makeText(this@QRCodePage,error, Toast.LENGTH_SHORT).show()
 
                             }
 
@@ -1739,18 +1742,7 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog!!.dismiss()
-                        // ✅ Print the full error details
-                        Log.e("API_ERROR", "Status: ERROR")
-                        Log.e("API_ERROR_CODE", resources.data?.code().toString())
-                        Log.e("API_ERROR_MSG", resources.message ?: "Unknown Error")
-
-                        Toast.makeText(this, "Server error occurred (Code: ${resources.data?.code() ?: "Unknown"})", Toast.LENGTH_LONG).show()
-
-                        // Optional: Handle specific 500 error
-                        if (resources.data?.code() == 500) {
-                            Log.e("API_ERROR", "Internal Server Error from backend.")
-                        }
+                        handleApiError(resources.data?.code() ?: 0, resources.message)
                     }
 
                     ApiStatus.LOADING -> {
@@ -1798,11 +1790,7 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        // ✅ Print the full error details
-                        Log.e("API_ERROR", "Status: ERROR")
-                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
-                            ConstantClass.dialog!!.dismiss()
-                        }
+                        handleApiError(it.data?.code() ?: 0, it.message)
                     }
 
                     ApiStatus.LOADING -> {

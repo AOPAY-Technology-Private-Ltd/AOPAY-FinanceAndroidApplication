@@ -171,7 +171,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
 
                 Log.e("API_ERROR", "Code: $code | Body: $errorBody")
 
-                emit(ApiResponse.error(data = null, message = message))
+                emit(ApiResponse.error(data = response, message = message))
             }
 
         } catch (exception: Exception) {

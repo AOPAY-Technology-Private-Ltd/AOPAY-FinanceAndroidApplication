@@ -62,7 +62,19 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
     fun getEMandateRequestReq(req: EMandateRequest) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
-            emit(ApiResponse.success(data = repository.getEMandateRequestReq(req)))
+            val response = repository.getEMandateRequestReq(req)
+            if (response != null && response.isSuccessful) {
+                emit(ApiResponse.success(data = response))
+            } else {
+                val code = response?.code() ?: 0
+                val message = when (code) {
+                    400 -> "Bad request (400)"
+                    404 -> "Not found (404)"
+                    500 -> "Server error (500)"
+                    else -> "Error: $code"
+                }
+                emit(ApiResponse.error(data = response, message = message))
+            }
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
@@ -83,7 +95,19 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
     fun loanApplyChargesReq(req: LoanChargeReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
-            emit(ApiResponse.success(data = repository.loanApplyChargesReq(req)))
+            val response = repository.loanApplyChargesReq(req)
+            if (response != null && response.isSuccessful) {
+                emit(ApiResponse.success(data = response))
+            } else {
+                val code = response?.code() ?: 0
+                val message = when (code) {
+                    400 -> "Bad request (400)"
+                    404 -> "Not found (404)"
+                    500 -> "Server error (500)"
+                    else -> "Error: $code"
+                }
+                emit(ApiResponse.error(data = response, message = message))
+            }
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
