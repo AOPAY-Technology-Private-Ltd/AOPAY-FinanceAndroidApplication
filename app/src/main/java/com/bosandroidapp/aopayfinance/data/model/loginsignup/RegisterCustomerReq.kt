@@ -100,6 +100,8 @@ data class RegisterCustomerReq(
     @SerializedName("upiMandate")
     var upiMandate:String,
     @SerializedName("createdBy")
-    var createdBy:String
+    var createdBy:String,
+    @SerializedName("clientcode")
+    var clientCode:String
 
 )

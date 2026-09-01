@@ -14,5 +14,8 @@ data class TransactionHistoryReq(
 	val registrationId: String? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String? = null,
+
+	@SerializedName("clientcode")
+	var clientCode: String
 )

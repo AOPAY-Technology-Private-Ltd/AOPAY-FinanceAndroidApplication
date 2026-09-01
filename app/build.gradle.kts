@@ -8,12 +8,13 @@ android {
     namespace = "com.bosandroidapp.aopayfinance"
     compileSdk = 34
 
+
     defaultConfig {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.0.6"
+        versionCode = 8
+        versionName = "1.0.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

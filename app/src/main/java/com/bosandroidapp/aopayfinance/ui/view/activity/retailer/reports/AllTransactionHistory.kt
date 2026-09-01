@@ -170,6 +170,7 @@ class AllTransactionHistory : BaseActivity() {
             toDate = ToDate,
             registrationId = retailerCode,
             status = null, //Approved
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
         Log.d("ReportReq", Gson().toJson(reportreq))
 

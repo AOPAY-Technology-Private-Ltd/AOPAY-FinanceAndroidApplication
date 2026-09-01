@@ -220,6 +220,7 @@ class DashBoard : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
+        getFirebaseToken()
         setDataHeader()
         if (logintype.equals(Customer)) {
             HitApiForEmiList()
@@ -262,13 +263,13 @@ class DashBoard : BaseActivity() {
             PanState = ""
             PanCity = ""
             PanCountry = ""
-            getFirebaseToken()
+
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
             }
             hitApiForLogin()
-            var request = SendNotificationFeatureNameRequest(
-                clientCode = ConstantClass.ClientCode,
+            val request = SendNotificationFeatureNameRequest(
+                clientCode = preference.getStringValue(ConstantClass.ClientCode, ""),
                 customerCode =  preference.getStringValue(ConstantClass.CustomerCode,""),
                 retailerCode = preference.getStringValue(ConstantClass.RetailerCode,""),
                 title = "EMI Overdue",
@@ -362,7 +363,7 @@ class DashBoard : BaseActivity() {
 
 
         binding.appBarDashBoard.deskdesign.clicktologin.setOnClickListener {
-            val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+            /*val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
             val loanDetails = sharedPref.getString("LoanData", "")
             if(loanDetails.isNullOrBlank()){
                 Toast.makeText(this,resources.getString(R.string.customerdashboard), Toast.LENGTH_LONG).show()
@@ -371,11 +372,11 @@ class DashBoard : BaseActivity() {
                 preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
                 binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
                 binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
-            }
+            }*/
 
-            /*preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
+            preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
             binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
-            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE*/
+            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
 
         }
 
@@ -474,9 +475,17 @@ class DashBoard : BaseActivity() {
 
 
     fun hitApiForGetAndCheckAccessToken(){
-        var generateTokenReq = GenerateAccessTokenRequest(
-            fcmToken = preference.getStringValue(ConstantClass.FCMTOKEN,"")
-        )
+
+        val token = if (preference.getStringValue(ConstantClass.FCMTOKEN, "").isNullOrBlank()) {
+            Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        } else {
+            preference.getStringValue(ConstantClass.FCMTOKEN, "")
+        }
+
+        val generateTokenReq = GenerateAccessTokenRequest(
+            fcmToken = token,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""))
+
         Log.d("tokenreq", Gson().toJson(generateTokenReq))
 
         viewModel.getAccessKeyForValidateAPKReq(generateTokenReq).observe(this) { resources ->
@@ -581,7 +590,8 @@ class DashBoard : BaseActivity() {
         if(registrationID.isNotEmpty()){
             var request = RetailerWalletAmountReq(
                 retailerID = registrationID,
-                amountType = "CreditBalance"
+                amountType = "CreditBalance",
+                clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
             )
             Log.d("walletAmountReq", Gson().toJson(request))
 
@@ -665,7 +675,8 @@ class DashBoard : BaseActivity() {
     fun HitApiForEmiList() {
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode, "")
+            customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
@@ -790,6 +801,7 @@ class DashBoard : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -822,10 +834,9 @@ class DashBoard : BaseActivity() {
 
 
         var request = ValidateSessionRequest(
-            preference.getStringValue(ConstantClass.RetailerCode, ""),
-            deviceId,
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            deviceId = deviceId,
+            token = preference.getStringValue(ConstantClass.FCMTOKEN, ""))
 
         Log.d("validaterequest", Gson().toJson(request))
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -858,8 +869,7 @@ class DashBoard : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 

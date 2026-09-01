@@ -218,7 +218,7 @@ class IDVerificationPage : BaseActivity() {
             lastName = lastName,
             mobileNumber = mob,
             emailId = emailId,
-            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharVerificationreq", Gson().toJson(aadharverificationreq))
@@ -387,6 +387,7 @@ class IDVerificationPage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -454,7 +455,7 @@ class IDVerificationPage : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

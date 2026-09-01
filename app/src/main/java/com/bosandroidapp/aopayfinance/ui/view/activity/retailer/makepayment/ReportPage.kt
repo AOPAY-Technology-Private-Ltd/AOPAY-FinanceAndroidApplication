@@ -141,7 +141,8 @@ class ReportPage : Fragment() {
             fromDate = FromDate,
             toDate = ToDate,
             activeStatus = "",
-            retailerCode = retailercode
+            retailerCode = retailercode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("makepaymentreportreq", Gson().toJson(gettingreportsreq))

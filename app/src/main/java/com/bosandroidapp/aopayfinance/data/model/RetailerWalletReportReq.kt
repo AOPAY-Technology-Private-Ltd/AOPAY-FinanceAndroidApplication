@@ -15,4 +15,6 @@ data class RetailerWalletReportReq(
     @SerializedName("toDate")
     var toDate : String ? = null,
 
+    @SerializedName("clientcode")
+    var clientCode: String
     )

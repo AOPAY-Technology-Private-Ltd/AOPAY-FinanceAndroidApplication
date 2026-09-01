@@ -217,7 +217,8 @@ class EmiLoanDetailPage : BaseActivity() {
 
         var request = RetailerWalletAmountReq(
             retailerID = registrationID,
-            amountType = "CreditBalance"
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("walletAmountReq", Gson().toJson(request))
@@ -705,7 +706,9 @@ class EmiLoanDetailPage : BaseActivity() {
     fun HitApiForEmiList(){
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = LoanId,
-            customercode = "")
+            customercode = "",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
+        )
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
         viewModel.getCustomerLoanEmiDetailsReq(loanemireq).observe(this) { resources ->
@@ -837,8 +840,9 @@ class EmiLoanDetailPage : BaseActivity() {
             customerCode =customercode,
             retailerCode = retailercode,
             bankName = "",
-            receiptImagePath = ""/*,
+            receiptImagePath = "",/*,
             imageFile = imageFile*/
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("loanEmiReceiveReq", Gson().toJson(request))
@@ -998,7 +1002,8 @@ class EmiLoanDetailPage : BaseActivity() {
             tdsAmount = 0,
             serviceschargeGSTAmount = 0,
             transactionStatus = "Approved",
-            loanCode = loanCode
+            loanCode = loanCode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("payoutrequest", Gson().toJson(request))
@@ -1133,8 +1138,7 @@ class EmiLoanDetailPage : BaseActivity() {
     fun hitApiForSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
 
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
@@ -1209,6 +1213,7 @@ class EmiLoanDetailPage : BaseActivity() {
                 Log.e("API_EXCEPTION", e.toString())
             }
         }
+
     }
 
 
@@ -1304,8 +1309,7 @@ class EmiLoanDetailPage : BaseActivity() {
     fun hitApiForReSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
             resources.let {
@@ -1343,12 +1347,13 @@ class EmiLoanDetailPage : BaseActivity() {
     }
 
 
+
     fun hitApiForOTPVerify(mobileOrEmailID: String, otp: String, message: String) {
         var verifyotpreq = VerifyOTPReq(
             mobileormailid = mobileOrEmailID,
             otp = otp,
-            logintype = message
-        )
+            logintype = message)
+
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
@@ -1462,6 +1467,7 @@ class EmiLoanDetailPage : BaseActivity() {
                 Log.e("API_EXCEPTION", e.toString())
             }
         }
+
 
     }
 

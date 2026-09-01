@@ -121,9 +121,12 @@ interface ApiInterface {
     @POST("api/AOP/V1/Validation/AadhaarValidateUrl")
     suspend fun getAadharVarification(@Body req : AadharVerificationReq): Response<AadharVerificationResp>?
 
+
+
     // Adhar details
     @POST("api/AOP/V1/Fetch/Digilocker/TransactionID")
     suspend fun getAadharDetails(@Body req : AAdhaarDetailesReq): Response<AadhaarDetailsResponse>?
+
 
 
     // cibil api for getting cibil score...............
@@ -151,6 +154,7 @@ interface ApiInterface {
         @Part("PanNumber") pannumber: RequestBody,
         @Part("StoreName") storename: RequestBody,
         @Part("StoreAddress") storeaddress: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part profilePhoto: MultipartBody.Part,
         @Part aadhaarfront: MultipartBody.Part,
         @Part aadhaarback: MultipartBody.Part,
@@ -189,13 +193,16 @@ interface ApiInterface {
     suspend fun getAllDeviceDetails(): Response<GetAllMobileDetailsListRes>?
 
 
+
     @POST("api/V1/AopayFinance/GetModelWiseLoanDetails")
     suspend fun getEmiSplitDataDetails(@Body req : GetEMISplitDetlailsReq): Response<EmiSplitRes>?
+
 
 
     //  customer mobile verification api
     @POST("api/V1/AopayFinance/VerifyCustomer")
     suspend fun verifycustomerReq(@Body req : VerifyCustomerReq): Response<VerifyCustomerResp>?
+
 
 
     @POST("api/V1/AopayFinance/ManageLoan")
@@ -255,6 +262,7 @@ interface ApiInterface {
         @Part("CibilApiResponse") CibilApiResponse: RequestBody,
         @Part("CustomerCodes") CustomerCodes: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("CibilScore") cibilScore: RequestBody,
         @Part("IsAggrementVerified") isAggrementVerified: RequestBody,
         @Part("IsRetailerAggrementVerified") IsRetailerAggrementVerified: RequestBody,
@@ -318,6 +326,7 @@ interface ApiInterface {
         @Part("CreatedBy") createdBy: RequestBody,
         @Part("MemberShipFees") membershipfees: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("CibilScore") cibilScore: RequestBody,
         @Part("IsAggrementVerified") isAggrementVerified: RequestBody,
         @Part("IsRetailerAggrementVerified") IsRetailerAggrementVerified: RequestBody,
@@ -382,6 +391,7 @@ interface ApiInterface {
         @Part("CreatedBy") createdBy: RequestBody,
         @Part("MemberShipFees") membershipfees: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("PanApiResponse") PanApiResponse: RequestBody,
         @Part("AadhaarApiResponse") AadhaarApiResponse: RequestBody,
         @Part("CibilApiResponse") CibilApiResponse: RequestBody,
@@ -627,6 +637,7 @@ interface ApiInterface {
         @Part("CreatedBy") CreatedBy: RequestBody,
         @Part("RecordStatus") RecordStatus: RequestBody,
         @Part("ActiveStatus") ActiveStatus: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part imageFile1: MultipartBody.Part
     ): Response<MakepaymentResp>
 

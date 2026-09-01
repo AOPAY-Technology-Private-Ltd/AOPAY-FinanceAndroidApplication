@@ -134,7 +134,8 @@ class DuesEMIPage : BaseActivity() {
     fun hitApiForGettingDueOverDueDataList(reporttype:String){
         var loanemireq = DueOverdueRequest(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-            reportType = reporttype
+            reportType = reporttype,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("dueoverduereq", Gson().toJson(loanemireq))

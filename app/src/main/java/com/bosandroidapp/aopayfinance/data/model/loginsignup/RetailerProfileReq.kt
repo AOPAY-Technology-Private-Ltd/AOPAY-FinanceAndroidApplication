@@ -25,5 +25,4 @@ data class RetailerProfileReq(
     var panNumber : String ,
     @SerializedName("activeStatus")
     var activeStatus : String
-
 )

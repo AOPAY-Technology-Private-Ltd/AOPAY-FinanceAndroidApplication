@@ -174,6 +174,7 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -243,7 +244,7 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -284,7 +285,7 @@ class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
 
         var aadharverificationreq = AAdhaarDetailesReq(
             transactionID = transactionId,
-            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharDetailsreq", Gson().toJson(aadharverificationreq))

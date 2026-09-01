@@ -397,7 +397,7 @@ class AddBank : Fragment() {
             iFSCCode = binding.ifsccode.text.toString().trim(),
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
             refID = "",
-            accountNumber = binding.accountnumber.text.toString().trim(),
+            accountNumber = binding.accountnumber.text.toString().trim()
         )
 
         Log.d("PennyDropReq",Gson().toJson(request))
@@ -494,8 +494,7 @@ class AddBank : Fragment() {
        branchName = binding.branchname.text.toString(),
        branchAddress = binding.branchaddress.text.toString(),
        mobilenumber = binding.mobilenumber.text.toString(),
-       emailID = binding.emailid.text.toString()
-   )
+       emailID = binding.emailid.text.toString())
 
    Log.d("AddBankAccountReq", Gson().toJson(req))
 
@@ -581,8 +580,7 @@ class AddBank : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = ""
-        )
+            emailID = "")
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

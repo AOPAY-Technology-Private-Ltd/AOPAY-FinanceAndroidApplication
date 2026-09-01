@@ -94,7 +94,8 @@ class PayoutReport : BaseActivity() {
 
         var payoutreq = PayoutReportReq(
             registrationId = preference.getStringValue(ConstantClass.RetailerCode, ""),
-            status = status
+            status = status,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("payoutreportreq", Gson().toJson(payoutreq))

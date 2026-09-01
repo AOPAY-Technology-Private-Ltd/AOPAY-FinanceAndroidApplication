@@ -535,6 +535,7 @@ class SignupPage : BaseActivity() {
             panNumber = panNumber,
             storeName = storename,
             storeAddress = storeaddress,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""),
             profilePhoto,
             aadhaarfront,
             aadhaarback,

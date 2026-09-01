@@ -125,7 +125,8 @@ class PayoutReports : Fragment() {
             retailerID = preference.getStringValue(ConstantClass.RetailerCode,""),
             reportType = reportType,
             fromDate = null,
-            toDate = null
+            toDate = null,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("payoutreportreq", Gson().toJson(request))

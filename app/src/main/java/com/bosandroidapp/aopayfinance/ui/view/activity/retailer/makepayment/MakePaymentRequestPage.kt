@@ -256,7 +256,8 @@ class MakePaymentRequestPage : BaseActivity() {
             CreatedBy = "",
             RecordStatus = "Pending",
             ActiveStatus = "Active",
-            cancelcheque
+            cancelcheque,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("RegistationRequest", Gson().toJson(registationRequest))

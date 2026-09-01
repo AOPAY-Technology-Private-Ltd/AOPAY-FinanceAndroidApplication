@@ -11,6 +11,8 @@ data class GetMakePaymentReq(
     @SerializedName("TransactionID"   ) var TransactionID: String? = null,
     @SerializedName("DcoumentPath"    ) var DcoumentPath: String? = null,
     @SerializedName("Remarks"         ) var Remarks: String? = null,
-    @SerializedName("CompanyCode"     ) var CompanyCode: String? = null
+    @SerializedName("CompanyCode"     ) var CompanyCode: String? = null,
+    @SerializedName("clientcode")
+    var clientCode: String
 
 )

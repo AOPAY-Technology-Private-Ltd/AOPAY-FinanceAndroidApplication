@@ -13,4 +13,6 @@ data class HoldAmountWithdrawReq(
     @SerializedName("remarks")
     var remarks: String,
 
+    @SerializedName("clientcode")
+    var clientCode: String
 )

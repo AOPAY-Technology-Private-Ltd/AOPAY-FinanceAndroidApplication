@@ -1619,6 +1619,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -1686,7 +1687,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -1809,7 +1810,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
             otp = otp,
             consentmessage = "I agree to share my data for verification purposes",
             consentacceptence = "yes",
-            registrationID = "AOP-5039"
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("CibilReq", Gson().toJson(cibilReq))
@@ -1955,6 +1956,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
             "CibilScore" to userScore.toString().toRequestBody(),
             "IsAggrementVerified" to "".toRequestBody(),
             "IsRetailerAggrementVerified" to "".toRequestBody(),
+            "clientcode" to preference.getStringValue(ConstantClass.ClientCode, "").toRequestBody(),
         )
 
         // Debug log full request
@@ -2015,6 +2017,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     requestMap["CibilApiResponse"]!!,
                     requestMap["CustomerCodes"]!!,
                     requestMap["RetailerCode"]!!,
+                    requestMap["clientcode"]!!,
                     requestMap["CibilScore"]!!,
                     requestMap["IsAggrementVerified"]!!,
                     requestMap["IsRetailerAggrementVerified"]!!,
@@ -2162,7 +2165,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         var request = RetailerWalletAmountReq(
             retailerID = registrationID,
-            amountType = "CreditBalance"
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("walletAmountReq", Gson().toJson(request))
 

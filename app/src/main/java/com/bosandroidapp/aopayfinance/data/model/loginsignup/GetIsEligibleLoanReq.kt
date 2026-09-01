@@ -9,4 +9,5 @@ data class GetIsEligibleLoanReq(
     @SerializedName("aadharNumber")
     var aadharNumber : String
 
+
 )

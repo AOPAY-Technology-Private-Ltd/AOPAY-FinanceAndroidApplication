@@ -6,11 +6,13 @@ import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.annotation.RequiresApi
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.SETTINGS_PKG
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.gpsSettingsOpened
@@ -32,6 +34,7 @@ import java.util.Locale
 class MyAccessibilityService : AccessibilityService() {
 
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 
         CoroutineScope(Dispatchers.IO).launch {

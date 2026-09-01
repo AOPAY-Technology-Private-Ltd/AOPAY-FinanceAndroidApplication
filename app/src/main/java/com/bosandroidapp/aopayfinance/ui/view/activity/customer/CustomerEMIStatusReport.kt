@@ -79,7 +79,8 @@ class CustomerEMIStatusReport : BaseActivity() {
 
     fun HitApiForEmiList(){
         var loanemireq = CustomerEmiStatusReq(
-            loanCode = loanCode
+            loanCode = loanCode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq",Gson().toJson(loanemireq))
 

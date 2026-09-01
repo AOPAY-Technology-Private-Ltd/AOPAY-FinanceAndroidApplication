@@ -168,8 +168,7 @@ class ForgetPasswordPage : BaseActivity() {
     fun hitApiForReSendOTP(mailidormobile:String){
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = "Retailer forgot password"
-        )
+            otpType = "Retailer forgot password")
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
         viewModel.sendOTPReq(sendOtpReq).observe(this){
                 resources->resources.let {
@@ -264,8 +263,7 @@ class ForgetPasswordPage : BaseActivity() {
         var verifyotpreq = VerifyOTPReq(
             mobileormailid = mobileOrEmailID,
             otp = otp,
-            logintype = "Retailer Forget password"
-        )
+            logintype = "Retailer Forget password")
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
         viewModel.verifyOTPReq(verifyotpreq).observe(this){
                 resources->resources.let {
@@ -310,11 +308,11 @@ class ForgetPasswordPage : BaseActivity() {
     fun hitApiForChangePassword(mailidormobile: String,password:String){
         var changePass = ForgotPasswordReq(
             mobileormailid =mailidormobile ,
-            password = password
-        )
+            password = password)
         Log.d("ChangePassReq", Gson().toJson(changePass))
+
         viewModel.forgotPasswordReq(changePass).observe(this){
-                resources->resources.let {
+            resources->resources.let {
             when(it.apiStatus){
 
                 ApiStatus.SUCCESS -> {

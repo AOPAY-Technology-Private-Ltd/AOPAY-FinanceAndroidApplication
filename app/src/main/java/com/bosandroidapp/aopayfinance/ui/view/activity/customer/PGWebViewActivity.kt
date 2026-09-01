@@ -100,6 +100,7 @@ class PGWebViewActivity : BaseActivity() {
     </body>
     </html>
 """.trimIndent()
+
         binding.pgwebview.settings.javaScriptEnabled = true
         binding.pgwebview.settings.domStorageEnabled = true
         binding.pgwebview.webViewClient = object : WebViewClient() {
@@ -216,8 +217,9 @@ class PGWebViewActivity : BaseActivity() {
             customerCode =customercode,
             retailerCode = retailercode,
             bankName = "PG",
-            receiptImagePath = ""/*,
-            imageFile = imageFile*/
+            receiptImagePath = "",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")/*,
+             imageFile = imageFile*/
         )
 
         Log.d("loanEmiReceiveReq", Gson().toJson(request))

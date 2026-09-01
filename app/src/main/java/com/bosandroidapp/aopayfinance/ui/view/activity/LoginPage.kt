@@ -189,6 +189,7 @@ class LoginPage : BaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+
         binding.loginlayout.setOnClickListener {
             var emailOfMobile = binding.emailormobilenumber.text.toString().trim()
             var password = binding.password.text.toString().trim()
@@ -207,6 +208,7 @@ class LoginPage : BaseActivity() {
            }
 
         }
+
 
         binding.forgetpageLayout.setOnClickListener {
             val mainIntent = Intent(this@LoginPage, ForgetPasswordPage::class.java)
@@ -291,7 +293,7 @@ class LoginPage : BaseActivity() {
                             fcmToken = FireBaseToken
                         )
 
-                        //sendDataOnServerForUploadToken(req)
+                        sendDataOnServerForUploadToken(req)
 
                         preference.setStringValue(ConstantClass.CustomerCode, response.customerCode.toString())
                         preference.setStringValue(ConstantClass.RetailerCode, response.retailerCode.toString())
@@ -303,15 +305,18 @@ class LoginPage : BaseActivity() {
                         preference.setStringValue(ConstantClass.LoginType, loginType)
                         preference.setStringValue(ConstantClass.LoginMobileorMailid, emailOfMobile)
                         preference.setStringValue(ConstantClass.Loginpassword, password)
+                        preference.setStringValue(ConstantClass.ClientCode, response.clientCode.toString())
 
                         val intent = Intent(this@LoginPage, DashBoard::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         finish()
 
-                    } else {
+                    }
+                    else {
                         OpenPopUpForVAlert(response?.message ?: "Login failed. Please connect with your administrator.")
                     }
+
                 }
 
                 ApiStatus.ERROR -> {
@@ -545,8 +550,7 @@ class LoginPage : BaseActivity() {
         var verifyotpreq = VerifyOTPReq(
             mobileormailid = mobileOrEmailID,
             otp = otp,
-            logintype = message
-        )
+            logintype = message)
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
@@ -590,8 +594,7 @@ class LoginPage : BaseActivity() {
     fun hitApiForReSendOTP(mailidormobile: String,type : String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
             resources.let {

@@ -428,7 +428,8 @@ class PayoutPage : Fragment() {
         var req = HoldAmountWithdrawReq(
             retailerID = preference.getStringValue(ConstantClass.RetailerCode,""),
             amount = binding.holdamountetx.text.toString().trim(),
-            remarks = binding.holdamountremarks.text.toString()
+            remarks = binding.holdamountremarks.text.toString(),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("HoldAmountReq", Gson().toJson(req))
@@ -601,7 +602,8 @@ class PayoutPage : Fragment() {
            ifscCode = "",
            branchName = "",
            remarks = binding.remarks.text.toString(),
-           payoutMode = "Offline"
+           payoutMode = "Offline",
+           clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
        )
    }
    else {
@@ -615,7 +617,8 @@ class PayoutPage : Fragment() {
            ifscCode = binding.ifsccode.text.toString().trim(),
            branchName = binding.branchname.text.toString(),
            remarks = binding.remarks.text.toString(),
-           payoutMode = "Online"
+           payoutMode = "Online",
+           clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
        )
    }
 
@@ -691,10 +694,12 @@ class PayoutPage : Fragment() {
         var registrationID = preference.getStringValue(ConstantClass.RetailerCode, "")
         var request = RetailerWalletAmountReq(
             retailerID = registrationID ,
-            amountType = "CreditBalance"
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("walletAmountReq", Gson().toJson(request))
+
         viewModel.getRetailerWalletAmountReq(request).observe(requireActivity()) { resources ->
             resources.let {
                 when (it.apiStatus) {
@@ -783,8 +788,7 @@ class PayoutPage : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = ""
-        )
+            emailID = "")
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

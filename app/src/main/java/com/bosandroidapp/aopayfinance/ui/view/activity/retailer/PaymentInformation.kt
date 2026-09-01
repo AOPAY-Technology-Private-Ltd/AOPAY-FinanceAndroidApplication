@@ -655,7 +655,7 @@ class PaymentInformation : BaseActivity() {
             iFSCCode = binding.ifsccode.text.toString().trim(),
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
             refID = "",
-            accountNumber = binding.accountnumber.text.toString().trim(),
+            accountNumber = binding.accountnumber.text.toString().trim()
         )
 
         Log.d("PennyDropReq",Gson().toJson(request))
@@ -724,7 +724,7 @@ class PaymentInformation : BaseActivity() {
     fun hitApiForRequestPennyDropCheckStatus(refID: String){
         var request = PennyDropCheckStatusRequest(
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
-            refID = refID,
+            refID = refID
         )
 
         Log.d("PennyDropCheckStatusReq",Gson().toJson(request))
@@ -934,6 +934,7 @@ class PaymentInformation : BaseActivity() {
             logintype = message
         )
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
+
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
@@ -1290,6 +1291,7 @@ class PaymentInformation : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -1358,7 +1360,7 @@ class PaymentInformation : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -1485,7 +1487,7 @@ class PaymentInformation : BaseActivity() {
             lastName = lastName,
             mobileNumber = mob,
             emailId = emailId,
-            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharVerificationreq", Gson().toJson(aadharverificationreq))

@@ -449,6 +449,7 @@ class QRCodePage : BaseActivity() {
                 "CibilScore" to userScore.toString().toRequestBody(),
                 "IsAggrementVerified" to isAggrementVerified.toRequestBody(),
                 "IsRetailerAggrementVerified" to IsRetailerAggrementVerified.toRequestBody(),
+                "clientcode" to preference.getStringValue(ConstantClass.ClientCode, "").toRequestBody(),
             )
 
             // Debug log full request
@@ -512,6 +513,7 @@ class QRCodePage : BaseActivity() {
                         requestMap["CibilApiResponse"]!!,
                         requestMap["CustomerCodes"]!!,
                         requestMap["RetailerCode"]!!,
+                        requestMap["clientcode"]!!,
                         requestMap["CibilScore"]!!,
                         requestMap["IsAggrementVerified"]!!,
                         requestMap["IsRetailerAggrementVerified"]!!,
@@ -637,7 +639,8 @@ class QRCodePage : BaseActivity() {
                                             validateKey = binding.accesstoken.text.toString(),
                                             defaultEmidebit = DefaulterEmiDebitPending,
                                             sellingPrice = ConstantClass.SellingPrice.toDouble(),
-                                            loanMode = ConstantClass.online
+                                            loanMode = ConstantClass.online,
+                                            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
                                         )
                                         Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
@@ -742,7 +745,8 @@ class QRCodePage : BaseActivity() {
                 "IsAggrementVerified" to isAggrementVerified.toRequestBody(),
                 "IsRetailerAggrementVerified" to IsRetailerAggrementVerified.toRequestBody(),
                 "IsRefAdhaarVerified" to ReferenceAadharVerified.toRequestBody(),
-                "IsRefAadhaarNumber" to ReferenceAadharNumber.toRequestBody()
+                "IsRefAadhaarNumber" to ReferenceAadharNumber.toRequestBody(),
+                "clientcode" to preference.getStringValue(ConstantClass.ClientCode, "").toRequestBody(),
             )
 
             Log.d("RefVerified", "${ ReferenceAadharVerified } ${ ReferenceAadharNumber }")
@@ -800,6 +804,7 @@ class QRCodePage : BaseActivity() {
                             requestMap["CreatedBy"]!!,
                             requestMap["MemberShipFees"]!!,
                             requestMap["RetailerCode"]!!,
+                            requestMap["clientcode"]!!,
                             requestMap["PanApiResponse"]!!,
                             requestMap["AadhaarApiResponse"]!!,
                             requestMap["CibilApiResponse"]!!,
@@ -911,7 +916,8 @@ class QRCodePage : BaseActivity() {
                                         validateKey = binding.accesstoken.text.toString(),
                                         defaultEmidebit = DefaulterEmiDebitAutoApproved,
                                         sellingPrice = ConstantClass.SellingPrice.toDouble(),
-                                        loanMode = ConstantClass.online
+                                        loanMode = ConstantClass.online,
+                                        clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
                                     )
                                     Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
@@ -1010,6 +1016,7 @@ class QRCodePage : BaseActivity() {
                             requestMap["CreatedBy"]!!,
                             requestMap["MemberShipFees"]!!,
                             requestMap["RetailerCode"]!!,
+                            requestMap["clientcode"]!!,
                             requestMap["CibilScore"]!!,
                             requestMap["IsAggrementVerified"]!!,
                             requestMap["IsRetailerAggrementVerified"]!!,
@@ -1134,7 +1141,8 @@ class QRCodePage : BaseActivity() {
                                             validateKey = binding.accesstoken.text.toString(),
                                             defaultEmidebit = DefaulterEmiDebitPending,
                                             sellingPrice = ConstantClass.SellingPrice.toDouble(),
-                                            loanMode = ConstantClass.CheckOnlineOrOffline
+                                            loanMode = ConstantClass.CheckOnlineOrOffline,
+                                            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
                                         )
                                         Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
@@ -1255,8 +1263,7 @@ class QRCodePage : BaseActivity() {
                                             teleNumber = "",
                                             authType = "",
                                             bankID = BankID,
-                                            bankAccountNumber = AccountNumber
-                                        )
+                                            bankAccountNumber = AccountNumber)
                                         hitApiForEnach(request,false)
                                     }
                                     else{
@@ -1521,6 +1528,7 @@ class QRCodePage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -1592,7 +1600,7 @@ class QRCodePage : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -1631,7 +1639,8 @@ class QRCodePage : BaseActivity() {
 
     fun hitApiForValidateKey() {
         var keyvalidatereq = ValidateAccessKeyReq(
-            apiacessKey = binding.accesstoken.text.toString().trim()
+            apiacessKey = binding.accesstoken.text.toString().trim(),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("keyvalidatereq", Gson().toJson(keyvalidatereq))
@@ -1764,8 +1773,7 @@ class QRCodePage : BaseActivity() {
 
         var request = LoanChargeReq(
             registrationID = PENNYDROP_REGISTRATION_ID,
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         panViewModel.loanApplyChargesReq(request).observe(this) { resources ->
             resources.let {

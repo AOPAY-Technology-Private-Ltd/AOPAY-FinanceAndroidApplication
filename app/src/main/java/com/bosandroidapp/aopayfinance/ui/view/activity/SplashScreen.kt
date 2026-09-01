@@ -33,10 +33,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
-
 class SplashScreen : AppCompatActivity() {
     lateinit var binding: SplashMainBinding
     lateinit var preference: SharedPreference
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +55,9 @@ class SplashScreen : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        binding.uattext.visibility= View.VISIBLE
+
+        binding.uattext.visibility= View.GONE
+
 
         Handler(Looper.getMainLooper()).postDelayed({
 
@@ -69,6 +71,7 @@ class SplashScreen : AppCompatActivity() {
                     startActivity(intent)
                 }.show()
             }
+
             else{
 
                 // Code to run after delay
@@ -83,8 +86,6 @@ class SplashScreen : AppCompatActivity() {
                     finish()
                 }
             }
-
-
 
 
         }, 3000)

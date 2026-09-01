@@ -87,7 +87,8 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
 
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode, "")
+            customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         try {
             Logger.d(ACCESSIBILITYTAG, "Syncing EMIs")
@@ -102,9 +103,7 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
                     Logger.d(ACCESSIBILITYTAG, obj)
                     sharedPref.edit().putString("LoanData", obj).apply()
                 }
-                
-                // Mark as synced only on successful API response
-                sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
+
                 Logger.d(ACCESSIBILITYTAG, "Loan data synced for date: $currentDate")
             }
         }
@@ -492,13 +491,15 @@ private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
 }
 
 
-
 fun Context.hasDateChanged(): Boolean {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     val lastSync = sharedPref.getString("LoanSyncDate", "")
-    Log.d("LastSyncDate", lastSync.toString())
-    Log.d("CurrentDate", currentDate.toString())
-    return lastSync != currentDate
+    if (lastSync !=currentDate) {
+        sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
+        // Logger.d(ACCESSIBILITYTAG, currentDate.toString())
+        return true
+    }
+    return false
 }
 
 

@@ -9,5 +9,4 @@ data class VerifyOTPReq(
     var otp:String,
     @SerializedName("login_Type")
     var logintype:String
-
 )

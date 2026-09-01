@@ -271,8 +271,7 @@ class KioskActivity : AppCompatActivity() {
             address="",
             aadharNumber="",
             panNumber="",
-            activeStatus=""
-        )
+            activeStatus="")
 
         Log.d("retailergetprofileReq", Gson().toJson(req))
 
@@ -320,11 +319,13 @@ class KioskActivity : AppCompatActivity() {
             Log.d("EMI_API", "Already running")
             return
         }
-
         isApiRunning = true
+
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode,""))
+            customercode = preference.getStringValue(ConstantClass.CustomerCode,""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""))
+
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
         viewModel.getCustomerLoanEmiDetailsReq(loanemireq).observe(this) { resources ->
@@ -345,6 +346,7 @@ class KioskActivity : AppCompatActivity() {
 
                                     setData(response.data, response.indiaTimeIST ?: "")
                                 }
+
                             }
 
                         }

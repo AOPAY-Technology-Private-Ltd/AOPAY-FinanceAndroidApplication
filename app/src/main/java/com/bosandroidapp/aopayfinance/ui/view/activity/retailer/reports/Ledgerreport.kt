@@ -155,6 +155,7 @@ class Ledgerreport : BaseActivity() {
             dealerCode = retailercode ,
             fromDate = FromDate,
             toDate = ToDate,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("ledgerreq", Gson().toJson(gettingreportsreq))

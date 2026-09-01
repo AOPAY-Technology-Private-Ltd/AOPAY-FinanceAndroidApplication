@@ -75,8 +75,7 @@ class BankListPage : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = ""
-        )
+            emailID = "")
 
         Log.d("GetBankListReq", Gson().toJson(req))
 
@@ -86,7 +85,7 @@ class BankListPage : Fragment() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let {
-                                    response ->
+                                response ->
                                 ConstantClass.dialog!!.dismiss()
                                 if(response!!.statuss.equals("True")){
                                     Log.d("BankListRes",Gson().toJson(response))
@@ -97,7 +96,8 @@ class BankListPage : Fragment() {
                                         adapter.notifyDataSetChanged()
                                         binding.notfoundimage.visibility= View.GONE
                                         binding.banklistview.visibility = View.VISIBLE
-                                    }else{
+                                    }
+                                    else{
                                         binding.notfoundimage.visibility= View.VISIBLE
                                         binding.banklistview.visibility = View.GONE
                                     }

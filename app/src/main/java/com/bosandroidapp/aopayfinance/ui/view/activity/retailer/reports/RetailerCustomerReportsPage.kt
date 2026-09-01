@@ -247,7 +247,8 @@ class RetailerCustomerReportsPage : BaseActivity() {
             recordStatus = recordStatus,
             customercode = "",
             fromDate = FromDate,
-            toDate = ToDate
+            toDate = ToDate,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("RetailerCustomerLoanReq", Gson().toJson(reportreq))
 
@@ -315,6 +316,7 @@ class RetailerCustomerReportsPage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -348,8 +350,7 @@ class RetailerCustomerReportsPage : BaseActivity() {
         var request = ValidateSessionRequest(
             preference.getStringValue(ConstantClass.RetailerCode, ""),
             preference.getStringValue(ConstantClass.DEVICEID, ""),
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            preference.getStringValue(ConstantClass.FCMTOKEN, ""))
         Log.d("validaterequest", Gson().toJson(request))
 
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -383,7 +384,7 @@ class RetailerCustomerReportsPage : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

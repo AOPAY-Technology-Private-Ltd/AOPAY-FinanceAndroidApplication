@@ -310,6 +310,7 @@ class MobileSelectionActivity : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -343,8 +344,7 @@ class MobileSelectionActivity : BaseActivity() {
         var request = ValidateSessionRequest(
             preference.getStringValue(ConstantClass.RetailerCode, ""),
             preference.getStringValue(ConstantClass.DEVICEID, ""),
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            preference.getStringValue(ConstantClass.FCMTOKEN, ""))
 
         Log.d("validaterequest", Gson().toJson(request))
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -376,8 +376,7 @@ class MobileSelectionActivity : BaseActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 

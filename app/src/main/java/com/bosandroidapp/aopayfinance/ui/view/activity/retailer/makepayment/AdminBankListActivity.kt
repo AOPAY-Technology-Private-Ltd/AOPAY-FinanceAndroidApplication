@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.impl.model.Preference
 import com.bos.payment.appName.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -48,7 +49,8 @@ class AdminBankListActivity : Fragment() {
 
     fun hitApiForAdminBankList(){
         var  adminBankReq = AdminBankDetailsReq(
-            adminCode = ConstantClass.Admin
+            adminCode = ConstantClass.Admin,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("AdminBankListReq", Gson().toJson(adminBankReq))

@@ -111,7 +111,8 @@ class CustomerReportsPage : BaseActivity() {
             recordStatus = recordStatus,
             customercode = customerCode,
             fromDate = null,
-            toDate = null
+            toDate = null,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("ReportReq", Gson().toJson(reportreq))
         viewModel.getReportsReq(reportreq).observe(this) { resources ->

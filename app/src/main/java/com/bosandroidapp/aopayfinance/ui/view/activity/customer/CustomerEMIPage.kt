@@ -105,7 +105,8 @@ class CustomerEMIPage : BaseActivity() {
     fun HitApiForEmiList(){
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode,"")
+            customercode = preference.getStringValue(ConstantClass.CustomerCode,""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq",Gson().toJson(loanemireq))
 

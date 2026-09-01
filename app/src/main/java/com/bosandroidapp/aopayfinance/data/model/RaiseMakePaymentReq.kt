@@ -1,5 +1,6 @@
 package com.bosandroidapp.aopayfinance.data.model
 
+import com.google.gson.annotations.SerializedName
 import java.io.File
 
 data class RaiseMakePaymentReq(
@@ -17,7 +18,9 @@ data class RaiseMakePaymentReq(
     val CreatedBy: String,
     val RecordStatus: String,
     val ActiveStatus: String,
-    val imagefile1: File ?
+    val imagefile1: File ?,
+    @SerializedName("clientcode")
+    var clientCode: String
 )
 
 

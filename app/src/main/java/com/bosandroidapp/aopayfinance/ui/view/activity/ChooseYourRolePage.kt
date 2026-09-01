@@ -164,7 +164,7 @@ class ChooseYourRolePage : BaseActivity() {
             deviceID = deviceId,
             brand = DeviceBrand,
             deviceName = DeviceName,
-            manufacturer = deviceManufacturer,
+            manufacturer = deviceManufacturer
         )
         Log.d("DeviceInfoReq", Gson().toJson(request))
 
