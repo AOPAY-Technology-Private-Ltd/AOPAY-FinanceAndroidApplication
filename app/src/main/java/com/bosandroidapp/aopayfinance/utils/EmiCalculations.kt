@@ -494,7 +494,7 @@ private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
 fun Context.hasDateChanged(): Boolean {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     val lastSync = sharedPref.getString("LoanSyncDate", "")
-    if (lastSync !=currentDate) {
+    if (lastSync != currentDate) {
         sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
         // Logger.d(ACCESSIBILITYTAG, currentDate.toString())
         return true

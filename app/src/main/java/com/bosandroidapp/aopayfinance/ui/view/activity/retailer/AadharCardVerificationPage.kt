@@ -198,7 +198,8 @@ class AadharCardVerificationPage : BaseActivity() {
 
         var eligiblereq = GetIsEligibleLoanReq(
             panNumber = "",
-            aadharNumber = aadharNumber
+            aadharNumber = aadharNumber,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
         Log.d("IsEligibleReq", Gson().toJson(eligiblereq))
 

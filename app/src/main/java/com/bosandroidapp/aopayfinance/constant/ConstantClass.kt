@@ -108,16 +108,16 @@ object ConstantClass {
 
      // Procustion  API
 
-  /*   const val BASE_URL = "https://api.aopay.finance/"
-       const val BASE_URL_IMAGE = "https://api.aopay.finance"
-
-       const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-       const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
+       /* const val BASE_URL = "https://api.aopay.finance/"
+          const val BASE_URL_IMAGE = "https://api.aopay.finance"
+          const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
+          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
 
 
      // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+
        const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
        const val PENNYDROP_REGISTRATION_ID = "AOP-554"
 
@@ -1087,6 +1087,7 @@ object ConstantClass {
     }
 
 
+
     fun Activity.showDevModeSnackbar(rootView: View) {
         Snackbar.make(
             rootView,
@@ -1096,6 +1097,7 @@ object ConstantClass {
             openDeveloperOptions()
         }.show()
     }
+
 
 
     fun Activity.openDeveloperOptions() {
@@ -1191,6 +1193,7 @@ object ConstantClass {
             ""
         }
     }
+
 
 
     fun eMandateformatDate(input: String): String {

@@ -20,6 +20,7 @@ import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.DueOverdueResponse
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenResponse
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerResponse
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
@@ -190,8 +191,7 @@ interface ApiInterface {
 
 
     @POST("api/V1/AopayFinance/GetAllDeviceDetails")
-    suspend fun getAllDeviceDetails(): Response<GetAllMobileDetailsListRes>?
-
+    suspend fun getAllDeviceDetails(@Body req : GetDevicedetailsReq): Response<GetAllMobileDetailsListRes>?
 
 
     @POST("api/V1/AopayFinance/GetModelWiseLoanDetails")

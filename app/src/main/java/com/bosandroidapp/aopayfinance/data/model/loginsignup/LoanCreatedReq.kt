@@ -80,6 +80,7 @@ data class LoanCreatedReq (
 
     @SerializedName("loanmode")
     var loanMode :String,
+
     @SerializedName("clientcode")
     var clientCode:String
 

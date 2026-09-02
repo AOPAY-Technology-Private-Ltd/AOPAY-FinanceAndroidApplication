@@ -521,6 +521,7 @@ class SignupPage : BaseActivity() {
         val storePhoto = saveImageToCache(this, storePhotoUri!!, "storefront.jpg")
         val companydoc = saveImageToCache(this, companyCodePhotoUri!!, "companydoc.jpg")
         val cancelcheque = saveImageToCache(this, chequePhotoUri!!, "cancelcheque.jpg")
+        var companyCode = binding.companyCodeEditText.text.toString().trim()
 
 
         var registationRequest = RegistrationReq(
@@ -535,7 +536,7 @@ class SignupPage : BaseActivity() {
             panNumber = panNumber,
             storeName = storename,
             storeAddress = storeaddress,
-            clientCode = preference.getStringValue(ConstantClass.ClientCode,""),
+            clientCode = companyCode,
             profilePhoto,
             aadhaarfront,
             aadhaarback,
@@ -587,6 +588,7 @@ class SignupPage : BaseActivity() {
         }
 
     }
+
 
 
     fun validateForm(firstname:String, lastname:String, aadharNumber: String, panNumber: String, mobile: String, email: String, address: String, password: String, confirmPassword: String,
@@ -827,7 +829,6 @@ class SignupPage : BaseActivity() {
             scrollView.smoothScrollBy(0, y)
         }
     }
-
 
 
 }

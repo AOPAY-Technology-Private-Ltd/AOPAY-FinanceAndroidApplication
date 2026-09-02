@@ -261,6 +261,7 @@ class QRCodePage : BaseActivity() {
             if (loancreatedreq != null) {
                 if (loaneCode.trim().isNotEmpty() && BankIFSCCode.trim().isNotEmpty() && ConstantClass.AccountHolderName.trim().isNotEmpty() && AccountType.trim().isNotEmpty()) {
                     // Loan already created in a previous attempt, retry E-Nach directly
+
                     val startDate = LoanStartDate
                     val endDate = LoanEndDate
                     val emiAmount = EmiAmount.toDouble().roundToInt()
@@ -289,7 +290,9 @@ class QRCodePage : BaseActivity() {
                         bankID = BankID,
                         bankAccountNumber = AccountNumber
                     )
+
                     hitApiForEnach(request,true)
+
                 }
                 else {
                     // No loan created yet, proceed with the normal flow
@@ -1376,7 +1379,8 @@ class QRCodePage : BaseActivity() {
         val startTime = System.currentTimeMillis()
         var req = GetIsEligibleLoanReq(
             panNumber = PanNumber,
-            aadharNumber = ""
+            aadharNumber = "",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("checkMemberShipReq", Gson().toJson(req))
@@ -1736,6 +1740,7 @@ class QRCodePage : BaseActivity() {
                                     }
 
                                 }
+
                                 val error = users.body()?.statusDesc ?: users.message() ?: "Something went wrong"
                                 Toast.makeText(this, error, Toast.LENGTH_LONG).show()
                             }

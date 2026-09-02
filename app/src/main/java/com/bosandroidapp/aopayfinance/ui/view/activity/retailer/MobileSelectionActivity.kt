@@ -33,6 +33,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.DataItem
@@ -164,7 +165,10 @@ class MobileSelectionActivity : BaseActivity() {
 
 
     fun hitApiForGetMobileDataList(){
-        viewModel.getMobileList().observe(this){ resources->resources.let {
+        var req = GetDevicedetailsReq(
+            clientcode = preference.getStringValue(ConstantClass.ClientCode,"")
+        )
+        viewModel.getMobileList(req).observe(this){ resources->resources.let {
             when(it.apiStatus){
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->

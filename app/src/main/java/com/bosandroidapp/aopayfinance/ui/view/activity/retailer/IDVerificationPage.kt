@@ -178,7 +178,7 @@ class IDVerificationPage : BaseActivity() {
 
 
         binding.cibilcardlayout.setOnClickListener {
-            startActivity(Intent(this@IDVerificationPage, CivilReportForm::class.java))
+           // startActivity(Intent(this@IDVerificationPage, CivilReportForm::class.java))
         }
 
 

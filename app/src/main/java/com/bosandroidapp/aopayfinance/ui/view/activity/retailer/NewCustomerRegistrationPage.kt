@@ -146,6 +146,7 @@ import kotlin.toString
 
 
 class NewCustomerRegistrationPage : BaseActivity() {
+
     lateinit var binding: ActivityNewCustomerRegistrationPageBinding
 
     lateinit var dialog: Dialog
@@ -193,7 +194,6 @@ class NewCustomerRegistrationPage : BaseActivity() {
         }
 
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,6 +218,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         setDataInUI()
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -589,7 +590,6 @@ class NewCustomerRegistrationPage : BaseActivity() {
             onBackPressed()
         }
 
-
         binding.acceptTermConditionCheck.setOnClickListener {
 
             OpenPopUpForTermCondition()
@@ -937,12 +937,12 @@ class NewCustomerRegistrationPage : BaseActivity() {
     }
 
 
-
     fun hitApiForSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
             otpType = type
         )
+
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
 
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
@@ -989,6 +989,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 }
             }
         }
+
     }
 
 
@@ -1375,6 +1376,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
             }
         }
     }
+
 
 
     fun hitApiForResendMobVerify(mobnumber: String, customerName: String, OTP: String) {
@@ -1796,7 +1798,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         if(CusteMailID.isNullOrBlank()){
             emailID = "bos.centerpvtltd@gmail.com"
-        }else{
+        }
+        else{
             emailID = CusteMailID
         }
 
@@ -1814,6 +1817,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         )
 
         Log.d("CibilReq", Gson().toJson(cibilReq))
+
         viewCibilModel.getCibilReq(cibilReq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {

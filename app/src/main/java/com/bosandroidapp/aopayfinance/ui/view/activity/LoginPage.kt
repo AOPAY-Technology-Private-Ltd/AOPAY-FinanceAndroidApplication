@@ -287,7 +287,7 @@ class LoginPage : BaseActivity() {
 
                         val req = NotificationSendTokenRequest(
                             deviceType= ConstantClass.DeviceType,
-                            clientCode = ConstantClass.ClientCode,
+                            clientCode = response.clientCode.toString(),
                             customerCode = response.customerCode.toString(),
                             retailerCode = response.retailerCode.toString(),
                             fcmToken = FireBaseToken
