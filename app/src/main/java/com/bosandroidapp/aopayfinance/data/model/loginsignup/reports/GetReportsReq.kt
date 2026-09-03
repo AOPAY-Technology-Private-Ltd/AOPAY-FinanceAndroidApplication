@@ -17,4 +17,6 @@ data class GetReportsReq(
 
     @SerializedName("toDate")
     var toDate:String? = null,
+    @SerializedName("clientcode")
+    var clientCode: String
     )

@@ -33,6 +33,4 @@ data class CibilScoreReq(
 
     @SerializedName("RegistrationID")
     var registrationID: String
-
-
 )

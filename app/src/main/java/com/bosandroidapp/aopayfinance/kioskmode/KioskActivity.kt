@@ -1,5 +1,6 @@
 package com.bosandroidapp.aopayfinance.kioskmode
 
+import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
@@ -7,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -29,6 +31,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isLockTaskStarted
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerProfileReq
@@ -51,6 +55,7 @@ import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import kotlin.toString
 
 class KioskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityKioskBinding
@@ -100,7 +105,6 @@ class KioskActivity : AppCompatActivity() {
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
 
         hitapiforGetUpdateProfile()
-
         HitApiForEmiList()
 
         val apps = findViewById<RecyclerView>(R.id.paymentApps)
@@ -117,12 +121,6 @@ class KioskActivity : AppCompatActivity() {
             apps.visibility=View.GONE
         }
 
-        // for testing transferOwnerShip.....................................................
-        val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-        if (dpm.isLockTaskPermitted(packageName)) {
-            startLockTask() // 🔒 Enter kiosk mode
-        }
 
         setOnClickListner()
 
@@ -138,77 +136,110 @@ class KioskActivity : AppCompatActivity() {
 
             HitApiForEmiList()
         }
+
+        hitapiforGetUpdateProfile()
+
+        // for testing transferOwnerShip.....................................................
+        val dpm = getSystemService(DevicePolicyManager::class.java)
+        val admin = ComponentName(this, KioskDeviceAdminReceiver::class.java)
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        if (dpm.isDeviceOwnerApp(packageName)) {
+
+            // Whitelist the app for Lock Task Mode (typically done once during provisioning)
+            dpm.setLockTaskPackages(admin, arrayOf(packageName))
+
+            // Start Lock Task only if not already active
+            if (!isLockTaskStarted &&activityManager.lockTaskModeState == ActivityManager.LOCK_TASK_MODE_NONE) {
+                startLockTask()
+                isLockTaskStarted = true
+            }
+        }
+
+        isPgClosing = false
     }
 
 
     fun setOnClickListner(){
 
         binding.submitpayment.setOnClickListener {
+                 if(isInternetAvailable(this@KioskActivity)) {
+                     if(!binding.amount.text.toString().isNullOrBlank()){
+                         emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
+                         if(binding.noOfEmi.selectedItem.toString().isNullOrBlank()){
+                             isApiRunning = false
+                             HitApiForEmiList()
+                         }
+                         else{
+                             if(emiamount>0.0){
+                                 lifecycleScope.launch {
+                                     selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                     // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                                     // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                                     var ForServerlatefine:String ?= ""
+                                     PGWebViewActivity.emiList.clear()
 
-            emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
+                                     for (j in 1..selectedNoofEmi) {
 
-            if(isInternetAvailable(this@KioskActivity)) {
+                                         val emiIndex = j - 1
 
-                    lifecycleScope.launch {
-                        selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                        // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                        // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
-                        var ForServerlatefine:String ?= ""
-                        PGWebViewActivity.emiList.clear()
+                                         val emiAmountWithFine: String
 
-                        for (j in 1..selectedNoofEmi) {
+                                         if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
+                                             if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
+                                                 emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                                 BounceChargeApplicable = BounceCharge
+                                             }
+                                             else{
+                                                 emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                                 BounceChargeApplicable = "0"
+                                             }
+                                             ForServerlatefine = latefine
+                                         }
+                                         else {
+                                             emiAmountWithFine = emiAmount
+                                             ForServerlatefine = "0"
+                                             BounceChargeApplicable = "0"
+                                         }
 
-                            val emiIndex = j - 1
+                                         Log.d("emiAmountWithFine", emiAmountWithFine)
+                                         Log.d("EMIAmount", emiAmountWithFine)
+                                         emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
+                                         )
+                                     }
 
-                            val emiAmountWithFine: String
+                                     val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
+                                     val emiNumbers=  (1..selectedNoofEmi).joinToString("")
+                                     PGWebViewActivity.LoanCodePG = loanCode
 
-                            if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
-                                if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
-                                    BounceChargeApplicable = BounceCharge
-                                }
-                                else{
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
-                                    BounceChargeApplicable = "0"
-                                }
-                                ForServerlatefine = latefine
-                            }
-                            else {
-                                emiAmountWithFine = emiAmount
-                                ForServerlatefine = "0"
-                                BounceChargeApplicable = "0"
-                            }
-
-                            Log.d("emiAmountWithFine", emiAmountWithFine)
-                            Log.d("EMIAmount", emiAmountWithFine)
-                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
-                            )
-                        }
-
-                        val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
-                        val emiNumbers=  (1..selectedNoofEmi).joinToString("")
-
-                        PGWebViewActivity.LoanCodePG = loanCode
-
-                        var req = PGRequestCall(
-                            payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                            customerEmailID = email,
-                            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                            payCartAmount = emiamount.toString(),
-                            eMINumbers = "EMI${emiNumbers}",
-                            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                            payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                            loanCode = loanCode
-                        )
-
-                        hitApiForRequestPG(req)
-
-
-                    }
-
-                }
-
-
+                                     var req = PGRequestCall(
+                                         payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                         customerEmailID = email,
+                                         registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                         payCartAmount = emiamount.toString(),
+                                         eMINumbers = "EMI${emiNumbers}",
+                                         customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                         payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                         loanCode = loanCode
+                                     )
+                                     hitApiForRequestPG(req)
+                                 }
+                             }
+                         }
+                     }
+                     else{
+                         isApiRunning = false
+                         HitApiForEmiList()
+                     }
+                 }
+                else{
+                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                         startActivity(Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY))
+                     } else {
+                         startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                     }
+                     Toast.makeText(this@KioskActivity,"Please connect with internet", Toast.LENGTH_SHORT).show()
+                 }
         }
     }
 
@@ -240,8 +271,7 @@ class KioskActivity : AppCompatActivity() {
             address="",
             aadharNumber="",
             panNumber="",
-            activeStatus=""
-        )
+            activeStatus="")
 
         Log.d("retailergetprofileReq", Gson().toJson(req))
 
@@ -254,7 +284,7 @@ class KioskActivity : AppCompatActivity() {
 
                                 if (response!!.statuss.equals("True")) {
                                     Log.d("retailerDetailsResponse", Gson().toJson(response))
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     EmailId= response.emailid.toString()
                                     MobileNumber= response.mobileNo.toString()
                                     FName= response.firstName.toString()
@@ -289,11 +319,13 @@ class KioskActivity : AppCompatActivity() {
             Log.d("EMI_API", "Already running")
             return
         }
-
         isApiRunning = true
+
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode,""))
+            customercode = preference.getStringValue(ConstantClass.CustomerCode,""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""))
+
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
         viewModel.getCustomerLoanEmiDetailsReq(loanemireq).observe(this) { resources ->
@@ -307,13 +339,14 @@ class KioskActivity : AppCompatActivity() {
                                 isApiRunning = false
 
                                 resources.data?.body()?.let { response ->
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
                                     LoanEmiList = response.data
                                     previousLoanData = response.data
                                     previousCurrentDate = response.indiaTimeIST ?: ""
 
                                     setData(response.data, response.indiaTimeIST ?: "")
                                 }
+
                             }
 
                         }
@@ -321,8 +354,8 @@ class KioskActivity : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                           ConstantClass.dialog!!.dismiss()
                         }
                         HitApiForEmiList()
                     }
@@ -423,13 +456,15 @@ class KioskActivity : AppCompatActivity() {
 
                                 if (response!!.status?.toLowerCase().equals("true",ignoreCase = true) && !response.preparePOSTForm.isNullOrEmpty()) {
                                     // Open WebView with the provided URL
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
+                                    isLockTaskStarted = false
+                                    stopLockTask()
                                     val intent = Intent(this@KioskActivity, PGWebViewActivity::class.java)
                                     intent.putExtra("pgurl", response.preparePOSTForm)
                                     startActivity(intent)
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                   ConstantClass.dialog!!.dismiss()
                                     Toast.makeText(this@KioskActivity, response.message, Toast.LENGTH_SHORT).show()
                                 }
 
@@ -440,7 +475,7 @@ class KioskActivity : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                       ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

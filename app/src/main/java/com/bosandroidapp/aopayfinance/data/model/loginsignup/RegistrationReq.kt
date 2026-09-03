@@ -37,6 +37,9 @@ data class RegistrationReq(
     @SerializedName("storeAddress")
     var storeAddress:String,
 
+    @SerializedName("clientcode")
+    var clientCode:String,
+
     val profilePhoto: File?,
 
     val aadhaarfront: File?,

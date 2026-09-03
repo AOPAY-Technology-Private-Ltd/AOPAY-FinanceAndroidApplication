@@ -23,6 +23,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDeta
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPendingEmisPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.DueOverdueCustomerReports
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MobileSelectionActivity.Companion.FilterDataList
@@ -34,7 +35,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
-class DuesEMIPage : AppCompatActivity() {
+class DuesEMIPage : BaseActivity() {
     lateinit var binding : ActivityPendingEmisPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
@@ -133,7 +134,8 @@ class DuesEMIPage : AppCompatActivity() {
     fun hitApiForGettingDueOverDueDataList(reporttype:String){
         var loanemireq = DueOverdueRequest(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-            reportType = reporttype
+            reportType = reporttype,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("dueoverduereq", Gson().toJson(loanemireq))
@@ -145,7 +147,7 @@ class DuesEMIPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("dueoverduewresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 val dueOverdueList = response.data
                                 dueOverdueDataList!!.clear()
 
@@ -170,7 +172,7 @@ class DuesEMIPage : AppCompatActivity() {
                     ApiStatus.ERROR -> {
                         binding.notfoundimage.visibility=View.VISIBLE
                         binding.showreports.visibility=View.GONE
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
 

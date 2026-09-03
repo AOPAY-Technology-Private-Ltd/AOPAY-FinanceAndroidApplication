@@ -96,6 +96,7 @@ import com.bosandroidapp.aopayfinance.data.pennydrop.PennyDropRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -112,7 +113,7 @@ import java.util.Locale
 import kotlin.text.clear
 import kotlin.text.equals
 
-class PaymentInformation : AppCompatActivity() {
+class PaymentInformation : BaseActivity() {
     lateinit var  binding : ActivityPaymentInformationBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var api: ApiInterface
@@ -256,7 +257,7 @@ class PaymentInformation : AppCompatActivity() {
                   ApiStatus.SUCCESS -> {
                       it.data.let { users ->
                           users!!.body().let { response ->
-                              ConstantClass.dialog.dismiss()
+                              ConstantClass.dialog!!.dismiss()
 
                               if(response!!.status!!.toLowerCase().equals("false")){
                                   Toast.makeText(this@PaymentInformation,response.message, Toast.LENGTH_SHORT).show()
@@ -281,7 +282,7 @@ class PaymentInformation : AppCompatActivity() {
                   }
 
                   ApiStatus.ERROR -> {
-                      ConstantClass.dialog.dismiss()
+                      ConstantClass.dialog!!.dismiss()
                   }
 
                   ApiStatus.LOADING -> {
@@ -615,23 +616,24 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     else{
-                        val (isValid, errorMessage) = isReferenceValidForm(
-                            referName = binding.refername.text.toString().trim(),
-                            referRelation = binding.referrelatinonship.text.toString().trim(),
-                            refMobile = binding.refmobno.text.toString().trim(),
-                            refAddress = binding.refaddress.text.toString().trim())
+                            val (isValid, errorMessage) = isReferenceValidForm(
+                                referName = binding.refername.text.toString().trim(),
+                                referRelation = binding.referrelatinonship.text.toString().trim(),
+                                refMobile = binding.refmobno.text.toString().trim(),
+                                refAddress = binding.refaddress.text.toString().trim())
 
-                        if (!isValid) {
-                            Toast.makeText(this@PaymentInformation, errorMessage, Toast.LENGTH_SHORT).show()
-                        }
-                        else
-                        {
-                            RefName = binding.refername.text.toString().trim()
-                            RefRelationShip = binding.referrelatinonship.text.toString().trim()
-                            RefmobileNo = binding.refmobno.text.toString().trim()
-                            RefAddress =  binding.refaddress.text.toString().trim()
-                            startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
-                        }
+                            if (!isValid) {
+                                Toast.makeText(this@PaymentInformation, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                            else
+                            {
+                                RefName = binding.refername.text.toString().trim()
+                                RefRelationShip = binding.referrelatinonship.text.toString().trim()
+                                RefmobileNo = binding.refmobno.text.toString().trim()
+                                RefAddress =  binding.refaddress.text.toString().trim()
+                                startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
+                            }
+
                     }
 
 
@@ -653,7 +655,7 @@ class PaymentInformation : AppCompatActivity() {
             iFSCCode = binding.ifsccode.text.toString().trim(),
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
             refID = "",
-            accountNumber = binding.accountnumber.text.toString().trim(),
+            accountNumber = binding.accountnumber.text.toString().trim()
         )
 
         Log.d("PennyDropReq",Gson().toJson(request))
@@ -665,7 +667,7 @@ class PaymentInformation : AppCompatActivity() {
                         it.data.let { users ->
                             users!!.body().let { response ->
                                 Log.d("PennyDropRes",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.model?.status.equals(ConstantClass.SUCCESS)){
                                     isBankVerified = true
                                     var beneficiaryName =  response.model!!.beneficiaryName
@@ -704,7 +706,7 @@ class PaymentInformation : AppCompatActivity() {
 
                     ApiStatus.ERROR -> {
                         binding.nextlayout.isEnabled = true
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -722,7 +724,7 @@ class PaymentInformation : AppCompatActivity() {
     fun hitApiForRequestPennyDropCheckStatus(refID: String){
         var request = PennyDropCheckStatusRequest(
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
-            refID = refID,
+            refID = refID
         )
 
         Log.d("PennyDropCheckStatusReq",Gson().toJson(request))
@@ -734,7 +736,7 @@ class PaymentInformation : AppCompatActivity() {
                         it.data.let { users ->
                             users!!.body().let { response ->
                                 Log.d("PennyDropCheckStatusRes",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.model?.status.equals(ConstantClass.SUCCESS)){
                                     AccountNumber = binding.accountnumber.text.toString().trim()
                                     BankIFSCCode = binding.ifsccode.text.toString().trim()
@@ -757,7 +759,7 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -796,14 +798,14 @@ class PaymentInformation : AppCompatActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@PaymentInformation,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -839,8 +841,8 @@ class PaymentInformation : AppCompatActivity() {
                     ).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                         OpenPopUpForVeryfyOTP(mobnumber, OTP)
                     }
 
@@ -858,10 +860,10 @@ class PaymentInformation : AppCompatActivity() {
 
     fun OpenPopUpForVeryfyOTP(EmailID: String, otp: String) {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -871,17 +873,17 @@ class PaymentInformation : AppCompatActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
         // Access views inside the custom layout
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val title = dialog.findViewById<TextView>(R.id.text_subtitle)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val title = dialog!!.findViewById<TextView>(R.id.text_subtitle)
 
         startOtpTimer(resendtxt, timer)
 
@@ -889,7 +891,7 @@ class PaymentInformation : AppCompatActivity() {
 
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -921,7 +923,7 @@ class PaymentInformation : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -932,13 +934,14 @@ class PaymentInformation : AppCompatActivity() {
             logintype = message
         )
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
+
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
                                         binding.refmobno.isEnabled = false
@@ -946,8 +949,8 @@ class PaymentInformation : AppCompatActivity() {
                                         binding.verifyiconphonenumber.visibility = View.VISIBLE
                                         binding.verifymobilenumber.visibility = View.GONE
 
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                 }else{
                                     isRefMobVerified = false
@@ -960,7 +963,7 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -986,7 +989,7 @@ class PaymentInformation : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
 
                                 if(response.statuss.equals("True")){
@@ -997,7 +1000,7 @@ class PaymentInformation : AppCompatActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@PaymentInformation,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
 
                             }
@@ -1006,7 +1009,7 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1042,8 +1045,8 @@ class PaymentInformation : AppCompatActivity() {
                     ).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                     }
                     Log.d("API_SUCCESS", loanData.toString())
                 } else {
@@ -1207,10 +1210,10 @@ class PaymentInformation : AppCompatActivity() {
     fun OpenAlertForExit(){
 
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.emialert_retailer)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.emialert_retailer)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -1219,9 +1222,9 @@ class PaymentInformation : AppCompatActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var textmsg = dialog.findViewById<TextView>(R.id.dialog_message)
-        var btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
-        var Ok = dialog.findViewById<Button>(R.id.Ok)
+        var textmsg = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        var btnCancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        var Ok = dialog!!.findViewById<Button>(R.id.Ok)
 
         btnCancel.visibility=View.GONE
 
@@ -1230,12 +1233,12 @@ class PaymentInformation : AppCompatActivity() {
 
         Ok.setOnClickListener {
             binding.nextlayout.isEnabled = true
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1244,23 +1247,23 @@ class PaymentInformation : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -1275,10 +1278,10 @@ class PaymentInformation : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1288,6 +1291,7 @@ class PaymentInformation : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -1299,8 +1303,8 @@ class PaymentInformation : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@PaymentInformation, response.status, preference)
                             }
@@ -1356,7 +1360,7 @@ class PaymentInformation : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -1483,7 +1487,7 @@ class PaymentInformation : AppCompatActivity() {
             lastName = lastName,
             mobileNumber = mob,
             emailId = emailId,
-            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharVerificationreq", Gson().toJson(aadharverificationreq))
@@ -1494,7 +1498,7 @@ class PaymentInformation : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharVerificationResp", Gson().toJson(response))
 
                                 if (response!!.code == null) {
@@ -1514,7 +1518,7 @@ class PaymentInformation : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

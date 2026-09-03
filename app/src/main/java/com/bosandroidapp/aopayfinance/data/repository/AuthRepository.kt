@@ -9,6 +9,7 @@ import com.bosandroidapp.aopayfinance.data.model.CustomerEmiStatusReq
 import com.bosandroidapp.aopayfinance.data.model.CustomerlocationUploadReq
 import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
@@ -23,6 +24,7 @@ import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.ForgotPasswordReq
@@ -55,6 +57,7 @@ import retrofit2.Response
 
 class AuthRepository(private val apiInterface: ApiInterface) {
 
+
   suspend fun getregistration(req: RegistrationReq): Response<RegistrationRes> {
     val firstname = req.firstName.toRequestBody("text/plain".toMediaTypeOrNull())
     val lastname = req.lastName.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -67,6 +70,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
     val pannumber = req.panNumber.toRequestBody("text/plain".toMediaTypeOrNull())
     val storename = req.storeName.toRequestBody("text/plain".toMediaTypeOrNull())
     val storeaddress = req.storeAddress.toRequestBody("text/plain".toMediaTypeOrNull())
+    val clientCode = req.clientCode.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
     // Convert image file to MultipartBody.Part
@@ -128,7 +132,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
       MultipartBody.Part.createFormData("company_doc_Photo_FileName", "")
     }
 
-    return apiInterface.registration(firstname,lastname,mob,mailid,cnfrmpassword,password,address,aadhaarnumber,pannumber,storename,storeaddress,
+    return apiInterface.registration(firstname,lastname,mob,mailid,cnfrmpassword,password,address,aadhaarnumber,pannumber,storename,storeaddress,clientCode,
       profilePhoto,aadhaarfront,aadhaarback,pancardfront,cancelcheque,storefront,companydoc)
 
   }
@@ -143,7 +147,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
 
   suspend fun forgotPassword(req: ForgotPasswordReq) = apiInterface.forgotPassword(req)
 
-  suspend fun getMobileList() = apiInterface.getAllDeviceDetails()
+  suspend fun getMobileList(req:GetDevicedetailsReq) = apiInterface.getAllDeviceDetails(req)
 
   suspend fun verifycustomerReq(req: VerifyCustomerReq) = apiInterface.verifycustomerReq(req)
 
@@ -168,6 +172,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
     val Bankname = req.bankName.toRequestBody("text/plain".toMediaTypeOrNull())
     val customerCode = req.customerCode.toRequestBody("text/plain".toMediaTypeOrNull())
     val retailerCode = req.retailerCode.toRequestBody("text/plain".toMediaTypeOrNull())
+    val clientcode = req.clientCode.toRequestBody("text/plain".toMediaTypeOrNull())
     val receiptImagePath = req.receiptImagePath.toRequestBody("text/plain".toMediaTypeOrNull())
 
 //
@@ -181,7 +186,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
 //        MultipartBody.Part.createFormData("ReceiptImage_FileName", "")
 //    }
     val imagePart =  MultipartBody.Part.createFormData("ReceiptImage_FileName", "")
-    return apiInterface.getcustomerLoanEmiReceive(mode, loanCode,  paymentDate, paymentMode, utrNumber, remarks, createdBy, customerCode, retailerCode, Bankname,receiptImagePath, imagePart)
+    return apiInterface.getcustomerLoanEmiReceive(mode, loanCode,  paymentDate, paymentMode, utrNumber, remarks, createdBy, customerCode, retailerCode, Bankname ,receiptImagePath, imagePart)
 
   }
 
@@ -251,6 +256,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
     val CreatedBy = req.CreatedBy.toRequestBody("text/plain".toMediaTypeOrNull())
     val RecordStatus = req.RecordStatus.toRequestBody("text/plain".toMediaTypeOrNull())
     val ActiveStatus = req.ActiveStatus.toRequestBody("text/plain".toMediaTypeOrNull())
+    val clientCode = req.clientCode.toRequestBody("text/plain".toMediaTypeOrNull())
 
     // Convert image file to MultipartBody.Part
     val imagePart1 = if (req.imagefile1 != null && req.imagefile1.exists()) {
@@ -262,10 +268,13 @@ class AuthRepository(private val apiInterface: ApiInterface) {
     }
 
 
-    return apiInterface.uploadDocumentForRaisAmountTransferAdmin(RetailerCode,RequestAmount,PaymentMode,BankName,AccountHolderName,AccountNumber,IFSCCode,UTRNumber,UPIID,Remarks,ApprovedRemarks,CreatedBy,RecordStatus,ActiveStatus,imagePart1)
+    return apiInterface.uploadDocumentForRaisAmountTransferAdmin(RetailerCode,RequestAmount,PaymentMode,BankName,AccountHolderName,AccountNumber,IFSCCode,UTRNumber,UPIID,Remarks,ApprovedRemarks,CreatedBy,RecordStatus,ActiveStatus, clientCode ,imagePart1)
 
   }
 
   suspend fun getMakePaymentReportReq(req: MakePaymentAdminReportRequest) = apiInterface.getMakePaymentReportReq(req)
+
+
+  suspend fun getRequestKitOption(req: KitOptionRequest) = apiInterface.getRequestKitOption(req)
 
 }

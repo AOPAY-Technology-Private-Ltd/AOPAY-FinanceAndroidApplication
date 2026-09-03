@@ -35,8 +35,7 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.binding.tvReceiptNo.text = ledgerReportList[position]!!.receiptNo
-        holder.binding.tvPendingAmount.text =
-            formatIndianAmount(ledgerReportList[position]!!.pendingAmount.toString())
+        holder.binding.tvPendingAmount.text = formatIndianAmount(ledgerReportList[position]!!.pendingAmount.toString())
 
         if (ledgerReportList[position]!!.recordStatus!!.toLowerCase().equals("paid")) {
             holder.binding.doneimage.setImageDrawable(
@@ -47,12 +46,11 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
             )
             holder.binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.paid_amount)
             holder.binding.tvRecordStatus.setTextColor(context.resources.getColor(com.bosandroidapp.aopayfinance.R.color.green))
-        } else {
+        }
+        else {
             holder.binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.due_amount)
             holder.binding.tvRecordStatus.setTextColor(context.resources.getColor(com.bosandroidapp.aopayfinance.R.color.red))
-            holder.binding.doneimage.setImageDrawable(ContextCompat.getDrawable(context, com.bosandroidapp.aopayfinance.R.drawable.crossicon
-                )
-            )
+            holder.binding.doneimage.setImageDrawable(ContextCompat.getDrawable(context, com.bosandroidapp.aopayfinance.R.drawable.crossicon))
         }
 
 

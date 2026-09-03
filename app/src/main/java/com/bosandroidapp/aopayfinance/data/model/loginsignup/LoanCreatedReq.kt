@@ -79,6 +79,9 @@ data class LoanCreatedReq (
     var sellingPrice : Double,
 
     @SerializedName("loanmode")
-    var loanMode :String
+    var loanMode :String,
+
+    @SerializedName("clientcode")
+    var clientCode:String
 
 )

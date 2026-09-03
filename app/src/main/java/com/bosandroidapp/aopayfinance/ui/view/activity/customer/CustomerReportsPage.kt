@@ -16,13 +16,14 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.GetReportsReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.RetailerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class CustomerReportsPage : AppCompatActivity() {
+class CustomerReportsPage : BaseActivity() {
     lateinit var binding: ActivityCustomerReportsPageBinding
     lateinit var preference: SharedPreference
     lateinit var viewModel: AuthenticationViewModel
@@ -58,6 +59,7 @@ class CustomerReportsPage : AppCompatActivity() {
         super.onResume()
         hitApiForGetReports(binding.reporttype.selectedItem.toString())
     }
+
 
     fun setview() {
         val adapter = ArrayAdapter.createFromResource(this, R.array.customerreporttype, R.layout.mobilenamelayout)
@@ -109,16 +111,18 @@ class CustomerReportsPage : AppCompatActivity() {
             recordStatus = recordStatus,
             customercode = customerCode,
             fromDate = null,
-            toDate = null
+            toDate = null,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("ReportReq", Gson().toJson(reportreq))
         viewModel.getReportsReq(reportreq).observe(this) { resources ->
+
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 ReportDataList = response.data!!.toMutableList()
                                 Log.d("ReportResponse", Gson().toJson(ReportDataList))
                                 if (ReportDataList.size > 0) {
@@ -137,7 +141,7 @@ class CustomerReportsPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

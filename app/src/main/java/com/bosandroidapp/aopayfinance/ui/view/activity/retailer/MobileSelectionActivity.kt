@@ -33,6 +33,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.DataItem
@@ -40,6 +41,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.MobileListAdapter
@@ -50,7 +52,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.GridSpacingItemDecoration
 import com.google.gson.Gson
 
-class MobileSelectionActivity : AppCompatActivity() {
+class MobileSelectionActivity : BaseActivity() {
 
     lateinit var binding : ActivityMobileselectionBinding
     lateinit var adapter : MobileListAdapter
@@ -163,12 +165,15 @@ class MobileSelectionActivity : AppCompatActivity() {
 
 
     fun hitApiForGetMobileDataList(){
-        viewModel.getMobileList().observe(this){ resources->resources.let {
+        var req = GetDevicedetailsReq(
+            clientcode = preference.getStringValue(ConstantClass.ClientCode,"")
+        )
+        viewModel.getMobileList(req).observe(this){ resources->resources.let {
             when(it.apiStatus){
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes", response.message)
                             if(response.status.equals("True")){
                                 MobileDataList = response.data!!
@@ -180,7 +185,7 @@ class MobileSelectionActivity : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -266,23 +271,23 @@ class MobileSelectionActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -297,10 +302,10 @@ class MobileSelectionActivity : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -309,6 +314,7 @@ class MobileSelectionActivity : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -320,8 +326,8 @@ class MobileSelectionActivity : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@MobileSelectionActivity, response.status, preference)
                             }
@@ -342,8 +348,7 @@ class MobileSelectionActivity : AppCompatActivity() {
         var request = ValidateSessionRequest(
             preference.getStringValue(ConstantClass.RetailerCode, ""),
             preference.getStringValue(ConstantClass.DEVICEID, ""),
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            preference.getStringValue(ConstantClass.FCMTOKEN, ""))
 
         Log.d("validaterequest", Gson().toJson(request))
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -375,8 +380,7 @@ class MobileSelectionActivity : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 

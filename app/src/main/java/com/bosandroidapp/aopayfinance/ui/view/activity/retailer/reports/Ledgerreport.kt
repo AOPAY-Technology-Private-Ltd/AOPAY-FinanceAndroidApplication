@@ -22,6 +22,7 @@ import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLedgerreportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.LowCibilScoreCustomerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.LedgerAdapter
@@ -33,7 +34,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class Ledgerreport : AppCompatActivity() {
+class Ledgerreport : BaseActivity() {
     lateinit var binding : ActivityLedgerreportBinding
     var FromDate: String= ""
     var ToDate: String =""
@@ -41,7 +42,6 @@ class Ledgerreport : AppCompatActivity() {
     private val myCalender1 = Calendar.getInstance()
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
-
     var LedgerReportList : List<LedgerReportDataItem?> = listOf()
     lateinit var ledgerAdapter : LedgerAdapter
 
@@ -58,9 +58,7 @@ class Ledgerreport : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        viewModel = ViewModelProvider(
-            this,
-            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
+        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
         preference = SharedPreference(this)
 
@@ -157,6 +155,7 @@ class Ledgerreport : AppCompatActivity() {
             dealerCode = retailercode ,
             fromDate = FromDate,
             toDate = ToDate,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("ledgerreq", Gson().toJson(gettingreportsreq))
@@ -172,11 +171,11 @@ class Ledgerreport : AppCompatActivity() {
                                 var LedgerReportList = response.data
 
                                 if(response.status.equals("True" ,ignoreCase = true)){
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     setDataOnUI(LedgerReportList!!)
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     binding.ledgerreports.visibility = View.GONE
                                     binding.notfoundimage.visibility = View.VISIBLE
                                     Toast.makeText(this,response.message, Toast.LENGTH_SHORT).show()
@@ -187,7 +186,7 @@ class Ledgerreport : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

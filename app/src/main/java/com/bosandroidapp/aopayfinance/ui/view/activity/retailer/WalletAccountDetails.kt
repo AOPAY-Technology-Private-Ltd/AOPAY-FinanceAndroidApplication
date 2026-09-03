@@ -50,6 +50,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerProfileReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerWalletPayoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.fragment.PayoutPage.Companion.CheckActiveStatus
@@ -65,7 +66,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import java.util.Locale
 
-class WalletAccountDetails : AppCompatActivity() {
+class WalletAccountDetails : BaseActivity() {
     lateinit var binding : ActivityWalletAccountDetailsBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference
@@ -193,6 +194,7 @@ class WalletAccountDetails : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -204,8 +206,8 @@ class WalletAccountDetails : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@WalletAccountDetails, response.status, preference)
                             }
@@ -259,8 +261,7 @@ class WalletAccountDetails : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 

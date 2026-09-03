@@ -26,6 +26,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.CibilRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CibilViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -36,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
+class AadharCardWebViewDIGILockerPage : BaseActivity() {
     lateinit var binding: ActivityAadharCardWebViewDigilockerPageBinding
     lateinit var viewModel: AuthenticationViewModel
     private lateinit var viewCibilModel: CibilViewModel
@@ -165,6 +166,7 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -176,8 +178,8 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AadharCardWebViewDIGILockerPage, response.status, preference)
                             }
@@ -234,8 +236,7 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 
@@ -275,7 +276,7 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
 
         var aadharverificationreq = AAdhaarDetailesReq(
             transactionID = transactionId,
-            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharDetailsreq", Gson().toJson(aadharverificationreq))
@@ -286,7 +287,7 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharDetailsResp", Gson().toJson(response))
                                 if (response!!.code.equals("200")) {
                                     ConstantClass.AadharDOB = response.model!!.dob!!
@@ -327,7 +328,7 @@ class AadharCardWebViewDIGILockerPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

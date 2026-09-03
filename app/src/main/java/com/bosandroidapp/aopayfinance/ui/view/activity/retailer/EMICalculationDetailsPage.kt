@@ -63,6 +63,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -71,7 +72,7 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class EMICalculationDetailsPage : AppCompatActivity() {
+class EMICalculationDetailsPage : BaseActivity() {
     lateinit var binding: ActivityEmicalculationDetailsPageBinding
     lateinit var viewModel: AuthenticationViewModel
     private var sellingPriceHandler = Handler(Looper.getMainLooper())
@@ -161,7 +162,8 @@ class EMICalculationDetailsPage : AppCompatActivity() {
         isApiRunning = true
         var emisplitReq = GetEMISplitDetlailsReq(
             brandName = brandName,
-            modelName = modelName
+            modelName = modelName,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("EmiPercentReq", Gson().toJson(emisplitReq))
 
@@ -180,8 +182,8 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                                 isApiRunning = false
                                 if (response.status.equals("True", true) && !response.data.isNullOrEmpty()){
                                     emiRetryCount = 0
-                                    if (ConstantClass.dialog.isShowing) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (ConstantClass.dialog?.isShowing==true) {
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     EmiSplitDataModel = response.data
 
@@ -210,8 +212,8 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                                     else{
                                         emiRetryCount = 0
 
-                                        if (ConstantClass.dialog.isShowing) {
-                                            ConstantClass.dialog.dismiss()
+                                        if (ConstantClass.dialog?.isShowing==true) {
+                                            ConstantClass.dialog!!.dismiss()
                                         }
 
                                         Toast.makeText(this, response.message ?: "No data found", Toast.LENGTH_SHORT).show()
@@ -219,7 +221,7 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                                 }
 
                                 /* if (response.status.equals("True")) {
-                                     ConstantClass.dialog.dismiss()
+                                     ConstantClass.dialog!!.dismiss()
                                      var EmiDataList = response.data
                                      if (EmiDataList!!.size > 0) {
                                          EmiSplitDataModel = EmiDataList
@@ -231,7 +233,7 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                                      }
                                  }
                                  else {
-                                     ConstantClass.dialog.dismiss()
+                                     ConstantClass.dialog!!.dismiss()
                                      Toast.makeText(this@EMICalculationDetailsPage, response.message, Toast.LENGTH_SHORT).show()
                                  }*/
                             }
@@ -239,7 +241,7 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                         isApiRunning = false
                         if (emiRetryCount < MAX_RETRY_COUNT) {
                             emiRetryCount++
@@ -257,8 +259,8 @@ class EMICalculationDetailsPage : AppCompatActivity() {
 
                             emiRetryCount = 0
 
-                            if (ConstantClass.dialog.isShowing) {
-                                ConstantClass.dialog.dismiss()
+                            if (ConstantClass.dialog?.isShowing==true) {
+                                ConstantClass.dialog!!.dismiss()
                             }
 
                             Toast.makeText(this, "Unable to load EMI details. Please try again.", Toast.LENGTH_SHORT).show()
@@ -630,23 +632,23 @@ class EMICalculationDetailsPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -661,10 +663,10 @@ class EMICalculationDetailsPage : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -673,6 +675,7 @@ class EMICalculationDetailsPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -684,8 +687,8 @@ class EMICalculationDetailsPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@EMICalculationDetailsPage, response.status, preference)
                             }
@@ -740,7 +743,7 @@ class EMICalculationDetailsPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

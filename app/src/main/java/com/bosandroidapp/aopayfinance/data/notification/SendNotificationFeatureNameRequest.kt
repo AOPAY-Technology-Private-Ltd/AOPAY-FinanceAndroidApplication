@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class SendNotificationFeatureNameRequest(
 
-	@field:SerializedName("clientCode")
-	val clientCode: String? = null,
+	@SerializedName("clientcode")
+	var clientCode: String,
 
 	@field:SerializedName("customerCode")
 	val customerCode: String? = null,

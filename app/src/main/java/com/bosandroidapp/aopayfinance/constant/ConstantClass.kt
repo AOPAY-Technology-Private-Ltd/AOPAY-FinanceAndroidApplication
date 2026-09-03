@@ -1,6 +1,7 @@
 package com.bosandroidapp.aopayfinance.constant
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -50,6 +51,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import  com.bosandroidapp.aopayfinance.R
+import com.bosandroidapp.aopayfinance.internetchecker.NetworkMonitor
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.workmanager.LocationUploadWorker
@@ -101,26 +103,35 @@ import javax.crypto.Cipher
 import javax.crypto.Cipher.SECRET_KEY
 import javax.crypto.spec.SecretKeySpec
 
+
 object ConstantClass {
 
      // Procustion  API
-     /*const val BASE_URL = "https://api.aopay.finance/"
-     const val BASE_URL_IMAGE = "https://api.aopay.finance"*/
 
-    // UAT API
+       /* const val BASE_URL = "https://api.aopay.finance/"
+          const val BASE_URL_IMAGE = "https://api.aopay.finance"
+          const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
+          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
 
-     const val BASE_URL = "https://uatapi.aopay.co.in/"
-     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+
+     // UAT API
+       const val BASE_URL = "https://uatapi.aopay.co.in/"
+       const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+
+       const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
+       const val PENNYDROP_REGISTRATION_ID = "AOP-554"
+
 
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
-     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
 
-     const val FRP_MAIL_ID = "116164541526712076874" // info@aopay.in
+
+     const val OLD_FRP_MAIL_ID = "info@aopay.in"
+
+     const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
 
      const val CustomerCode = "customerCode"
 
@@ -136,7 +147,8 @@ object ConstantClass {
      const val DEVICEID = "deviceid"
      const val LoanSuccessStatus = "success"
      const val DeviceType = "Android"
-     const val ClientCode = "CMP0005"
+     //const val ClientCode = "CMP0005"
+     const val ClientCode = "clientcode"
      const val DefaulterEmiDebitAutoApproved ="admin"
      const val DefaulterEmiDebitPending ="retailer"
      const val SessionOutStatus = "Inactive"
@@ -159,6 +171,10 @@ object ConstantClass {
      const val LoginType = "Logintype"
      const val online = "Online"
      const val offline = "Offline"
+
+
+    var isPgClosing = false
+    var isLockTaskStarted = false
      const val editprofile = "Edit Profile"
      const val cancel = "Cancel"
      const val paymentMode = "Select Payment Mode"
@@ -226,11 +242,11 @@ object ConstantClass {
 
      var LoanSecurityHoldAmount : String = ""
 
-     lateinit var  dialog : Dialog
+     var dialog : Dialog? = null
 
      var PanNumber : String = ""
-     var CheckOnlineOrOffline : String = "Offline"
-     var PanNumberVerified : String = "yes"
+     var CheckOnlineOrOffline : String = ""
+     var PanNumberVerified : String = "no"
      var BrandName : String = ""
      var ModelName : String = ""
      var ModelVarient : String = ""
@@ -241,9 +257,8 @@ object ConstantClass {
      var Tenure : String = ""
      var LoanAmount : Double = 0.0
      var EmiAmount : String = ""
-
-    var LoanStartDate = ""
-    var LoanEndDate = ""
+     var LoanStartDate = ""
+     var LoanEndDate = ""
      var InterestRate : String = ""
      var ProcessingFees : String = ""
      var InterestAmt : String = ""
@@ -336,6 +351,29 @@ object ConstantClass {
     var eMandate = "accepted"
     var eMandatepending = "pending"
     var isMandate = "Yes"
+    var internetSettingsOpened = false
+
+    private var noInternetDialog: AlertDialog? = null
+
+    fun showNoInternetDialog(context: Context) {
+        if (noInternetDialog?.isShowing == true) return
+
+        noInternetDialog = AlertDialog.Builder(context)
+            .setTitle("No Internet")
+            .setMessage("Please check your Wi-Fi or mobile data connection.")
+            .setCancelable(false)
+            .setPositiveButton("Open Settings") { _, _ ->
+                if (NetworkMonitor(context).isConnected()) noInternetDialog?.dismiss() else {
+                    val intent = Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                }
+
+            }
+            .create()
+
+        noInternetDialog?.show()
+    }
 
 
 
@@ -356,11 +394,12 @@ object ConstantClass {
 
 
     fun OpenPopUpForVeryfyOTP(context: Context){
-        dialog = Dialog(context)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.loader)
+        val d = Dialog(context)
+        dialog = d
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        d.setContentView(R.layout.loader)
 
-        dialog.window?.apply {
+        d.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -369,9 +408,9 @@ object ConstantClass {
             decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        d.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        d.show()
 
     }
 
@@ -1048,6 +1087,7 @@ object ConstantClass {
     }
 
 
+
     fun Activity.showDevModeSnackbar(rootView: View) {
         Snackbar.make(
             rootView,
@@ -1057,6 +1097,7 @@ object ConstantClass {
             openDeveloperOptions()
         }.show()
     }
+
 
 
     fun Activity.openDeveloperOptions() {
@@ -1152,6 +1193,7 @@ object ConstantClass {
             ""
         }
     }
+
 
 
     fun eMandateformatDate(input: String): String {

@@ -19,6 +19,7 @@ import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLowCibilScoreCustomerReportsBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.LowCibilScoreCustomerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -29,7 +30,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class LowCibilScoreCustomerReports : AppCompatActivity() {
+class LowCibilScoreCustomerReports : BaseActivity() {
     lateinit var binding: ActivityLowCibilScoreCustomerReportsBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
@@ -184,7 +185,8 @@ class LowCibilScoreCustomerReports : AppCompatActivity() {
             reportType = "CustByCredit",
             fromDate = FromDate,
             toDate = ToDate,
-            retailerCode = retailercode
+            retailerCode = retailercode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("cibilreportsreq", Gson().toJson(gettingreportsreq))
@@ -197,7 +199,7 @@ class LowCibilScoreCustomerReports : AppCompatActivity() {
                             users.body()?.let { response ->
                                 Log.d("cibilreportsresponse", Gson().toJson(response))
                                 if(response.status.equals("True" ,ignoreCase = true)){
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     if(response.data!!.size>0){
                                         LowCibilReportList = response.data!!
                                         binding.showreports.visibility = View.VISIBLE
@@ -206,7 +208,7 @@ class LowCibilScoreCustomerReports : AppCompatActivity() {
                                         setDataOnUI(LowCibilReportList)
                                         setview()
                                     }else{
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         binding.showreports.visibility = View.GONE
                                         binding.spinnerlayout.visibility = View.GONE
                                         binding.notfoundimage.visibility = View.VISIBLE
@@ -214,7 +216,7 @@ class LowCibilScoreCustomerReports : AppCompatActivity() {
                                     }
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     binding.showreports.visibility = View.GONE
                                     binding.spinnerlayout.visibility = View.GONE
                                     binding.notfoundimage.visibility = View.VISIBLE
@@ -226,7 +228,7 @@ class LowCibilScoreCustomerReports : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                      ConstantClass.dialog.dismiss()
+                      ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

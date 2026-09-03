@@ -62,6 +62,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.Aadhar
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.PanVerificationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AadharCardWebViewDIGILockerPage.Companion.digilockerLink
@@ -70,7 +71,7 @@ import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 import java.io.File
 
-class AadharCardVerificationPage : AppCompatActivity() {
+class AadharCardVerificationPage : BaseActivity() {
     lateinit var binding : ActivityAadharCardVerificationPageBinding
     private val CAMERA_REQUEST_CODE_FRONT = 1001
     private  var photoFrontUri: Uri? = null
@@ -105,6 +106,14 @@ class AadharCardVerificationPage : AppCompatActivity() {
             }
 
         }
+        else{
+            if(front){
+                photoFrontUri=null
+            }
+            else{
+                photoBackUri=null
+            }
+        }
 
 
     }
@@ -130,6 +139,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
         setDataOnUI()
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -161,24 +171,23 @@ class AadharCardVerificationPage : AppCompatActivity() {
         }
 
         binding.verifybuttonlayout.setOnClickListener {
-            val aadharNumber = binding.aadharnumberEdittxt.text.toString().trim()
 
-            // Aadhaar validation
-            if (aadharNumber.isBlank() || aadharNumber.length != 12 || !aadharNumber.all { it.isDigit() }) {
-                Toast.makeText(this, "Enter a valid 12-digit Aadhaar number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+                val aadharNumber = binding.aadharnumberEdittxt.text.toString().trim()
+
+                // Aadhaar validation
+                if (aadharNumber.isBlank() || aadharNumber.length != 12 || !aadharNumber.all { it.isDigit() }) {
+                    Toast.makeText(this, "Enter a valid 12-digit Aadhaar number", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Image URI validation
+                if (photoFrontUri == null || photoBackUri == null) {
+                    Toast.makeText(this, "Please upload both front and back Aadhaar images", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                hitApiForCheckIsEligibleOrNotForLoan(aadharNumber)
             }
-
-            // Image URI validation
-            if (photoFrontUri == null || photoBackUri == null) {
-                Toast.makeText(this, "Please upload both front and back Aadhaar images", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            hitApiForCheckIsEligibleOrNotForLoan(aadharNumber)
-
-
-        }
 
 
 
@@ -189,7 +198,8 @@ class AadharCardVerificationPage : AppCompatActivity() {
 
         var eligiblereq = GetIsEligibleLoanReq(
             panNumber = "",
-            aadharNumber = aadharNumber
+            aadharNumber = aadharNumber,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
         Log.d("IsEligibleReq", Gson().toJson(eligiblereq))
 
@@ -209,7 +219,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
                                     startActivity(intent)
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     OpenPopUpForVAlert()
                                 }
 
@@ -220,7 +230,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -236,21 +246,21 @@ class AadharCardVerificationPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert(){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility=View.VISIBLE
         done.visibility= View.GONE
@@ -261,7 +271,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
             finish()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -300,6 +310,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -311,8 +322,8 @@ class AadharCardVerificationPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AadharCardVerificationPage, response.status, preference)
                             }
@@ -367,8 +378,7 @@ class AadharCardVerificationPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 

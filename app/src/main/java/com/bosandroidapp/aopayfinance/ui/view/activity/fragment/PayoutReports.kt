@@ -43,14 +43,22 @@ class PayoutReports : Fragment() {
 
         preference = SharedPreference(requireContext())
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
-        hitApiForReports(reportType)
+       // hitApiForReports(reportType)
         return binding.root
+    }
+
+
+
+    override fun onResume() {
+        super.onResume()
+
+        hitApiForReports(reportType)
     }
 
 
     fun setview( ){
         // for report.........................................................................................
-        val adapter = ArrayAdapter.createFromResource(requireContext(),  R.array.reporttype, R.layout.mobilenamelayout)
+        val adapter = ArrayAdapter.createFromResource(requireContext(),  R.array.cibilreporttype, R.layout.mobilenamelayout)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.reporttype.adapter = adapter
         var isSpinnerFirstCall = true // declare outside the listener
@@ -74,6 +82,7 @@ class PayoutReports : Fragment() {
 
     }
 
+
     fun setDataOnView(status: String){
 
         if(!reportDataList.isNullOrEmpty()){
@@ -90,6 +99,8 @@ class PayoutReports : Fragment() {
             if(!filteredList.isNullOrEmpty()){
                 binding.notfoundimage.visibility= View.GONE
                 binding.showreports.visibility = View.VISIBLE
+                /*var list = filteredList.reversed()
+                Log.d("reversereportList", Gson().toJson( filteredList.reversed()))*/
                 var adapter = RetailerWalletAdapter(requireContext(), filteredList)
                 binding.showreports.adapter = adapter
                 adapter.notifyDataSetChanged()
@@ -107,13 +118,15 @@ class PayoutReports : Fragment() {
 
     }
 
+
     fun hitApiForReports(reportType:String){
 
         var request = RetailerWalletReportReq(
             retailerID = preference.getStringValue(ConstantClass.RetailerCode,""),
             reportType = reportType,
             fromDate = null,
-            toDate = null
+            toDate = null,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("payoutreportreq", Gson().toJson(request))
@@ -125,7 +138,7 @@ class PayoutReports : Fragment() {
                         it.data.let { users ->
                             users!!.body().let {
                                     response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("payoutreportres",Gson().toJson(response))
                                 if(response!!.status.equals("True")){
                                     if(!response.data.isNullOrEmpty()){
@@ -146,7 +159,7 @@ class PayoutReports : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -158,6 +171,7 @@ class PayoutReports : Fragment() {
         }
 
     }
+
 
 
 }

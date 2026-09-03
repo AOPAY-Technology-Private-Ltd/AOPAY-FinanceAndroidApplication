@@ -24,6 +24,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityCibilReportsDetailsPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.adapter.CibilViewPagerAdapter
@@ -33,7 +34,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 
-class CibilReportsDetailsPage : AppCompatActivity() {
+class CibilReportsDetailsPage : BaseActivity() {
     lateinit var binding : ActivityCibilReportsDetailsPageBinding
     val statusArray = listOf("Personal", "CAIS", "Account","Bureau","CAPS")
     lateinit var  viewPager: ViewPager2
@@ -116,6 +117,7 @@ class CibilReportsDetailsPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -157,7 +159,7 @@ class CibilReportsDetailsPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

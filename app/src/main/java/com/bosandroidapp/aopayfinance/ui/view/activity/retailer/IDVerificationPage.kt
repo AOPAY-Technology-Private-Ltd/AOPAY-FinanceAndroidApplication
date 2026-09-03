@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.Window.FEATURE_NO_TITLE
 import android.view.WindowManager
 import android.widget.Button
@@ -36,6 +37,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharFrontImageUri
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharTransactionIdNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CheckOnlineOrOffline
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryMobileVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryOTP
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ENTEREDCUSTOMERDOB
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
@@ -44,6 +47,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefAadharTransactionIdNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ReferenceAadharNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ReferenceAadharVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
@@ -51,49 +55,64 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AadharVerificationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
+import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AadharCardWebViewDIGILockerPage.Companion.digilockerLink
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class IDVerificationPage : AppCompatActivity() {
+class IDVerificationPage : BaseActivity() {
     lateinit var binding: ActivityIdverificationPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
     lateinit var dialog: Dialog
+    lateinit var panViewModel: PanViewModel
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityIdverificationPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
 
-        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN)))[AuthenticationViewModel::class.java]
+        panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
+        viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
+
         preference = SharedPreference(this)
 
         setOnClickListner()
 
+
     }
 
+
     fun setOnClickListner() {
+
 
         binding.back.setOnClickListener {
             onBackPressed()
         }
 
+
         binding.aadharcardlayout.setOnClickListener {
-            if (PanNumber.isBlank()) {
+            if (PanNumber.isBlank() ) {
                 Toast.makeText(this@IDVerificationPage, "Please Verify Pan Card first!!", Toast.LENGTH_SHORT).show()
             }
             else {
@@ -105,14 +124,15 @@ class IDVerificationPage : AppCompatActivity() {
             }
         }
 
+
         binding.pancardlayout.setOnClickListener {
+
             if (CheckOnlineOrOffline.isBlank()) {
                 Toast.makeText(this@IDVerificationPage, "Please select mode first!!", Toast.LENGTH_SHORT).show()
-            } else {
-                OpenPopUpForValidateDate()
-
             }
-
+            else {
+                OpenPopUpForValidateDate()
+                }
         }
 
 
@@ -158,7 +178,7 @@ class IDVerificationPage : AppCompatActivity() {
 
 
         binding.cibilcardlayout.setOnClickListener {
-            startActivity(Intent(this@IDVerificationPage, CivilReportForm::class.java))
+           // startActivity(Intent(this@IDVerificationPage, CivilReportForm::class.java))
         }
 
 
@@ -178,7 +198,8 @@ class IDVerificationPage : AppCompatActivity() {
 
         if (ConstantClass.AadharVerified.equals("no")&& ConstantClass.AadharVerified.isNullOrBlank() && ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.online)) {
             binding.doneaadhaar.visibility = View.VISIBLE
-        } else {
+        }
+        else {
             binding.doneaadhaar.visibility = View.GONE
         }
 
@@ -197,18 +218,18 @@ class IDVerificationPage : AppCompatActivity() {
             lastName = lastName,
             mobileNumber = mob,
             emailId = emailId,
-            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharVerificationreq", Gson().toJson(aadharverificationreq))
 
-        viewModel.getAadharVerificationReq(aadharverificationreq).observe(this) { resources ->
+        panViewModel.getAadharVerificationReq(aadharverificationreq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharVerificationResp", Gson().toJson(response))
 
                                 if (response!!.code == null) {
@@ -238,7 +259,7 @@ class IDVerificationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -260,27 +281,25 @@ class IDVerificationPage : AppCompatActivity() {
         super.onBackPressed()
     }
 
-
-
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForValidateDate() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
-        val dobfield = dialog.findViewById<TextView>(R.id.dob)
-        val calendarlayout = dialog.findViewById<LinearLayout>(R.id.calendarlayout)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
+        val dobfield = dialog!!.findViewById<TextView>(R.id.dob)
+        val calendarlayout = dialog!!.findViewById<LinearLayout>(R.id.calendarlayout)
 
         cancel.visibility = View.VISIBLE
         image.visibility = View.VISIBLE
@@ -294,13 +313,12 @@ class IDVerificationPage : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
-
 
     private fun showDatePicker(dob: TextView, done: TextView) {
         val calendar = Calendar.getInstance()
@@ -327,9 +345,9 @@ class IDVerificationPage : AppCompatActivity() {
                 val age = today.get(Calendar.YEAR) - selectedYear
 
                 // Adjust if birthday hasn't occurred yet this year
-                val hasBirthdayPassed = (today.get(Calendar.DAY_OF_YEAR) >= selectedCalendar.get(Calendar.DAY_OF_YEAR))
+                val hasBirthdayPassed =
+                    (today.get(Calendar.DAY_OF_YEAR) >= selectedCalendar.get(Calendar.DAY_OF_YEAR))
                 exactAge = if (hasBirthdayPassed) age else age - 1
-
 
 
             }, year, month, day
@@ -338,22 +356,22 @@ class IDVerificationPage : AppCompatActivity() {
 
         // Set min age 18
         calendar.add(Calendar.YEAR, -18)
-        datePickerDialog.datePicker.maxDate = calendar.timeInMillis
+        datePickerDialog!!.datePicker.maxDate = calendar.timeInMillis
 
         // Set max age 65
         val minCalendar = Calendar.getInstance()
         minCalendar.add(Calendar.YEAR, -65)
-        datePickerDialog.datePicker.minDate = minCalendar.timeInMillis
+        datePickerDialog!!.datePicker.minDate = minCalendar.timeInMillis
 
 
-        datePickerDialog.show()
+        datePickerDialog!!.show()
 
         done.setOnClickListener {
 
             if (exactAge in 18..65) {
                 startActivity(Intent(this@IDVerificationPage, PanCardVerificationPage::class.java))
-                if(dialog!=null && dialog.isShowing){
-                    dialog.dismiss()
+                if(dialog!=null && dialog!!.isShowing){
+                    dialog!!.dismiss()
                 }
             }
             else {
@@ -369,6 +387,7 @@ class IDVerificationPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -380,8 +399,8 @@ class IDVerificationPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@IDVerificationPage, response.status, preference)
                             }
@@ -433,9 +452,10 @@ class IDVerificationPage : AppCompatActivity() {
 
     }
 
+
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -470,6 +490,7 @@ class IDVerificationPage : AppCompatActivity() {
         }
 
     }
+
 
 
 }

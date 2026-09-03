@@ -31,6 +31,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.RegistrationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityMakePaymentRequestPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
@@ -39,7 +40,7 @@ import com.google.gson.Gson
 import java.io.File
 import kotlin.toString
 
-class MakePaymentRequestPage : AppCompatActivity() {
+class MakePaymentRequestPage : BaseActivity() {
     lateinit var binding: ActivityMakePaymentRequestPageBinding
     lateinit var preference: SharedPreference
     var photoUri: Uri? = null
@@ -255,7 +256,8 @@ class MakePaymentRequestPage : AppCompatActivity() {
             CreatedBy = "",
             RecordStatus = "Pending",
             ActiveStatus = "Active",
-            cancelcheque
+            cancelcheque,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("RegistationRequest", Gson().toJson(registationRequest))
@@ -267,7 +269,7 @@ class MakePaymentRequestPage : AppCompatActivity() {
                         ApiStatus.SUCCESS -> {
                             it.data.let { users ->
                                 users!!.body().let { response ->
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     if (response!!.statuss!!.toLowerCase().equals("true", ignoreCase = true)) {
                                         Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
                                         finish()
@@ -283,7 +285,7 @@ class MakePaymentRequestPage : AppCompatActivity() {
                         }
 
                         ApiStatus.ERROR -> {
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         ApiStatus.LOADING -> {

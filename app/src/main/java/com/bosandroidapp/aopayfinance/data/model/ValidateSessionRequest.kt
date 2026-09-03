@@ -12,5 +12,4 @@ data class ValidateSessionRequest(
 
 	@field:SerializedName("token")
 	val token: String? = null
-
 )

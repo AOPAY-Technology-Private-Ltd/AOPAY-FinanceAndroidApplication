@@ -49,6 +49,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.uriToFile
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RegistrationReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.LoginPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -58,7 +59,7 @@ import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
 
-class SignupPage : AppCompatActivity() {
+class SignupPage : BaseActivity() {
     lateinit var binding : ActivitySignupPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference
@@ -520,6 +521,7 @@ class SignupPage : AppCompatActivity() {
         val storePhoto = saveImageToCache(this, storePhotoUri!!, "storefront.jpg")
         val companydoc = saveImageToCache(this, companyCodePhotoUri!!, "companydoc.jpg")
         val cancelcheque = saveImageToCache(this, chequePhotoUri!!, "cancelcheque.jpg")
+        var companyCode = binding.companyCodeEditText.text.toString().trim()
 
 
         var registationRequest = RegistrationReq(
@@ -534,6 +536,7 @@ class SignupPage : AppCompatActivity() {
             panNumber = panNumber,
             storeName = storename,
             storeAddress = storeaddress,
+            clientCode = companyCode,
             profilePhoto,
             aadhaarfront,
             aadhaarback,
@@ -551,7 +554,7 @@ class SignupPage : AppCompatActivity() {
                     ApiStatus.SUCCESS ->{
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AirPortListResponse", Gson().toJson(response))
                                 if(response.statuss){
                                     preference.setStringValue(ConstantClass.CustomerCode, response.customerCode.toString())
@@ -573,7 +576,7 @@ class SignupPage : AppCompatActivity() {
                     }
                     ApiStatus.ERROR -> {
                         binding.createaccount.isEnabled=true
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -585,6 +588,7 @@ class SignupPage : AppCompatActivity() {
         }
 
     }
+
 
 
     fun validateForm(firstname:String, lastname:String, aadharNumber: String, panNumber: String, mobile: String, email: String, address: String, password: String, confirmPassword: String,
@@ -825,7 +829,6 @@ class SignupPage : AppCompatActivity() {
             scrollView.smoothScrollBy(0, y)
         }
     }
-
 
 
 }

@@ -13,6 +13,7 @@ import com.bosandroidapp.aopayfinance.data.model.CustomerEmiStatusReq
 import com.bosandroidapp.aopayfinance.data.model.CustomerlocationUploadReq
 import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
@@ -26,6 +27,7 @@ import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.ForgotPasswordReq
@@ -129,10 +131,10 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         }
     }
 
-    fun getMobileList() = liveData(Dispatchers.IO) {
+    fun getMobileList(req:GetDevicedetailsReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
-            emit(ApiResponse.success(data = repository.getMobileList()))
+            emit(ApiResponse.success(data = repository.getMobileList(req)))
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
@@ -170,7 +172,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
 
                 Log.e("API_ERROR", "Code: $code | Body: $errorBody")
 
-                emit(ApiResponse.error(data = null, message = message))
+                emit(ApiResponse.error(data = response, message = message))
             }
 
         } catch (exception: Exception) {
@@ -325,7 +327,6 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
-
     fun getRetailerWalletPayoutReq(req: RetailerWalletPayoutReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -335,6 +336,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
 
     fun loanSettlementReportReq(req: LoanSettlementReportReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
@@ -553,6 +555,17 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         emit(ApiResponse.loading(data = null))
         try {
             emit(ApiResponse.success(data = repository.getMakePaymentReportReq(req)))
+        }
+        catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
+        }
+    }
+
+
+    fun getRequestKitOption(req: KitOptionRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(ApiResponse.success(data = repository.getRequestKitOption(req)))
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))

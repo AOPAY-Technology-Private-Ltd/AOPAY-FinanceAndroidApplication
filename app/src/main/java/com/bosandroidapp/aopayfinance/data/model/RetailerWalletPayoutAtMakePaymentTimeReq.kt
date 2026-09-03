@@ -66,5 +66,8 @@ data class RetailerWalletPayoutAtMakePaymentTimeReq(
 
 	//loanCode
 	@field:SerializedName("loanCode")
-	val loanCode: String? = null
+	val loanCode: String? = null,
+
+	@SerializedName("clientcode")
+	var clientCode: String
 )

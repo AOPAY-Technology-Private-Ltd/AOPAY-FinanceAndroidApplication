@@ -7,8 +7,8 @@ data class NotificationSendTokenRequest(
 	@field:SerializedName("deviceType")
 	val deviceType: String? = null,
 
-	@field:SerializedName("clientCode")
-	val clientCode: String? = null,
+	@SerializedName("clientcode")
+	var clientCode: String,
 
 	@field:SerializedName("customerCode")
 	val customerCode: String? = null,

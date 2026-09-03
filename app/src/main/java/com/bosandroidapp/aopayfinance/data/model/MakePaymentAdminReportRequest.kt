@@ -14,5 +14,8 @@ data class MakePaymentAdminReportRequest(
 	val activeStatus: String? = null,
 
 	@field:SerializedName("retailerCode")
-	val retailerCode: String? = null
+	val retailerCode: String? = null,
+
+	@SerializedName("clientcode")
+	var clientCode: String
 )

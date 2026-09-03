@@ -28,6 +28,11 @@ data class RetailerWalletPayoutReq(
     var branchName:String,
 
     @SerializedName("remarks")
-    var remarks:String
+    var remarks:String,
+
+    @SerializedName("payoutMode")
+    var payoutMode:String,
+    @SerializedName("clientcode")
+    var clientCode:String
 
 )

@@ -36,6 +36,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth
 import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth.Companion.startActivityForAuth
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
@@ -45,8 +46,10 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class ChooseYourRolePage : AppCompatActivity() {
-   lateinit var binding : ActivityChooseYourRolePageBinding
+
+
+class ChooseYourRolePage : BaseActivity() {
+    lateinit var binding : ActivityChooseYourRolePageBinding
     lateinit var viewModel: AuthenticationViewModel
 
 
@@ -62,6 +65,7 @@ class ChooseYourRolePage : AppCompatActivity() {
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
+
         GoogleAuth.initialize(this)
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
 
@@ -128,7 +132,6 @@ class ChooseYourRolePage : AppCompatActivity() {
 
     }
 
-
     fun hitApiForUploadCustomerDeviceInfo(){
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         try {
@@ -161,7 +164,7 @@ class ChooseYourRolePage : AppCompatActivity() {
             deviceID = deviceId,
             brand = DeviceBrand,
             deviceName = DeviceName,
-            manufacturer = deviceManufacturer,
+            manufacturer = deviceManufacturer
         )
         Log.d("DeviceInfoReq", Gson().toJson(request))
 
@@ -174,7 +177,7 @@ class ChooseYourRolePage : AppCompatActivity() {
                 }
 
                 ApiStatus.SUCCESS -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     val response = it.data?.body()
                     Log.d("DeviceInfoResponse", Gson().toJson(response))
 
@@ -183,12 +186,12 @@ class ChooseYourRolePage : AppCompatActivity() {
                     }
                     else {
                         Toast.makeText(this,"Kindly transfer the ownership to AO Pay.",Toast.LENGTH_SHORT).show()
-                        //intentNextPage()
+                        //intentNextPage() // for testing purpose
                     }
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
                     Log.e("LoginError", errorMessage)
@@ -199,13 +202,13 @@ class ChooseYourRolePage : AppCompatActivity() {
 
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         GoogleAuth.onActivityResult(requestCode, data)?.let { details ->
             Toast.makeText(this, details, Toast.LENGTH_LONG).show()
         }
     }
-
 
 
 }

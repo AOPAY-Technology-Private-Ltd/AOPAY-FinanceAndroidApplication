@@ -25,6 +25,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.GetReportsReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.RetailerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -36,7 +37,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class RetailerCustomerReportsPage : AppCompatActivity() {
+class RetailerCustomerReportsPage : BaseActivity() {
     lateinit var binding : ActivityRetailerCustomerReportsPageBinding
     lateinit var preference : SharedPreference
     lateinit var viewModel: AuthenticationViewModel
@@ -246,7 +247,8 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
             recordStatus = recordStatus,
             customercode = "",
             fromDate = FromDate,
-            toDate = ToDate
+            toDate = ToDate,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("RetailerCustomerLoanReq", Gson().toJson(reportreq))
 
@@ -256,7 +258,7 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes",Gson().toJson(response) )
                             ReportDataList = response.data!!.toMutableList()
                             //ReportDataList =  allReportList.filter { !it.recordStatus.equals("Disbursed", ignoreCase = true) }.toMutableList()
@@ -278,7 +280,7 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {
@@ -314,6 +316,7 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -325,8 +328,8 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@RetailerCustomerReportsPage, response.status, preference)
                             }
@@ -347,8 +350,7 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
         var request = ValidateSessionRequest(
             preference.getStringValue(ConstantClass.RetailerCode, ""),
             preference.getStringValue(ConstantClass.DEVICEID, ""),
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            preference.getStringValue(ConstantClass.FCMTOKEN, ""))
         Log.d("validaterequest", Gson().toJson(request))
 
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -382,7 +384,7 @@ class RetailerCustomerReportsPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

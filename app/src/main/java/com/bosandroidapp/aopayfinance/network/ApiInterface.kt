@@ -20,6 +20,7 @@ import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.DueOverdueResponse
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenResponse
+import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerResponse
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
@@ -45,6 +46,8 @@ import com.bosandroidapp.aopayfinance.data.model.ValidateSessionResp
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerResp
 import com.bosandroidapp.aopayfinance.data.model.cibilscore.CibilScroeResp
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
+import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionResponse
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.EligibleLoanResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.EmiSplitRes
@@ -119,9 +122,12 @@ interface ApiInterface {
     @POST("api/AOP/V1/Validation/AadhaarValidateUrl")
     suspend fun getAadharVarification(@Body req : AadharVerificationReq): Response<AadharVerificationResp>?
 
+
+
     // Adhar details
     @POST("api/AOP/V1/Fetch/Digilocker/TransactionID")
     suspend fun getAadharDetails(@Body req : AAdhaarDetailesReq): Response<AadhaarDetailsResponse>?
+
 
 
     // cibil api for getting cibil score...............
@@ -149,6 +155,7 @@ interface ApiInterface {
         @Part("PanNumber") pannumber: RequestBody,
         @Part("StoreName") storename: RequestBody,
         @Part("StoreAddress") storeaddress: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part profilePhoto: MultipartBody.Part,
         @Part aadhaarfront: MultipartBody.Part,
         @Part aadhaarback: MultipartBody.Part,
@@ -184,16 +191,18 @@ interface ApiInterface {
 
 
     @POST("api/V1/AopayFinance/GetAllDeviceDetails")
-    suspend fun getAllDeviceDetails(): Response<GetAllMobileDetailsListRes>?
+    suspend fun getAllDeviceDetails(@Body req : GetDevicedetailsReq): Response<GetAllMobileDetailsListRes>?
 
 
     @POST("api/V1/AopayFinance/GetModelWiseLoanDetails")
     suspend fun getEmiSplitDataDetails(@Body req : GetEMISplitDetlailsReq): Response<EmiSplitRes>?
 
 
+
     //  customer mobile verification api
     @POST("api/V1/AopayFinance/VerifyCustomer")
     suspend fun verifycustomerReq(@Body req : VerifyCustomerReq): Response<VerifyCustomerResp>?
+
 
 
     @POST("api/V1/AopayFinance/ManageLoan")
@@ -253,6 +262,7 @@ interface ApiInterface {
         @Part("CibilApiResponse") CibilApiResponse: RequestBody,
         @Part("CustomerCodes") CustomerCodes: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("CibilScore") cibilScore: RequestBody,
         @Part("IsAggrementVerified") isAggrementVerified: RequestBody,
         @Part("IsRetailerAggrementVerified") IsRetailerAggrementVerified: RequestBody,
@@ -316,6 +326,7 @@ interface ApiInterface {
         @Part("CreatedBy") createdBy: RequestBody,
         @Part("MemberShipFees") membershipfees: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("CibilScore") cibilScore: RequestBody,
         @Part("IsAggrementVerified") isAggrementVerified: RequestBody,
         @Part("IsRetailerAggrementVerified") IsRetailerAggrementVerified: RequestBody,
@@ -380,6 +391,7 @@ interface ApiInterface {
         @Part("CreatedBy") createdBy: RequestBody,
         @Part("MemberShipFees") membershipfees: RequestBody,
         @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part("PanApiResponse") PanApiResponse: RequestBody,
         @Part("AadhaarApiResponse") AadhaarApiResponse: RequestBody,
         @Part("CibilApiResponse") CibilApiResponse: RequestBody,
@@ -424,13 +436,16 @@ interface ApiInterface {
     suspend fun getPayoutReportReq(@Body req : PayoutReportReq): Response<PayoutReportResp>?
 
 
+
     @POST("api/V1/AopayFinance/GetLookupReports")
     suspend fun getRetailerWalletReport(@Body req : RetailerWalletReportReq): Response<RetailerWalletReportResp>?
+
 
 
     // api for both addbank and get bank list.............................................................................
     @POST("api/V1/AopayFinance/RetailerBankAccountManage")
     suspend fun addBankAccounts(@Body req : com.bosandroidapp.aopayfinance.data.model.AddBankAccountReq): Response<AddedBankListResp>?
+
 
 
     // api for hold amount request .............................................................................
@@ -533,7 +548,7 @@ interface ApiInterface {
 
 
     // link for download apk file
-    @GET("api/V1/AopayFinance/generate-qr")
+    @GET("api/V1/AopayFinance/generate-download-aopay-qr")
     suspend fun getApkUrlLink(): Response<ResponseBody>?
 
 
@@ -622,6 +637,7 @@ interface ApiInterface {
         @Part("CreatedBy") CreatedBy: RequestBody,
         @Part("RecordStatus") RecordStatus: RequestBody,
         @Part("ActiveStatus") ActiveStatus: RequestBody,
+        @Part("clientcode") clientCode: RequestBody,
         @Part imageFile1: MultipartBody.Part
     ): Response<MakepaymentResp>
 
@@ -632,5 +648,12 @@ interface ApiInterface {
 
     @POST("api/V1/AopayFinance/GetRetailerMakePaymentList")
     suspend fun getMakePaymentReportReq(@Body req : MakePaymentAdminReportRequest) : Response<MakePaymentAdminReportResponse>?
+
+
+
+    //retailer kit option
+    @POST("api/V1/AopayFinance/GetRetailerLoanModeDetails")
+    suspend fun getRequestKitOption(@Body req : KitOptionRequest) : Response<KitOptionResponse>?
+
 
 }

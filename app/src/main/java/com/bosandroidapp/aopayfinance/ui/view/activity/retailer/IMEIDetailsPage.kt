@@ -58,6 +58,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -70,7 +71,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class IMEIDetailsPage : AppCompatActivity() {
+class IMEIDetailsPage : BaseActivity() {
     lateinit var binding : ActivityImeidetailsPageBinding
     private val CAMERA_REQUEST_CODE_FRONT = 1001
     private  var imei1photoUri: Uri? = null
@@ -344,28 +345,28 @@ class IMEIDetailsPage : AppCompatActivity() {
 
     fun OpenPopUpForTermCondition() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.retailer_customer_aggrement)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.retailer_customer_aggrement)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.btnAccept)
-        val termconditiontxt = dialog.findViewById<TextView>(R.id.termconditiontxt)
-        val customername = dialog.findViewById<TextView>(R.id.customerName)
-        val customername1 = dialog.findViewById<TextView>(R.id.customername)
-        val brandname = dialog.findViewById<TextView>(R.id.brandname)
-        val modelName = dialog.findViewById<TextView>(R.id.modelName)
-        val imieno1 = dialog.findViewById<TextView>(R.id.imieno1)
-        val imieno2 = dialog.findViewById<TextView>(R.id.imieno2)
-        val mobnumber = dialog.findViewById<TextView>(R.id.mobnumber)
-        val currentdate = dialog.findViewById<TextView>(R.id.currentdate)
-        val retailerName = dialog.findViewById<TextView>(R.id.retailerName)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.btnAccept)
+        val termconditiontxt = dialog!!.findViewById<TextView>(R.id.termconditiontxt)
+        val customername = dialog!!.findViewById<TextView>(R.id.customerName)
+        val customername1 = dialog!!.findViewById<TextView>(R.id.customername)
+        val brandname = dialog!!.findViewById<TextView>(R.id.brandname)
+        val modelName = dialog!!.findViewById<TextView>(R.id.modelName)
+        val imieno1 = dialog!!.findViewById<TextView>(R.id.imieno1)
+        val imieno2 = dialog!!.findViewById<TextView>(R.id.imieno2)
+        val mobnumber = dialog!!.findViewById<TextView>(R.id.mobnumber)
+        val currentdate = dialog!!.findViewById<TextView>(R.id.currentdate)
+        val retailerName = dialog!!.findViewById<TextView>(R.id.retailerName)
 
 
         val firstName = preference.getStringValue(ConstantClass.FirstName, "").orEmpty()
@@ -391,7 +392,7 @@ class IMEIDetailsPage : AppCompatActivity() {
             startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))
         }
 
-        dialog.setOnDismissListener {
+        dialog!!.setOnDismissListener {
             // Called when dialog is dismissed by back press or programmatically
             if (iisAggrementVerified) {
 
@@ -403,7 +404,7 @@ class IMEIDetailsPage : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
 
     }
@@ -413,23 +414,23 @@ class IMEIDetailsPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -444,10 +445,10 @@ class IMEIDetailsPage : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -456,6 +457,7 @@ class IMEIDetailsPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -467,8 +469,8 @@ class IMEIDetailsPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@IMEIDetailsPage, response.status, preference)
                             }
@@ -522,7 +524,7 @@ class IMEIDetailsPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

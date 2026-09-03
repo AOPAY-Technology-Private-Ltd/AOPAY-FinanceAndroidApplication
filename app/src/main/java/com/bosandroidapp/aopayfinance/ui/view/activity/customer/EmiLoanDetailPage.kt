@@ -75,6 +75,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -105,7 +106,7 @@ import kotlin.sequences.ifEmpty
 import kotlin.text.equals
 import kotlin.toString
 
-class EmiLoanDetailPage : AppCompatActivity() {
+class EmiLoanDetailPage : BaseActivity() {
     lateinit var binding : ActivityEmiLoanDetailPageBinding
     lateinit var dialog : Dialog
     lateinit var viewModel: AuthenticationViewModel
@@ -216,7 +217,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
         var request = RetailerWalletAmountReq(
             retailerID = registrationID,
-            amountType = "CreditBalance"
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("walletAmountReq", Gson().toJson(request))
@@ -250,8 +252,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details
@@ -464,54 +466,95 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
 
         binding.submitpayment.setOnClickListener {
+            if(isInternetAvailable(this@EmiLoanDetailPage)) {
+                emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
 
-            emiamount = binding.amount.text.toString().replace("₹ ","").toDouble()
-
-            if(binding.paymentmode.selectedItem.toString().equals("Cash")){
-                if(checkpaynow){
-                    Toast.makeText(this,"Please enter valid remarks.",Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                Log.d("emiamount", " $emiamount $WalletBalance")
-
-                if(emiamount <= WalletBalance.toDouble()) {
-                    OpenAlertForEmiRequest(customerCode)
-                    //HitApiForRetailerWalletPayoutAmount(emiamount)
-                }
-                else{
-                    Toast.makeText(this, "You don't have sufficient balance for raise emi.", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-            else
-            {
-                /*if(isInternetAvailable(this@EmiLoanDetailPage)) {
-
-                    if (imagepath!!.isBlank()) {
-                        Toast.makeText(this, "Please upload receipt photo", Toast.LENGTH_SHORT).show()
+                if(binding.paymentmode.selectedItem.toString().equals("Cash")){
+                    if(checkpaynow){
+                        Toast.makeText(this,"Please enter valid remarks.",Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
 
-                    if(binding.txnNumber.text.toString().equals("")){
-                        Toast.makeText(this, "Please enter transaction number", Toast.LENGTH_SHORT).show()
+                    Log.d("emiamount", " $emiamount $WalletBalance")
+
+
+                    if(emiamount <= WalletBalance.toDouble()) {
+                        OpenAlertForEmiRequest(customerCode)
+                        //HitApiForRetailerWalletPayoutAmount(emiamount)
                     }
                     else{
-                        if(checktxnNumber){
-                            Toast.makeText(this, "Please enter valid transaction number", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "You don't have sufficient balance for raise emi.", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+                else
+                {
+                    /*if(isInternetAvailable(this@EmiLoanDetailPage)) {
+
+                        if (imagepath!!.isBlank()) {
+                            Toast.makeText(this, "Please upload receipt photo", Toast.LENGTH_SHORT).show()
                             return@setOnClickListener
                         }
 
-                        if(binding.remarkEdt.text.toString().trim().equals("")){
-                            Toast.makeText(this, "Please enter remarks", Toast.LENGTH_SHORT).show()
-                            return@setOnClickListener
+                        if(binding.txnNumber.text.toString().equals("")){
+                            Toast.makeText(this, "Please enter transaction number", Toast.LENGTH_SHORT).show()
                         }
+                        else{
+                            if(checktxnNumber){
+                                Toast.makeText(this, "Please enter valid transaction number", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            if(binding.remarkEdt.text.toString().trim().equals("")){
+                                Toast.makeText(this, "Please enter remarks", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            lifecycleScope.launch {
+                                var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                                ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                                var ForServerlatefine:String ?= ""
+
+                                for (j in 1..selectedNoofEmi) {
+
+                                    val emiIndex = j - 1
+
+                                    val emiAmountWithFine: String
+
+                                    if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
+                                        if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
+                                            emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                            BounceChargeApplicable = BounceCharge
+                                        }
+                                        else{
+                                            emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                            BounceChargeApplicable = "0"
+                                        }
+                                        ForServerlatefine = latefine
+                                    }
+                                    else {
+                                        emiAmountWithFine = emiAmount
+                                        ForServerlatefine = "0"
+                                        BounceChargeApplicable = "0"
+                                    }
+                                    Log.d("EMIAmount", emiAmountWithFine)
+                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine, file!!)
+                                    delay(1000) // wait 1 second between calls
+                                }
+
+                            }
+                        }
+                    }*/
+
+                    if(isInternetAvailable(this@EmiLoanDetailPage)) {
 
                         lifecycleScope.launch {
-                            var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                            val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                            ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
+                            selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                            // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                            // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
                             var ForServerlatefine:String ?= ""
+                            PGWebViewActivity.emiList.clear()
 
                             for (j in 1..selectedNoofEmi) {
 
@@ -535,75 +578,41 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                     ForServerlatefine = "0"
                                     BounceChargeApplicable = "0"
                                 }
+
+                                Log.d("emiAmountWithFine", emiAmountWithFine)
                                 Log.d("EMIAmount", emiAmountWithFine)
-                                HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine, file!!)
-                                delay(1000) // wait 1 second between calls
+                                emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode))
+                                //val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
+                                // HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
+                                // delay(1000) // wait 1 second between calls
                             }
 
-                        }
-                    }
-                }*/
+                            val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
+                            val emiNumbers=  (1..selectedNoofEmi).joinToString("")
+                            PGWebViewActivity.LoanCodePG = loanCode
 
-                if(isInternetAvailable(this@EmiLoanDetailPage)) {
-
-                    lifecycleScope.launch {
-                        selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
-                        // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
-                        // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
-                        var ForServerlatefine:String ?= ""
-                        PGWebViewActivity.emiList.clear()
-
-                        for (j in 1..selectedNoofEmi) {
-
-                            val emiIndex = j - 1
-
-                            val emiAmountWithFine: String
-
-                            if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
-                                if(isEmandateVerified!!.toLowerCase().equals("yes",ignoreCase = true)){
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
-                                    BounceChargeApplicable = BounceCharge
-                                }
-                                else{
-                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
-                                    BounceChargeApplicable = "0"
-                                }
-                                ForServerlatefine = latefine
-                            }
-                            else {
-                                emiAmountWithFine = emiAmount
-                                ForServerlatefine = "0"
-                                BounceChargeApplicable = "0"
-                            }
-
-                            Log.d("emiAmountWithFine", emiAmountWithFine)
-                            Log.d("EMIAmount", emiAmountWithFine)
-                            emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
+                            var req = PGRequestCall(
+                                payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                customerEmailID = email,
+                                registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                payCartAmount = "1"/*emiamount.toString()*/,
+                                eMINumbers = "EMI${emiNumbers}",
+                                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                loanCode = loanCode
                             )
-                            // HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
-                            // delay(1000) // wait 1 second between calls
+
+                            hitApiForRequestPG(req)
+
+                            // }
                         }
 
-                        val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
-                        val emiNumbers=  (1..selectedNoofEmi).joinToString("")
-                        PGWebViewActivity.LoanCodePG = loanCode
-                        var req = PGRequestCall(
-                            payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                            customerEmailID = email,
-                            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                            payCartAmount = emiamount.toString(),
-                            eMINumbers = "EMI${emiNumbers}",
-                            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                            payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                            loanCode = loanCode
-                        )
-
-                        hitApiForRequestPG(req)
-
-                        // }
                     }
 
                 }
+            }
+            else{
+                Toast.makeText(this@EmiLoanDetailPage,"Please connect with internet", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -626,13 +635,13 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
                                 if (response!!.status?.toLowerCase().equals("true",ignoreCase = true) && !response.preparePOSTForm.isNullOrEmpty()) {
                                     // Open WebView with the provided URL
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     val intent = Intent(this@EmiLoanDetailPage, PGWebViewActivity::class.java)
                                     intent.putExtra("pgurl", response.preparePOSTForm)
                                     startActivity(intent)
                                 }
                                 else {
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     Toast.makeText(this@EmiLoanDetailPage, response.message, Toast.LENGTH_SHORT).show()
                                 }
 
@@ -643,7 +652,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -697,7 +706,9 @@ class EmiLoanDetailPage : AppCompatActivity() {
     fun HitApiForEmiList(){
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = LoanId,
-            customercode = "")
+            customercode = "",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
+        )
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
         viewModel.getCustomerLoanEmiDetailsReq(loanemireq).observe(this) { resources ->
@@ -708,8 +719,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                             users.body()?.let {
                                     response ->
                                 Log.d("customerLoanemiresp", response.toString())
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     var currentDate = response.indiaTimeIST
 
@@ -786,8 +797,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -803,7 +814,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
 
 
-    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?,imageFile:File){
+    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?){
 
         var createdBy=""
 
@@ -817,12 +828,11 @@ class EmiLoanDetailPage : AppCompatActivity() {
         var customercode =  customerCode
         var retailercode =  preference.getStringValue(ConstantClass.RetailerCode, "")
 
-
         val request = CustomerLoanEmiReceiveReq(
             mode = "UPDATE",
             loanCode = loanCode,
             paymentDate = getCurrentUtcTimestamp(),
-            paymentMode =  binding.paymentmode.selectedItem.toString(),
+            paymentMode ="Wallet", // as per Naim Khan Changes 17/08/2026
             utrNumber = "",
             remarks = binding.remarkEdt.text.toString(),
             createdBy = createdBy,
@@ -830,8 +840,9 @@ class EmiLoanDetailPage : AppCompatActivity() {
             customerCode =customercode,
             retailerCode = retailercode,
             bankName = "",
-            receiptImagePath = ""/*,
+            receiptImagePath = "",/*,
             imageFile = imageFile*/
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("loanEmiReceiveReq", Gson().toJson(request))
@@ -845,8 +856,9 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                     response ->
                                 Log.d("loanEmiReceiveResp", response.toString())
                                 if(loopcount==emicount){
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
                                     finish()
@@ -868,8 +880,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -887,10 +899,10 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
     fun OpenPopUpForVeryfyOTP(){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.layout_for_payment)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.layout_for_payment)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -899,8 +911,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var exitbutton = dialog.findViewById<LinearLayout>(R.id.exitlayout)
-        var shareImage = dialog.findViewById<ImageView>(R.id.shareimage)
+        var exitbutton = dialog!!.findViewById<LinearLayout>(R.id.exitlayout)
+        var shareImage = dialog!!.findViewById<ImageView>(R.id.shareimage)
 
         shareImage.setOnClickListener {
             shareImageFromDrawable(this, R.drawable.bosqrimage)
@@ -908,7 +920,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
 
         exitbutton.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
             val intent = Intent(this@EmiLoanDetailPage, DashBoard::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -916,17 +928,17 @@ class EmiLoanDetailPage : AppCompatActivity() {
         }
 
 
-        dialog.setOnDismissListener{
-            dialog.dismiss()
+        dialog!!.setOnDismissListener{
+            dialog!!.dismiss()
             val intent = Intent(this@EmiLoanDetailPage, DashBoard::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -986,11 +998,12 @@ class EmiLoanDetailPage : AppCompatActivity() {
             customerCommissionGST = 0,
             commissionWithoutGST = 0,
             transferFromMsg = "Your Account is debited by ${amount}Rs.Due to Paid EMI on customer code :${customerCode}",
-            registrationId = retailercode,
+            registrationId = ConstantClass.PENNYDROP_REGISTRATION_ID,
             tdsAmount = 0,
             serviceschargeGSTAmount = 0,
             transactionStatus = "Approved",
-            loanCode = loanCode
+            loanCode = loanCode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("payoutrequest", Gson().toJson(request))
@@ -1036,8 +1049,9 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                         }
                                     }*/
 
-                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine,imageFile)
+                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
                                 }
+
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
                                 }
@@ -1049,8 +1063,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
@@ -1081,10 +1095,10 @@ class EmiLoanDetailPage : AppCompatActivity() {
     fun OpenAlertForEmiRequest(customerCode : String){
 
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.emialert_retailer)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.emialert_retailer)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -1093,15 +1107,15 @@ class EmiLoanDetailPage : AppCompatActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        var textmsg = dialog.findViewById<TextView>(R.id.dialog_message)
-        var btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
-        var Ok = dialog.findViewById<Button>(R.id.Ok)
+        var textmsg = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        var btnCancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        var Ok = dialog!!.findViewById<Button>(R.id.Ok)
 
         textmsg.text = "Are you sure you want to proceed with the EMI payment for this customer (${customerCode})?"
 
 
         btnCancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
 
@@ -1114,9 +1128,9 @@ class EmiLoanDetailPage : AppCompatActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1124,8 +1138,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
     fun hitApiForSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
 
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
@@ -1139,24 +1152,24 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                 Log.d("OTP", otp)
 
                                 if (response.statuss.equals("True")) {
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
-                                    dialog.dismiss()
+                                    dialog!!.dismiss()
                                     var customerName = "${preference.getStringValue(ConstantClass.FirstName,"")} ${preference.getStringValue(ConstantClass.LastName, "")}"
                                     Log.d("RetailerName", customerName)
                                     hitApiForMobVerify(mailidormobile, customerName, otp)
                                 }
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1200,16 +1213,17 @@ class EmiLoanDetailPage : AppCompatActivity() {
                 Log.e("API_EXCEPTION", e.toString())
             }
         }
+
     }
 
 
     fun OpenPopUpForVeryfyOTP(EmailID: String, otp: String) {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -1219,24 +1233,24 @@ class EmiLoanDetailPage : AppCompatActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val title = dialog.findViewById<TextView>(R.id.text_subtitle)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val title = dialog!!.findViewById<TextView>(R.id.text_subtitle)
 
         startOtpTimer(resendtxt, timer)
 
         title.text = "Please enter the 4-digit OTP sent to your registered mobile number."
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -1265,7 +1279,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1295,8 +1309,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
     fun hitApiForReSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
             resources.let {
@@ -1304,7 +1317,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
                                 if(response.statuss.equals("True")){
                                     var otp = response.value
@@ -1314,14 +1327,14 @@ class EmiLoanDetailPage : AppCompatActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1334,12 +1347,13 @@ class EmiLoanDetailPage : AppCompatActivity() {
     }
 
 
+
     fun hitApiForOTPVerify(mobileOrEmailID: String, otp: String, message: String) {
         var verifyotpreq = VerifyOTPReq(
             mobileormailid = mobileOrEmailID,
             otp = otp,
-            logintype = message
-        )
+            logintype = message)
+
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
@@ -1347,11 +1361,11 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                     var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
 
@@ -1409,7 +1423,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1442,8 +1456,8 @@ class EmiLoanDetailPage : AppCompatActivity() {
                     Toast.makeText(this@EmiLoanDetailPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                     }
                     Log.d("API_SUCCESS", loanData.toString())
                 } else {
@@ -1453,6 +1467,7 @@ class EmiLoanDetailPage : AppCompatActivity() {
                 Log.e("API_EXCEPTION", e.toString())
             }
         }
+
 
     }
 

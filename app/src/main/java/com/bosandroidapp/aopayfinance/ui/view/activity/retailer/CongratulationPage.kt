@@ -16,11 +16,12 @@ import com.bosandroidapp.aopayfinance.databinding.ActivityCongratulationPageBind
 
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import kotlinx.coroutines.launch
 
-class CongratulationPage : AppCompatActivity() {
+class CongratulationPage : BaseActivity() {
     lateinit var binding: ActivityCongratulationPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var api: ApiInterface

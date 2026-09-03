@@ -30,6 +30,7 @@ import com.bosandroidapp.aopayfinance.data.repository.CibilRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CibilViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityReferenceAadharCardWebViewDigilockerPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.PaymentInformation.Companion.checkKYC
@@ -41,7 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
+class AadharCardReferenceWebViewDIGILockerPage : BaseActivity() {
     lateinit var binding: ActivityReferenceAadharCardWebViewDigilockerPageBinding
     lateinit var viewModel: AuthenticationViewModel
     private lateinit var viewCibilModel: CibilViewModel
@@ -173,6 +174,7 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -184,8 +186,8 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AadharCardReferenceWebViewDIGILockerPage, response.status, preference)
                             }
@@ -242,7 +244,7 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -283,7 +285,7 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
 
         var aadharverificationreq = AAdhaarDetailesReq(
             transactionID = transactionId,
-            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("AadharDetailsreq", Gson().toJson(aadharverificationreq))
@@ -294,7 +296,7 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("AadharDetailsResp", Gson().toJson(response))
                                 if (response!!.code.equals("200")) {
                                     checkKYC = true
@@ -323,7 +325,7 @@ class AadharCardReferenceWebViewDIGILockerPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {

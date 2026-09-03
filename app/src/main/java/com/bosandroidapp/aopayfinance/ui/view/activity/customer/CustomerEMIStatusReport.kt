@@ -19,6 +19,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDeta
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityCustomerEmistatusReportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.CustomerEMIDetailsAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.CustomerEmiStatusAdapter
@@ -26,7 +27,7 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class CustomerEMIStatusReport : AppCompatActivity() {
+class CustomerEMIStatusReport : BaseActivity() {
 
     lateinit var binding: ActivityCustomerEmistatusReportBinding
     lateinit var viewModel: AuthenticationViewModel
@@ -34,9 +35,11 @@ class CustomerEMIStatusReport : AppCompatActivity() {
     var customerLoanEmiDetailsList : MutableList<CustomerEMIDataItem?>? = mutableListOf()
     lateinit var adapter : CustomerEmiStatusAdapter
 
+
     companion object{
         var loanCode : String = ""
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +59,7 @@ class CustomerEMIStatusReport : AppCompatActivity() {
 
     }
 
+
     fun  setonClickListner(){
 
         binding.back.setOnClickListener {
@@ -63,6 +67,7 @@ class CustomerEMIStatusReport : AppCompatActivity() {
         }
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -74,7 +79,8 @@ class CustomerEMIStatusReport : AppCompatActivity() {
 
     fun HitApiForEmiList(){
         var loanemireq = CustomerEmiStatusReq(
-            loanCode = loanCode
+            loanCode = loanCode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq",Gson().toJson(loanemireq))
 
@@ -87,8 +93,8 @@ class CustomerEMIStatusReport : AppCompatActivity() {
                                 response ->
                                 Log.d("customerLoanemiresp", Gson().toJson(response))
 
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     customerLoanEmiDetailsList = LoanEmiList as MutableList<CustomerEMIDataItem?>?
                                     if(!customerLoanEmiDetailsList.isNullOrEmpty() && customerLoanEmiDetailsList!!.size>0){
@@ -108,8 +114,8 @@ class CustomerEMIStatusReport : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }
@@ -130,5 +136,6 @@ class CustomerEMIStatusReport : AppCompatActivity() {
         binding.showingLoanList.adapter = adapter
         adapter.notifyDataSetChanged()
     }
+
 
 }

@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.lifecycleScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -22,18 +23,20 @@ import androidx.work.WorkManager
 import com.bosandroidapp.aopayfinance.databinding.SplashMainBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isDevModeEnabled
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.showDevModeSnackbar
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.workmanager.EmiNotificationWorker
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
-
 class SplashScreen : AppCompatActivity() {
     lateinit var binding: SplashMainBinding
     lateinit var preference: SharedPreference
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,22 +56,39 @@ class SplashScreen : AppCompatActivity() {
         }
 
 
+        binding.uattext.visibility= View.GONE
+
+
         Handler(Looper.getMainLooper()).postDelayed({
-            // Code to run after delay
-            if (preference.getBoolanValue(ConstantClass.LoggedIn, false)) {
-                val mainIntent = Intent(this@SplashScreen, DashBoard::class.java)
-                startActivity(mainIntent)
-                finish()
+
+            if (!isInternetAvailable(this)) {
+                Snackbar.make(findViewById(android.R.id.content),
+                    "No internet connection. Please check your network.",
+                    Snackbar.LENGTH_INDEFINITE
+                ).setAction("Retry") {
+                    val intent = Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }.show()
             }
-            else {
-                val mainIntent = Intent(this@SplashScreen, ChooseYourRolePage::class.java)
-                startActivity(mainIntent)
-                finish()
+
+            else{
+
+                // Code to run after delay
+                if (preference.getBoolanValue(ConstantClass.LoggedIn, false)) {
+                    val mainIntent = Intent(this@SplashScreen, DashBoard::class.java)
+                    startActivity(mainIntent)
+                    finish()
+                }
+                else {
+                    val mainIntent = Intent(this@SplashScreen, ChooseYourRolePage::class.java)
+                    startActivity(mainIntent)
+                    finish()
+                }
             }
 
 
         }, 3000)
-
 
 
     }

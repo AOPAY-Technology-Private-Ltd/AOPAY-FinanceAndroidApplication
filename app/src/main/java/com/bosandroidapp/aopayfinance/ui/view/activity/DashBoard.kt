@@ -85,12 +85,14 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.kioskmode.initiateBlocking
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerEMIPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerReportsPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.BankDetailsPage
+import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CustomerAppInstall
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IDVerificationPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MapActivity
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports.LowCibilScoreCustomerReports
@@ -118,7 +120,7 @@ import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 
-class DashBoard : AppCompatActivity() {
+class DashBoard : BaseActivity() {
     private lateinit var binding: ActivityDashBoardBinding
     private lateinit var headerBinding: NavHeaderDashBoardBinding
     lateinit var preference: SharedPreference
@@ -164,6 +166,7 @@ class DashBoard : AppCompatActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION), 101)
             }
             binding.makePaymentLayout.visibility=View.GONE
+            binding.installAppLayout.visibility=View.GONE
             binding.logout.visibility = View.GONE
 
         }
@@ -174,7 +177,7 @@ class DashBoard : AppCompatActivity() {
             }
 
             binding.makePaymentLayout.visibility=View.VISIBLE
-
+            binding.installAppLayout.visibility=View.VISIBLE
             /*          binding.navRecyclerViewlayout.visibility=View.GONE
             binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
             navAdapter = NavAdapter(this, items) { clickedChild ->
@@ -185,12 +188,11 @@ class DashBoard : AppCompatActivity() {
             }
             binding.navRecyclerView.adapter = navAdapter*/
 
-            binding.logout.visibility = View.VISIBLE
+             binding.logout.visibility = View.VISIBLE
 
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
             }
-
 
           }
 
@@ -218,6 +220,7 @@ class DashBoard : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
+        getFirebaseToken()
         setDataHeader()
         if (logintype.equals(Customer)) {
             HitApiForEmiList()
@@ -260,13 +263,13 @@ class DashBoard : AppCompatActivity() {
             PanState = ""
             PanCity = ""
             PanCountry = ""
-            getFirebaseToken()
+
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
             }
             hitApiForLogin()
-            var request = SendNotificationFeatureNameRequest(
-                clientCode = ConstantClass.ClientCode,
+            val request = SendNotificationFeatureNameRequest(
+                clientCode = preference.getStringValue(ConstantClass.ClientCode, ""),
                 customerCode =  preference.getStringValue(ConstantClass.CustomerCode,""),
                 retailerCode = preference.getStringValue(ConstantClass.RetailerCode,""),
                 title = "EMI Overdue",
@@ -345,6 +348,7 @@ class DashBoard : AppCompatActivity() {
             startActivity(Intent(this@DashBoard, MakePaymentPage::class.java))
         }
 
+
         binding.appBarDashBoard.swiperefresh.setOnRefreshListener {
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
@@ -359,7 +363,7 @@ class DashBoard : AppCompatActivity() {
 
 
         binding.appBarDashBoard.deskdesign.clicktologin.setOnClickListener {
-            val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+            /*val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
             val loanDetails = sharedPref.getString("LoanData", "")
             if(loanDetails.isNullOrBlank()){
                 Toast.makeText(this,resources.getString(R.string.customerdashboard), Toast.LENGTH_LONG).show()
@@ -368,11 +372,11 @@ class DashBoard : AppCompatActivity() {
                 preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
                 binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
                 binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
-            }
+            }*/
 
-          /* preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
+            preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
             binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
-            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE*/
+            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
 
         }
 
@@ -385,6 +389,10 @@ class DashBoard : AppCompatActivity() {
         binding.navProfile.setOnClickListener {
             binding.drawerLayout.closeDrawers()
             startActivity(Intent(this, RetailerProfilePage::class.java))
+        }
+
+        binding.installAppLayout.setOnClickListener {
+            startActivity(Intent(this, CustomerAppInstall::class.java))
         }
 
 
@@ -467,9 +475,17 @@ class DashBoard : AppCompatActivity() {
 
 
     fun hitApiForGetAndCheckAccessToken(){
-        var generateTokenReq = GenerateAccessTokenRequest(
-            fcmToken = preference.getStringValue(ConstantClass.FCMTOKEN,"")
-        )
+
+        val token = if (preference.getStringValue(ConstantClass.FCMTOKEN, "").isNullOrBlank()) {
+            Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        } else {
+            preference.getStringValue(ConstantClass.FCMTOKEN, "")
+        }
+
+        val generateTokenReq = GenerateAccessTokenRequest(
+            fcmToken = token,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""))
+
         Log.d("tokenreq", Gson().toJson(generateTokenReq))
 
         viewModel.getAccessKeyForValidateAPKReq(generateTokenReq).observe(this) { resources ->
@@ -480,7 +496,7 @@ class DashBoard : AppCompatActivity() {
                             users.body()?.let { response ->
                                 Log.d("tokenresp", response.message!!)
                                 Log.d("tokenmessage",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog?.dismiss()
                                 uploadDataOnFirebaseConsole(Gson().toJson(response),"CurrentLocation")
                                 if(response.success!!){
                                     binding.appBarDashBoard.deskdesign.generatedkey.visibility= View.VISIBLE
@@ -493,7 +509,7 @@ class DashBoard : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog?.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -529,20 +545,20 @@ class DashBoard : AppCompatActivity() {
 
     fun OpenPopUpForVeryfyOTP() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
 
         done.setOnClickListener {
             if (logintype.equals(Retailer)){
@@ -561,10 +577,10 @@ class DashBoard : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -574,7 +590,8 @@ class DashBoard : AppCompatActivity() {
         if(registrationID.isNotEmpty()){
             var request = RetailerWalletAmountReq(
                 retailerID = registrationID,
-                amountType = "CreditBalance"
+                amountType = "CreditBalance",
+                clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
             )
             Log.d("walletAmountReq", Gson().toJson(request))
 
@@ -622,8 +639,8 @@ class DashBoard : AppCompatActivity() {
                         }
 
                         ApiStatus.ERROR -> {
-                            if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                ConstantClass.dialog.dismiss()
+                            if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+                                ConstantClass.dialog?.dismiss()
                             }
                             binding.appBarDashBoard.swiperefresh.isRefreshing = false
                             hitApiForRetailerWalletAmount()
@@ -658,7 +675,8 @@ class DashBoard : AppCompatActivity() {
     fun HitApiForEmiList() {
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode, "")
+            customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq", Gson().toJson(loanemireq))
 
@@ -783,6 +801,7 @@ class DashBoard : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -794,8 +813,8 @@ class DashBoard : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog?.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@DashBoard, response.status, preference)
                             }
@@ -815,10 +834,9 @@ class DashBoard : AppCompatActivity() {
 
 
         var request = ValidateSessionRequest(
-            preference.getStringValue(ConstantClass.RetailerCode, ""),
-            deviceId,
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            deviceId = deviceId,
+            token = preference.getStringValue(ConstantClass.FCMTOKEN, ""))
 
         Log.d("validaterequest", Gson().toJson(request))
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -851,8 +869,7 @@ class DashBoard : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 
@@ -1006,7 +1023,7 @@ class DashBoard : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
 

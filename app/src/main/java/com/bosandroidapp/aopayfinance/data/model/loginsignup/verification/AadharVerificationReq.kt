@@ -16,5 +16,6 @@ data class AadharVerificationReq(
     var emailId:String,
 
     @SerializedName("RegistrationID")
-    var registrationId:String,
+    var registrationId:String
+
 )

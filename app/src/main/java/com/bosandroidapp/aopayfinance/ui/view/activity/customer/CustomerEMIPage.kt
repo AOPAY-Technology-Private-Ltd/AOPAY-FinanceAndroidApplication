@@ -16,13 +16,14 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.CustomerEMIDetailsAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class CustomerEMIPage : AppCompatActivity() {
+class CustomerEMIPage : BaseActivity() {
     lateinit var binding : ActivityCustomerEmipageBinding
     lateinit var adapter : CustomerEMIDetailsAdapter
     lateinit var viewModel: AuthenticationViewModel
@@ -104,7 +105,8 @@ class CustomerEMIPage : AppCompatActivity() {
     fun HitApiForEmiList(){
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
-            customercode = preference.getStringValue(ConstantClass.CustomerCode,"")
+            customercode = preference.getStringValue(ConstantClass.CustomerCode,""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("customerloanEmireq",Gson().toJson(loanemireq))
 
@@ -117,8 +119,8 @@ class CustomerEMIPage : AppCompatActivity() {
                                 response ->
                                 Log.d("customerLoanemiresp", Gson().toJson(response))
 
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                                    ConstantClass.dialog.dismiss()
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
                                     var LoanEmiList = response.data
                                     customerLoanEmiDetailsList = LoanEmiList as MutableList<CustomerDataItem?>?
                                     setDataOnView(customerLoanEmiDetailsList)
@@ -130,8 +132,8 @@ class CustomerEMIPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                            ConstantClass.dialog.dismiss()
+                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                     }

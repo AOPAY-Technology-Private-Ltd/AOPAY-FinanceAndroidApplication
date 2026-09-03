@@ -3,6 +3,7 @@ package com.bosandroidapp.aopayfinance.ui.view.adapter
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.LoanId
 import com.bosandroidapp.aopayfinance.ui.view.model.ColorList
+import java.util.Locale
 
 class RetailerWalletAdapter (var context: Context, var retailerWalletReportList :List<DataItem?>?): RecyclerView.Adapter<RetailerWalletAdapter.ViewHolder>() {
 
@@ -29,6 +31,9 @@ class RetailerWalletAdapter (var context: Context, var retailerWalletReportList 
         var retailercode = binding.retailercode
         var transactiondate = binding.transactiondate
         var remarksmsg = binding.remarksmsg
+        var paymentMode = binding.paymentMode
+        var payoutMode = binding.payoutMode
+        var payoutModeLayout = binding.paymentModeLayout
     }
 
 
@@ -42,25 +47,46 @@ class RetailerWalletAdapter (var context: Context, var retailerWalletReportList 
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(retailerWalletReportList!![position]!!.transactionStatus!!.toLowerCase().equals("pending")){
-            holder.status.setTextColor(ContextCompat.getColor(context, R.color.orange))
+        val item = retailerWalletReportList!![position]!!
+        val statusStr = item.transactionStatus?.toLowerCase() ?: ""
+
+        if(item.payoutMode!!.isNotEmpty()){
+            holder.payoutModeLayout.visibility=View.VISIBLE
         }
 
-        if(retailerWalletReportList!![position]!!.transactionStatus!!.toLowerCase().equals("approved")){
-            holder.status.setTextColor(ContextCompat.getColor(context, R.color.green))
+        else{
+            holder.payoutModeLayout.visibility=View.GONE
         }
 
-        if(retailerWalletReportList!![position]!!.transactionStatus!!.toLowerCase().equals("rejected")){
-            holder.status.setTextColor(ContextCompat.getColor(context, R.color.red))
+        when (statusStr) {
+            "pending" -> {
+                holder.status.setTextColor(ContextCompat.getColor(context, R.color.orange))
+                holder.status.setBackgroundResource(R.drawable.bg_status_orange)
+            }
+            "approved", "success" -> {
+                holder.status.setTextColor(ContextCompat.getColor(context, R.color.green))
+                holder.status.setBackgroundResource(R.drawable.bg_status_green)
+            }
+            "rejected", "failed" -> {
+                holder.status.setTextColor(ContextCompat.getColor(context, R.color.red))
+                holder.status.setBackgroundResource(R.drawable.bg_status_red)
+            }
+            else -> {
+                holder.status.setTextColor(ContextCompat.getColor(context, R.color.darkgrey))
+                holder.status.setBackgroundResource(R.drawable.bg_status_light)
+            }
         }
 
         preference = SharedPreference(context)
-        holder.status.text = retailerWalletReportList!![position]!!.transactionStatus!!.substring(0, 1).toUpperCase()+retailerWalletReportList!![position]!!.transactionStatus!!.substring(1).toLowerCase()
-        holder.transactionid.text = retailerWalletReportList!![position]!!.transactionID
-        holder.withdrawAmount.text = "₹ " .plus(retailerWalletReportList!![position]!!.amount   )
-        holder.retailercode.text = retailerWalletReportList!![position]!!.retailerID
-        holder.transactiondate.text = formatDateToReport(retailerWalletReportList!![position]!!.transactionDate!!)
-        holder.remarksmsg.text = retailerWalletReportList!![position]!!.remarks
+        holder.status.text = item.transactionStatus?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() } ?: "Unknown"
+        holder.transactionid.text = item.transactionID
+        holder.withdrawAmount.text = "₹ ".plus(item.amount)
+        holder.retailercode.text = item.retailerID
+        holder.transactiondate.text = formatDateToReport(item.transactionDate ?: "")
+        holder.remarksmsg.text = item.remarks
+        holder.paymentMode.text = item.paymentMode ?: "N/A"
+        holder.payoutMode.text = item.payoutMode ?: "N/A"
+
     }
 
 

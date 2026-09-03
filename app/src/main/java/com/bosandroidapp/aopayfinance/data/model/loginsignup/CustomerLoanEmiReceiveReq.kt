@@ -70,6 +70,7 @@ data class CustomerLoanEmiReceiveReq(
     val netDueAmount: String,*/
     val bankName: String,
     val receiptImagePath: String,
-    /*val imageFile: File?*/ // optional image file
+    @SerializedName("clientcode")
+    var clientCode: String
 )
 

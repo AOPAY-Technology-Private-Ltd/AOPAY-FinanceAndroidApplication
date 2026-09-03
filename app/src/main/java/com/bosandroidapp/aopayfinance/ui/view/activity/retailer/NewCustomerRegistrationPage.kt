@@ -126,6 +126,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.CibilRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CibilViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
@@ -144,7 +145,8 @@ import java.util.Locale
 import kotlin.toString
 
 
-class NewCustomerRegistrationPage : AppCompatActivity() {
+class NewCustomerRegistrationPage : BaseActivity() {
+
     lateinit var binding: ActivityNewCustomerRegistrationPageBinding
 
     lateinit var dialog: Dialog
@@ -192,7 +194,6 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         }
 
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,6 +218,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         setDataInUI()
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -588,7 +590,6 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
             onBackPressed()
         }
 
-
         binding.acceptTermConditionCheck.setOnClickListener {
 
             OpenPopUpForTermCondition()
@@ -660,88 +661,89 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
 
         binding.createaccount.setOnClickListener {
-
             val (isValid, errorMessage) = isValidForm(
-                firstName = binding.firstName.text.toString().trim(),
-                middleName = binding.middleName.text.toString().trim(),
-                lastName = binding.lastName.text.toString().trim(),
-                mobileNumber = binding.mobileNumber.text.toString().trim(),
-                alternateMobile = binding.alternatemobileNumber.text.toString().trim(),
-                houseNumber = binding.flathouseno.text.toString().trim(),
-                areaSector = binding.areasector.text.toString().trim(),
-                pinCode = binding.pincode.text.toString().trim(),
-                currentAddress = binding.currentaddress.text.toString().trim(),
-                state = binding.statename.text.toString(),
-                city = binding.cityname.text.toString(),
-                imagepath = customerImagePath,
-                isAccepted = binding.acceptTermConditionCheck.isChecked,
-                primarymobverified = CustPrimaryMobileVerified
-            )
+                    firstName = binding.firstName.text.toString().trim(),
+                    middleName = binding.middleName.text.toString().trim(),
+                    lastName = binding.lastName.text.toString().trim(),
+                    mobileNumber = binding.mobileNumber.text.toString().trim(),
+                    alternateMobile = binding.alternatemobileNumber.text.toString().trim(),
+                    houseNumber = binding.flathouseno.text.toString().trim(),
+                    areaSector = binding.areasector.text.toString().trim(),
+                    pinCode = binding.pincode.text.toString().trim(),
+                    currentAddress = binding.currentaddress.text.toString().trim(),
+                    state = binding.statename.text.toString(),
+                    city = binding.cityname.text.toString(),
+                    imagepath = customerImagePath,
+                    isAccepted = binding.acceptTermConditionCheck.isChecked,
+                    primarymobverified = CustPrimaryMobileVerified
+                )
 
             if (!isValid) {
-                Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NewCustomerRegistrationPage, errorMessage, Toast.LENGTH_SHORT).show()
 
-            }
+                }
             else {
-                CustPhotoPath = photoUri
-                CustFirstName = binding.firstName.text.toString().trim()
-                CustMiddleName = binding.middleName.text.toString().trim()
-                CustLastName = binding.lastName.text.toString().trim()
-                CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
-                CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
-                isAggrementVerified = "yes"
-                CusteMailID = binding.emailId.text.toString().trim()
-                CustFlatNo = binding.flathouseno.text.toString().trim()
-                CustAreaSector = binding.areasector.text.toString().trim()
-                CustCurrentAddress = binding.currentaddress.text.toString().trim()
-                CustPinCode = binding.pincode.text.toString().trim()
-                CustStateName = binding.statename.text.toString()
-                CustCityName = binding.cityname.text.toString()
-                ConstantClass.ClickOnCardDashboard = "Customer"
+                    CustPhotoPath = photoUri
+                    CustFirstName = binding.firstName.text.toString().trim()
+                    CustMiddleName = binding.middleName.text.toString().trim()
+                    CustLastName = binding.lastName.text.toString().trim()
+                    CustPrimaryMobileNumber = binding.mobileNumber.text.toString().trim()
+                    CustAlternateMobileNumber = binding.alternatemobileNumber.text.toString().trim()
+                    isAggrementVerified = "yes"
+                    CusteMailID = binding.emailId.text.toString().trim()
+                    CustFlatNo = binding.flathouseno.text.toString().trim()
+                    CustAreaSector = binding.areasector.text.toString().trim()
+                    CustCurrentAddress = binding.currentaddress.text.toString().trim()
+                    CustPinCode = binding.pincode.text.toString().trim()
+                    CustStateName = binding.statename.text.toString()
+                    CustCityName = binding.cityname.text.toString()
+                    ConstantClass.ClickOnCardDashboard = "Customer"
 
-                if(CheckOnlineOrOffline.equals(ConstantClass.offline)){
-                    if(!CustAlternateMobileNumber.isNullOrBlank()){
-                        CustomerLoanStatus =  CustomerLoanStatusPending
-                        startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
-                 }
-                 else {
-                        binding.alternatemobileNumber.error= "Please enter alternate mobile number ."
-                        scrollToView(binding.detaillayout,  binding.alternatemobileNumber)
-                 }
+                    if(CheckOnlineOrOffline.equals(ConstantClass.online)){
 
+                        if (CustPrimaryMobileNumber.isNullOrBlank()) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Primary mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (CustPrimaryMobileNumber.length != 10) {
+
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit primary mobile number.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (CustAlternateMobileNumber.isNullOrBlank()) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Alternate mobile number is mandatory.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else if (!CustAlternateMobileNumber.isNullOrBlank() && CustAlternateMobileNumber.length != 10) {
+
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit alternate mobile number.", Toast.LENGTH_SHORT).show()
+
+                        } else if (!CustAlternateMobileNumber.isNullOrBlank() && CustPrimaryMobileNumber == CustAlternateMobileNumber) {
+                            Toast.makeText(this@NewCustomerRegistrationPage, "Primary and alternate mobile numbers should not be the same.", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else {
+                            hitApiForCibilReport()
+                        }
+
+                    }
+
+                    else{
+                        if(!CustAlternateMobileNumber.isNullOrBlank()){
+                            CustomerLoanStatus =  CustomerLoanStatusPending
+                            startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
+                        }
+                        else {
+                            binding.alternatemobileNumber.error= "Please enter alternate mobile number ."
+                            scrollToView(binding.detaillayout,  binding.alternatemobileNumber)
+                        }
+
+                    }
 
                 }
 
-                else{
 
-                    if (CustPrimaryMobileNumber.isNullOrBlank()) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Primary mobile number is mandatory.", Toast.LENGTH_SHORT).show()
 
-                    }
-                    else if (CustPrimaryMobileNumber.length != 10) {
-
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit primary mobile number.", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else if (CustAlternateMobileNumber.isNullOrBlank()) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Alternate mobile number is mandatory.", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else if (!CustAlternateMobileNumber.isNullOrBlank() && CustAlternateMobileNumber.length != 10) {
-
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Please enter a valid 10-digit alternate mobile number.", Toast.LENGTH_SHORT).show()
-
-                    } else if (!CustAlternateMobileNumber.isNullOrBlank() && CustPrimaryMobileNumber == CustAlternateMobileNumber) {
-                        Toast.makeText(this@NewCustomerRegistrationPage, "Primary and alternate mobile numbers should not be the same.", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else {
-                        hitApiForCibilReport()
-                    }
-
-                }
-
-            }
 
         }
 
@@ -751,10 +753,10 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
     fun OpenPopUpForVeryfyOTP(EmailID: String, otp: String) {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -764,17 +766,17 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val title = dialog.findViewById<TextView>(R.id.text_subtitle)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val title = dialog!!.findViewById<TextView>(R.id.text_subtitle)
 
         startOtpTimer(resendtxt, timer)
 
@@ -786,7 +788,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -833,9 +835,10 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
+
 
     fun startOtpTimer(resendtxt: TextView, timer: TextView) {
         resendtxt.visibility = View.INVISIBLE
@@ -856,6 +859,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         }
         countDownTimer.start()
     }
+
 
     private fun createImageFile(): File {
         val fileName = "IMG_${System.currentTimeMillis()}"
@@ -896,7 +900,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
                                 if(response.statuss.equals("True")){
                                     if (clickemailId) {
@@ -913,14 +917,14 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                                 }
                                 else{
                                 Toast.makeText(this@NewCustomerRegistrationPage,response.message,Toast.LENGTH_SHORT).show()
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -933,12 +937,12 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
     }
 
 
-
     fun hitApiForSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
             otpType = type
         )
+
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
 
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
@@ -960,21 +964,21 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                                     }
 
                                     if (clickemailId) {
-                                        ConstantClass.dialog.dismiss()
+                                        ConstantClass.dialog!!.dismiss()
                                         Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
                                         OpenPopUpForVeryfyOTP(mailidormobile, "")
                                     }
                                 }
                                 else{
                                     Toast.makeText(this@NewCustomerRegistrationPage,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -985,6 +989,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                 }
             }
         }
+
     }
 
 
@@ -1001,7 +1006,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
                                     if (clickemailId) {
@@ -1030,8 +1035,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                                         binding.alternateverifymobilenumber.visibility = View.GONE
                                     }
 
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                 } else {
                                     binding.emailId.isEnabled = true
@@ -1045,7 +1050,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1231,30 +1236,96 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
     }
 
 
+
+    fun isKitValidForm(
+        firstName: String,
+        lastName: String,
+        mobileNumber: String,
+        primarymobverified: String
+    ): Pair<Boolean, String?> {
+
+        if (firstName.isBlank()) {
+            binding.firstName.error= "Please enter your first name."
+            scrollToView(binding.detaillayout,  binding.firstName)
+            return Pair(false, "Please enter your first name.")
+        }
+        else{
+            binding.firstName.error = null
+        }
+
+
+        if (!checkFirstName){
+            return Pair(false, "Please enter a valid first name.")
+        }
+
+
+        if (lastName.isBlank()) {
+            binding.lastName.error= "Please enter your last name."
+            scrollToView(binding.detaillayout,  binding.lastName)
+            return Pair(false, "Please enter your last name.")
+        }
+        else {
+            binding.lastName.error = null
+        }
+
+
+        if (!checkLastName) return Pair(false, "Please enter a valid last name.")
+
+
+        if (!mobileNumber.matches(Regex("^[6-9]\\d{9}$"))) {
+            binding.mobileNumber.error= "Please enter a valid 10-digit mobile number."
+            scrollToView(binding.detaillayout,  binding.mobileNumber)
+            return Pair(false, "Please enter a valid mobile number.")
+        }
+        else{
+            binding.mobileNumber.error = null
+        }
+
+        if (primarymobverified.isBlank()|| primarymobverified.isNotBlank() && !primarymobverified.equals("yes")){
+            binding.mobileNumber.error= "Please verify your primary mobile number first."
+            scrollToView(binding.detaillayout,  binding.mobileNumber)
+            return Pair(false, "Please verify your primary mobile number first.")
+        }else{
+            binding.mobileNumber.error = null
+        }
+
+        if(binding.emailId.text.isNotEmpty()){
+
+            if (!binding.emailId.text.toString().matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")))
+                return Pair(false, "Enter valid email address")
+
+            if (!checkEmailId)
+                return Pair(false, "Enter valid email address")
+        }
+
+        return Pair(true, null)
+    }
+
+
     fun OpenPopUpForTermCondition() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.term_condition_layout)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.term_condition_layout)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.btnAccept)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.btnAccept)
 
 
         verifyButton.setOnClickListener {
             iisAggrementVerified = true
             binding.acceptTermConditionCheck.isChecked = true
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.setOnDismissListener {
+        dialog!!.setOnDismissListener {
             // Called when dialog is dismissed by back press or programmatically
             if (iisAggrementVerified) {
 
@@ -1266,7 +1337,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1289,8 +1360,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     Toast.makeText(this@NewCustomerRegistrationPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                         OpenPopUpForVeryfyOTP(mobnumber, OTP)
                     }
 
@@ -1305,6 +1376,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
             }
         }
     }
+
 
 
     fun hitApiForResendMobVerify(mobnumber: String, customerName: String, OTP: String) {
@@ -1325,8 +1397,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     Toast.makeText(this@NewCustomerRegistrationPage, "Otp sent on your mobile number!!", Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                        ConstantClass.dialog.dismiss()
+                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                        ConstantClass.dialog!!.dismiss()
                     }
                     Log.d("API_SUCCESS", loanData.toString())
                 } else {
@@ -1357,23 +1429,23 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -1387,10 +1459,10 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -1549,6 +1621,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -1560,8 +1633,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@NewCustomerRegistrationPage, response.status, preference)
                             }
@@ -1616,7 +1689,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
@@ -1690,14 +1763,14 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                                 }
                                 else {
                                     Toast.makeText(this@NewCustomerRegistrationPage, response.message, Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1725,7 +1798,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
         if(CusteMailID.isNullOrBlank()){
             emailID = "bos.centerpvtltd@gmail.com"
-        }else{
+        }
+        else{
             emailID = CusteMailID
         }
 
@@ -1739,17 +1813,18 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
             otp = otp,
             consentmessage = "I agree to share my data for verification purposes",
             consentacceptence = "yes",
-            registrationID = "AOP-5048"
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("CibilReq", Gson().toJson(cibilReq))
+
         viewCibilModel.getCibilReq(cibilReq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 var otp = response.value
                                 Log.d("cibilresp", Gson().toJson(response))
 
@@ -1802,7 +1877,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -1885,6 +1960,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
             "CibilScore" to userScore.toString().toRequestBody(),
             "IsAggrementVerified" to "".toRequestBody(),
             "IsRetailerAggrementVerified" to "".toRequestBody(),
+            "clientcode" to preference.getStringValue(ConstantClass.ClientCode, "").toRequestBody(),
         )
 
         // Debug log full request
@@ -1945,6 +2021,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     requestMap["CibilApiResponse"]!!,
                     requestMap["CustomerCodes"]!!,
                     requestMap["RetailerCode"]!!,
+                    requestMap["clientcode"]!!,
                     requestMap["CibilScore"]!!,
                     requestMap["IsAggrementVerified"]!!,
                     requestMap["IsRetailerAggrementVerified"]!!,
@@ -1984,22 +2061,22 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
 
     fun PopOpForCibileScoreRequestToAdmin(cibilScore : String,title:String,check:Boolean){
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val titletxt = dialog.findViewById<TextView>(R.id.title)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val titletxt = dialog!!.findViewById<TextView>(R.id.title)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
 
         cancel.visibility=View.GONE
@@ -2032,16 +2109,16 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                 binding.mobileNumber.isEnabled = true
                 binding.verifyiconphonenumber.visibility = View.GONE
                 binding.verifymobilenumber.visibility = View.VISIBLE
-                dialog.dismiss()
+                dialog!!.dismiss()
             }
 
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -2058,7 +2135,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("verifycustomerresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
 
                                 if(response.statuss!!.toLowerCase().equals("true", ignoreCase = true)){
                                     hitApiForSendOTP(binding.mobileNumber.text.toString().trim(), OTPTYPE) //"Mobile"
@@ -2072,7 +2149,7 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -2085,13 +2162,15 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
     }
 
 
+
     fun hitApiForRetailerWalletAmount() {
 
         var registrationID = preference.getStringValue(ConstantClass.RetailerCode, "")
 
         var request = RetailerWalletAmountReq(
             retailerID = registrationID,
-            amountType = "CreditBalance"
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         Log.d("walletAmountReq", Gson().toJson(request))
 
@@ -2128,8 +2207,8 @@ class NewCustomerRegistrationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details

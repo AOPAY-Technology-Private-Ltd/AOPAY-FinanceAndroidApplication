@@ -6,34 +6,59 @@ import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.annotation.RequiresApi
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.SETTINGS_PKG
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.gpsSettingsOpened
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.internetSettingsOpened
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
+import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity
 import com.bosandroidapp.aopayfinance.utils.ACCESSIBILITYTAG
 import com.bosandroidapp.aopayfinance.utils.Logger
+import com.bosandroidapp.aopayfinance.utils.currentDate
 import com.bosandroidapp.aopayfinance.utils.syncEmis
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MyAccessibilityService : AccessibilityService() {
 
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            syncEmis()
+        val currentPkg = event?.packageName?.toString() ?: ""
+
+        val preference = SharedPreference(this)
+
+        if (preference.getBoolanValue(ConstantClass.LoggedIn, false) &&
+            preference.getStringValue(ConstantClass.CustomerCode, "").isNotEmpty()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (isInternetAvailable(this@MyAccessibilityService)) {
+                    syncEmis()
+                }
+            }
         }
+
+
 
         if (isMyAppInfoPage() && !isEMIsCompleted()) {
             Logger.d(ACCESSIBILITYTAG, "On App Info Page: Global Back")
             performGlobalAction(GLOBAL_ACTION_BACK)
         }
+
+
 
         if (isFactoryResetting(event?.text?.toString() ?: "") && !isEMIsCompleted()) {
             Logger.d(ACCESSIBILITYTAG, "On Factory Reset Page: Global Back")
@@ -41,7 +66,7 @@ class MyAccessibilityService : AccessibilityService() {
             this.showToast("You are not allowed to Factory reset your device when your EMIs are pending.")
         }
 
-        val currentPkg = event?.packageName?.toString() ?: ""
+
 
         if (!isGpsEnabled(this) && !isEMIsCompleted()) {
             // Open GPS settings ONLY ONCE
@@ -57,6 +82,7 @@ class MyAccessibilityService : AccessibilityService() {
 
             return // STOP all other processing
         }
+
 
         // ✅ GPS ENABLED → RELEASE LOCK
         if (gpsSettingsOpened) {
@@ -77,7 +103,27 @@ class MyAccessibilityService : AccessibilityService() {
 
         if (isLocked()) {
 
+            if (!isInternetAvailable(this) && isInternetAlertSituationCompleted()) {
+                // Open Internet settings ONLY ONCE
+                if (!internetSettingsOpened) {
+                    internetSettingsOpened = true
+                    showToast("Please connect with internet")
+                    openInternetSettings()
+                    return
+                }
+                if (!currentPkg.contains(SETTINGS_PKG)) {
+                    openInternetSettings()   // FORCE BACK
+                }
+
+                return // STOP all other processing
+            }
+
             val packageName = event?.packageName?.toString()
+
+
+            if(packageName==null){
+                refreshService()
+            }
 
             Log.d("packageName", packageName.toString())
 
@@ -91,8 +137,14 @@ class MyAccessibilityService : AccessibilityService() {
                 return
             }
 
+            /*if (isActivityRunning(this, PGWebViewActivity::class.java)) {
+                return
+            }*/
 
-            if (isActivityRunning(this, PGWebViewActivity::class.java)) {
+            if (ConstantClass.isPgClosing) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    ConstantClass.isPgClosing = false
+                }, 1000)
                 return
             }
 
@@ -135,7 +187,7 @@ class MyAccessibilityService : AccessibilityService() {
             && !((event?.packageName?.equals("sbi.mobile.apps.in")) ?: false)
             && !((event?.packageName?.equals("in.amazon.mShop.android.shopping")) ?: false)
             && !((event?.packageName?.equals("com.bosandroidapp.aopayfinance")) ?: false)
-            && !(event?.packageName == null) && !isActivityRunning(this, KioskActivity::class.java) && !isPaymentAppRunning()) {
+            && !(event?.packageName == null) &&!isMyAppOnTop()&& /*!isActivityRunning(this, KioskActivity::class.java)*/  event?.packageName != null && !isPaymentAppRunning()) {
 
             Logger.d(ACCESSIBILITYTAG, "${event.packageName}")
             Logger.d(ACCESSIBILITYTAG, "Performing KioskActivity Intent")
@@ -151,6 +203,45 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        val info = getServiceInfo()
+
+        // Fetch all installed packages on the device
+        val packages = getPackageManager().getInstalledPackages(0)
+        val packageNames = arrayOfNulls<String>(packages.size)
+        for (i in packages.indices) {
+            packageNames[i] = packages.get(i)!!.packageName
+        }
+
+        // Explicitly map them to the service info
+        info.packageNames = packageNames
+        setServiceInfo(info)
+    }
+
+    fun refreshService() {
+        val info = getServiceInfo()
+        if (info != null) {
+            // Re-applying the exact same info forces the system to refresh the channel
+            setServiceInfo(info)
+        }
+    }
+
+
+    // changes by me
+    private fun isMyAppOnTop(): Boolean {
+        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        for (task in am.appTasks) {
+            val top = task.taskInfo.topActivity
+            if (top?.packageName == packageName) {
+                return true
+            }
+        }
+        return false
+    }
+
+
     private fun isActivityRunning(context: Context, activityClass: Class<*>): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val tasks = activityManager.appTasks
@@ -163,6 +254,7 @@ class MyAccessibilityService : AccessibilityService() {
         }
         return false
     }
+
 
     private fun isMyAppInfoPage(): Boolean {
         val rootNode = rootInActiveWindow ?: return false
@@ -200,6 +292,12 @@ class MyAccessibilityService : AccessibilityService() {
     private fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
         return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+    }
+
+    fun openInternetSettings() {
+        val intent = Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
 
@@ -294,7 +392,9 @@ class MyAccessibilityService : AccessibilityService() {
                 packageName.equals("com.motorola.ccc.ota", true) ||
 
                 // Nothing
-                packageName.equals("com.nothing.smartcenter", true)
+                packageName.equals("com.nothing.smartcenter", true)||
+
+                packageName.equals("com.bosandroidapp.aopayfinance", true)
 
     }
 

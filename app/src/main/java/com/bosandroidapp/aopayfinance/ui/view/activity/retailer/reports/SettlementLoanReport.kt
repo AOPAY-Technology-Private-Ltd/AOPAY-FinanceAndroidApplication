@@ -16,6 +16,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.LoanSettlem
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivitySettlementLoanReportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.RetailerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.LoanSettlementAdapter
@@ -23,7 +24,7 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class SettlementLoanReport : AppCompatActivity() {
+class SettlementLoanReport : BaseActivity() {
     lateinit var binding:ActivitySettlementLoanReportBinding
     lateinit var adapter: LoanSettlementAdapter
     lateinit var viewModel: AuthenticationViewModel
@@ -60,7 +61,8 @@ class SettlementLoanReport : AppCompatActivity() {
         var retailerCode = preference.getStringValue(ConstantClass.RetailerCode,"")
 
         var reportreq = LoanSettlementReportReq(
-            retailerCode = retailerCode
+            retailerCode = retailerCode,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("ReportReq", Gson().toJson(reportreq))
@@ -70,7 +72,7 @@ class SettlementLoanReport : AppCompatActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes", Gson().toJson(response) )
                             var ReportDataList = response.data!!.toMutableList()
                             if(ReportDataList.size>0){
@@ -89,7 +91,7 @@ class SettlementLoanReport : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {

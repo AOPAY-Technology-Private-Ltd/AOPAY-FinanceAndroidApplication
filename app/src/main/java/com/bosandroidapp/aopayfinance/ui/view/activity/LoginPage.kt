@@ -58,6 +58,7 @@ import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureN
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLoginPageBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.ForgetPasswordPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.SignupPage
@@ -67,7 +68,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
-class LoginPage : AppCompatActivity() {
+class LoginPage : BaseActivity() {
     lateinit var binding: ActivityLoginPageBinding
     private lateinit var viewModel: AuthenticationViewModel
     lateinit var preference : SharedPreference
@@ -164,10 +165,12 @@ class LoginPage : AppCompatActivity() {
             finish()
         }*/
 
+
         binding.signupText.setOnClickListener{
             val mainIntent = Intent(this@LoginPage, SignupPage::class.java)
             startActivity(mainIntent)
         }
+
 
         binding.emailormobilenumber.addTextChangedListener(object : TextWatcher {
 
@@ -186,6 +189,7 @@ class LoginPage : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+
         binding.loginlayout.setOnClickListener {
             var emailOfMobile = binding.emailormobilenumber.text.toString().trim()
             var password = binding.password.text.toString().trim()
@@ -203,8 +207,8 @@ class LoginPage : AppCompatActivity() {
                }
            }
 
-
         }
+
 
         binding.forgetpageLayout.setOnClickListener {
             val mainIntent = Intent(this@LoginPage, ForgetPasswordPage::class.java)
@@ -235,6 +239,7 @@ class LoginPage : AppCompatActivity() {
 
         }
 
+
     }
 
 
@@ -258,7 +263,8 @@ class LoginPage : AppCompatActivity() {
             password = password,
             logintype = loginType,
             deviceId = deviceId,
-            token = FireBaseToken
+            token = FireBaseToken,
+            imeiNumber =  ConstantClass.IMEI
         )
 
         Log.d("LoginReq", Gson().toJson(loginRequest))
@@ -272,7 +278,7 @@ class LoginPage : AppCompatActivity() {
                 }
 
                 ApiStatus.SUCCESS -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
 
                     val response = it.data?.body()
                     Log.d("LoginResponse", Gson().toJson(response))
@@ -281,13 +287,13 @@ class LoginPage : AppCompatActivity() {
 
                         val req = NotificationSendTokenRequest(
                             deviceType= ConstantClass.DeviceType,
-                            clientCode = ConstantClass.ClientCode,
+                            clientCode = response.clientCode.toString(),
                             customerCode = response.customerCode.toString(),
                             retailerCode = response.retailerCode.toString(),
                             fcmToken = FireBaseToken
                         )
 
-                        //sendDataOnServerForUploadToken(req)
+                        sendDataOnServerForUploadToken(req)
 
                         preference.setStringValue(ConstantClass.CustomerCode, response.customerCode.toString())
                         preference.setStringValue(ConstantClass.RetailerCode, response.retailerCode.toString())
@@ -299,19 +305,22 @@ class LoginPage : AppCompatActivity() {
                         preference.setStringValue(ConstantClass.LoginType, loginType)
                         preference.setStringValue(ConstantClass.LoginMobileorMailid, emailOfMobile)
                         preference.setStringValue(ConstantClass.Loginpassword, password)
+                        preference.setStringValue(ConstantClass.ClientCode, response.clientCode.toString())
 
                         val intent = Intent(this@LoginPage, DashBoard::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         finish()
 
-                    } else {
+                    }
+                    else {
                         OpenPopUpForVAlert(response?.message ?: "Login failed. Please connect with your administrator.")
                     }
+
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
                     OpenPopUpForVAlert(errorMessage)
@@ -347,10 +356,10 @@ class LoginPage : AppCompatActivity() {
     // for customer login flow
     fun OpenPopUpForVeryfyOTP(MobileNumber: String, otp:String){
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.verifyforgetpasswordotplayour)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.verifyforgetpasswordotplayour)
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -359,22 +368,22 @@ class LoginPage : AppCompatActivity() {
             navigationBarColor = Color.TRANSPARENT
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.verifylayout)
-        val cancel = dialog.findViewById<ImageView>(R.id.cancel)
-        val resendlayout = dialog.findViewById<RelativeLayout>(R.id.resendlayout)
-        val resendtxt = dialog.findViewById<TextView>(R.id.resendtxt)
-        val timer = dialog.findViewById<TextView>(R.id.timer)
-        val subtitle = dialog.findViewById<TextView>(R.id.text_subtitle)
-        val pinView=dialog.findViewById<PinView>(R.id.pinview)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.verifylayout)
+        val cancel = dialog!!.findViewById<ImageView>(R.id.cancel)
+        val resendlayout = dialog!!.findViewById<RelativeLayout>(R.id.resendlayout)
+        val resendtxt = dialog!!.findViewById<TextView>(R.id.resendtxt)
+        val timer = dialog!!.findViewById<TextView>(R.id.timer)
+        val subtitle = dialog!!.findViewById<TextView>(R.id.text_subtitle)
+        val pinView=dialog!!.findViewById<PinView>(R.id.pinview)
 
         subtitle.text = "Enter four digit OTP send on your registered mobile number"
 
         startOtpTimer(resendtxt,timer)
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
         resendlayout.setOnClickListener {
@@ -403,7 +412,7 @@ class LoginPage : AppCompatActivity() {
 
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -476,8 +485,8 @@ class LoginPage : AppCompatActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@LoginPage,response.message,Toast.LENGTH_SHORT).show()
-                                    if( ConstantClass.dialog.isShowing){
-                                        ConstantClass.dialog.dismiss()
+                                    if( ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                 }
 
@@ -486,7 +495,7 @@ class LoginPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -519,8 +528,8 @@ class LoginPage : AppCompatActivity() {
                     Toast.makeText(this@LoginPage,"Otp sent on your mobile number!!" , Toast.LENGTH_SHORT).show()
                     val loanData = response.body()
 
-                    if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                        ConstantClass.dialog.dismiss()
+                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                        ConstantClass.dialog!!.dismiss()
                         OpenPopUpForVeryfyOTP(mobnumber,OTP)
                     }
 
@@ -541,8 +550,7 @@ class LoginPage : AppCompatActivity() {
         var verifyotpreq = VerifyOTPReq(
             mobileormailid = mobileOrEmailID,
             otp = otp,
-            logintype = message
-        )
+            logintype = message)
         Log.d("VerifyOTPReq", Gson().toJson(verifyotpreq))
         viewModel.verifyOTPReq(verifyotpreq).observe(this) { resources ->
             resources.let {
@@ -550,14 +558,14 @@ class LoginPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("VerifyOTPRes", response.message)
                                 if (response.statuss.equals("True")) {
 
                                     hitApiForLogin(mobileOrEmailID,"")
 
-                                    if (dialog != null && dialog.isShowing) {
-                                        dialog.dismiss()
+                                    if (dialog != null && dialog!!.isShowing) {
+                                        dialog!!.dismiss()
                                     }
                                 }
 
@@ -568,7 +576,7 @@ class LoginPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -586,8 +594,7 @@ class LoginPage : AppCompatActivity() {
     fun hitApiForReSendOTP(mailidormobile: String,type : String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type
-        )
+            otpType = type)
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
             resources.let {
@@ -595,7 +602,7 @@ class LoginPage : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("SendRes", response.message)
                                         var otp = response.value
                                         var customerName = "Customer"
@@ -606,7 +613,7 @@ class LoginPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -637,8 +644,8 @@ class LoginPage : AppCompatActivity() {
                 Toast.makeText(this@LoginPage,"Otp sent on your mobile number!!" , Toast.LENGTH_SHORT).show()
                 val loanData = response.body()
 
-                if(ConstantClass.dialog!=null && ConstantClass.dialog.isShowing){
-                    ConstantClass.dialog.dismiss()
+                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                    ConstantClass.dialog!!.dismiss()
                 }
                 Log.d("API_SUCCESS", loanData.toString())
             }
@@ -658,22 +665,22 @@ class LoginPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert(message : String ?){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility=View.VISIBLE
         done.visibility= View.GONE
@@ -681,10 +688,10 @@ class LoginPage : AppCompatActivity() {
         txt.text=/*"Your loan application was created, but you must validate your PAN  again since 90 days have passed"*/ message
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -747,7 +754,7 @@ class LoginPage : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                     // 👇 Show proper error from ViewModel (404, 500 etc.)
                     val errorMessage = it.message ?: "Something went wrong"
                     OpenPopUpForVAlert(errorMessage)

@@ -20,18 +20,20 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.PayoutRepor
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPayoutReportBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.adapter.PayoutReportAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
 
-class PayoutReport : AppCompatActivity() {
+class PayoutReport : BaseActivity() {
     lateinit var binding: ActivityPayoutReportBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
     var payoutReportList: List<PayoutDataItem?>? = mutableListOf()
     lateinit var adapter : PayoutReportAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +52,9 @@ class PayoutReport : AppCompatActivity() {
         setOnClickListner()
     }
 
+
     override fun onResume() {
         super.onResume()
-
         setSpinner()
     }
 
@@ -92,10 +94,11 @@ class PayoutReport : AppCompatActivity() {
 
         var payoutreq = PayoutReportReq(
             registrationId = preference.getStringValue(ConstantClass.RetailerCode, ""),
-            status = status
+            status = status,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
-        Log.d("payoutreq", Gson().toJson(payoutreq))
+        Log.d("payoutreportreq", Gson().toJson(payoutreq))
 
         viewModel.getPayoutReportReq(payoutreq).observe(this) { resources ->
             resources.let {
@@ -104,7 +107,7 @@ class PayoutReport : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("payoutresp", Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 payoutReportList = response.data!!
 
                                 if(payoutReportList!!.isNotEmpty()){
@@ -130,7 +133,7 @@ class PayoutReport : AppCompatActivity() {
                     ApiStatus.ERROR -> {
                         binding.notfoundimage.visibility=View.VISIBLE
                         binding.showreports.visibility=View.GONE
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
 

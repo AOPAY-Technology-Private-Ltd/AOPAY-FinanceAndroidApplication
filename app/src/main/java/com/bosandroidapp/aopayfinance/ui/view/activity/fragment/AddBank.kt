@@ -113,7 +113,7 @@ class AddBank : Fragment() {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
                             users!!.body().let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.status!!.toLowerCase().equals("false")){
                                     Toast.makeText(requireContext(),response.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -131,7 +131,7 @@ class AddBank : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -350,23 +350,23 @@ class AddBank : Fragment() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility = View.VISIBLE
 
@@ -380,10 +380,10 @@ class AddBank : Fragment() {
         }
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -397,7 +397,7 @@ class AddBank : Fragment() {
             iFSCCode = binding.ifsccode.text.toString().trim(),
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
             refID = "",
-            accountNumber = binding.accountnumber.text.toString().trim(),
+            accountNumber = binding.accountnumber.text.toString().trim()
         )
 
         Log.d("PennyDropReq",Gson().toJson(request))
@@ -409,7 +409,7 @@ class AddBank : Fragment() {
                         it.data.let { users ->
                             users!!.body().let { response ->
                                 Log.d("PennyDropRes",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.model?.status.equals(ConstantClass.SUCCESS)){
                                     hitApiForRequestPennyDropCheckStatus(response!!.model!!.clientRefNum!!)
                                 }
@@ -423,7 +423,7 @@ class AddBank : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -453,7 +453,7 @@ class AddBank : Fragment() {
                         it.data.let { users ->
                             users!!.body().let { response ->
                                 Log.d("PennyDropCheckStatusRes",Gson().toJson(response))
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 if(response!!.model?.status.equals(ConstantClass.SUCCESS)){
                                     hitApiFoAddAccount()
                                 }
@@ -467,7 +467,7 @@ class AddBank : Fragment() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -494,8 +494,7 @@ class AddBank : Fragment() {
        branchName = binding.branchname.text.toString(),
        branchAddress = binding.branchaddress.text.toString(),
        mobilenumber = binding.mobilenumber.text.toString(),
-       emailID = binding.emailid.text.toString()
-   )
+       emailID = binding.emailid.text.toString())
 
    Log.d("AddBankAccountReq", Gson().toJson(req))
 
@@ -506,16 +505,16 @@ class AddBank : Fragment() {
                    it.data.let { users ->
                        users!!.body().let { response ->
 
-                           if(dialog!=null && dialog.isShowing){
-                               dialog.dismiss()
+                           if(dialog!=null && dialog!!.isShowing){
+                               dialog!!.dismiss()
                            }
 
                            if (response!!.statuss.equals("True")) {
                                Log.d("AddBankAccountResp", Gson().toJson(response))
-                               ConstantClass.dialog.dismiss()
+                               ConstantClass.dialog!!.dismiss()
 
-                               if(dialog!=null && dialog.isShowing){
-                                   dialog.dismiss()
+                               if(dialog!=null && dialog!!.isShowing){
+                                   dialog!!.dismiss()
                                }
                                clearEditPage()
                                hitApiForReports()
@@ -523,7 +522,7 @@ class AddBank : Fragment() {
 
                            }
                            else {
-                               ConstantClass.dialog.dismiss()
+                               ConstantClass.dialog!!.dismiss()
                                Toast.makeText(requireContext(),response.message,Toast.LENGTH_SHORT).show()
                            }
 
@@ -534,7 +533,7 @@ class AddBank : Fragment() {
                }
 
                ApiStatus.ERROR -> {
-                   ConstantClass.dialog.dismiss()
+                   ConstantClass.dialog!!.dismiss()
                }
 
                ApiStatus.LOADING -> {
@@ -581,8 +580,7 @@ class AddBank : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = ""
-        )
+            emailID = "")
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

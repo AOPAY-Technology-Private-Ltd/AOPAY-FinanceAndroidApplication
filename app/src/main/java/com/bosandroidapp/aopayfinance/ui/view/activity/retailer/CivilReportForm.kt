@@ -47,6 +47,7 @@ import com.bosandroidapp.aopayfinance.data.repository.CibilRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CibilViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityCivilReportFormBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -57,7 +58,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class CivilReportForm : AppCompatActivity() {
+class CivilReportForm : BaseActivity() {
 
     lateinit var binding : ActivityCivilReportFormBinding
     lateinit var dialog: Dialog
@@ -145,13 +146,14 @@ class CivilReportForm : AppCompatActivity() {
             }, year, month, day
         )
 
-        datePickerDialog.show()
+        datePickerDialog!!.show()
     }
 
     fun hitApiForSendOTP(mailidormobile: String,type : String) {
         var sendOtpReq = SendOtpReq(
             mobileoremailId = mailidormobile,
-            otpType = type)
+            otpType = type
+        )
         Log.d("SendOTPREQ", Gson().toJson(sendOtpReq))
 
         viewModel.sendOTPReq(sendOtpReq).observe(this) { resources ->
@@ -171,14 +173,14 @@ class CivilReportForm : AppCompatActivity() {
                                 }
                                 else{
                                     Toast.makeText(this@CivilReportForm,response.message,Toast.LENGTH_SHORT).show()
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                             }
                         }
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -210,7 +212,7 @@ class CivilReportForm : AppCompatActivity() {
             otp = otp,
             consentmessage = "I agree to share my data for verification purposes",
             consentacceptence = "yes",
-            registrationID = "AOP-5048"
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
         Log.d("CibilReq",Gson().toJson(cibilReq))
@@ -220,7 +222,7 @@ class CivilReportForm : AppCompatActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 var otp = response.value
                                 Log.d("cibilresp", response.message)
                                 if (!response.httpResponseCode.isNullOrBlank() && response.httpResponseCode.equals("200")) {
@@ -297,7 +299,7 @@ class CivilReportForm : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -368,23 +370,23 @@ class CivilReportForm : AppCompatActivity() {
     fun OpenPopUpForTermCondition() {
 
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.term_condition_layout)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.term_condition_layout)
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val verifyButton = dialog.findViewById<LinearLayout>(R.id.btnAccept)
-        val termConditiontxt = dialog.findViewById<TextView>(R.id.tvTermsContent)
+        val verifyButton = dialog!!.findViewById<LinearLayout>(R.id.btnAccept)
+        val termConditiontxt = dialog!!.findViewById<TextView>(R.id.tvTermsContent)
 
         termConditiontxt.text = Html.fromHtml(getString(R.string.cibiltermcondition), Html.FROM_HTML_MODE_LEGACY)
 
         verifyButton.setOnClickListener {
             isCibilAggrementVerified = true
             binding.acceptTermConditionCheck.isChecked = true
-            dialog.dismiss()
+            dialog!!.dismiss()
         }
 
-        dialog.setOnDismissListener {
+        dialog!!.setOnDismissListener {
             // Called when dialog is dismissed by back press or programmatically
             if (isCibilAggrementVerified) {
 
@@ -394,7 +396,7 @@ class CivilReportForm : AppCompatActivity() {
             }
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -402,6 +404,7 @@ class CivilReportForm : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -413,8 +416,8 @@ class CivilReportForm : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@CivilReportForm, response.status, preference)
                             }
@@ -469,7 +472,7 @@ class CivilReportForm : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
         )
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))

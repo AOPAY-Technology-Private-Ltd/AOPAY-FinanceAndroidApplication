@@ -20,6 +20,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.Transaction
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityAllTransactionHistoryBinding
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.RetailerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.TransactionReportAdapter
@@ -31,7 +32,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-class AllTransactionHistory : AppCompatActivity() {
+class AllTransactionHistory : BaseActivity() {
     lateinit var binding: ActivityAllTransactionHistoryBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
@@ -169,6 +170,7 @@ class AllTransactionHistory : AppCompatActivity() {
             toDate = ToDate,
             registrationId = retailerCode,
             status = null, //Approved
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
         Log.d("ReportReq", Gson().toJson(reportreq))
 
@@ -178,7 +180,7 @@ class AllTransactionHistory : AppCompatActivity() {
                 ApiStatus.SUCCESS -> {
                     it.data?.let { users ->
                         users.body()?.let { response ->
-                            ConstantClass.dialog.dismiss()
+                            ConstantClass.dialog!!.dismiss()
                             Log.d("MobileRes", Gson().toJson(response) )
                             transactionHistory = response.data!!.toMutableList()
                             if(transactionHistory!!.size>0){
@@ -198,7 +200,7 @@ class AllTransactionHistory : AppCompatActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog.dismiss()
+                    ConstantClass.dialog!!.dismiss()
                 }
 
                 ApiStatus.LOADING -> {

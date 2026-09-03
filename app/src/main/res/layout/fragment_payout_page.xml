@@ -86,6 +86,52 @@
                     android:paddingBottom="@dimen/_30sdp"
                     android:layout_marginHorizontal="@dimen/_5sdp">
 
+                    <RadioGroup
+                        android:id="@+id/payoutTypeRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:gravity="center">
+
+                        <RadioButton
+                            android:id="@+id/radioOnline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/online"
+                            android:checked="true"
+                            android:layout_marginEnd="@dimen/_20sdp"/>
+
+                        <RadioButton
+                            android:id="@+id/radioOffline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/offline"/>
+
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:id="@+id/retailername_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@drawable/bg_black_border"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/retailername"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="@string/retailer_name"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:padding="@dimen/_8sdp"
+                            android:textColor="@color/edt_color"
+                            android:textSize="@dimen/_14ssp" />
+
+                    </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/bankdetailslayout"
                         android:layout_width="match_parent"

@@ -66,6 +66,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
+import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -77,7 +78,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PanCardVerificationPage : AppCompatActivity() {
+class PanCardVerificationPage : BaseActivity() {
     lateinit var binding: ActivityPanCardVerificationPageBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var panViewModel: PanViewModel
@@ -114,6 +115,9 @@ class PanCardVerificationPage : AppCompatActivity() {
                     } bytes"
                 )
 
+            }
+            else{
+                photoFrontUri=null
             }
 
 
@@ -191,32 +195,33 @@ class PanCardVerificationPage : AppCompatActivity() {
         }
 
         binding.verifybuttonlayout.setOnClickListener {
-            var panNumber = binding.pannumber.text.toString()
-            // PAN validation (Regex: 5 letters, 4 digits, 1 letter)
-            val panRegex = Regex("[A-Z]{5}[0-9]{4}[A-Z]{1}")
+                var panNumber = binding.pannumber.text.toString()
+                // PAN validation (Regex: 5 letters, 4 digits, 1 letter)
+                val panRegex = Regex("[A-Z]{5}[0-9]{4}[A-Z]{1}")
 
-            if (panNumber.isBlank() || !panRegex.matches(panNumber.uppercase())) {
-                Toast.makeText(this, "Enter a valid PAN number (e.g., ABCDE1234F)", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if(!checkPanNumber){
-                Toast.makeText(this, "Enter a valid PAN number ", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
-                // Image URI validation
-                if (photoFrontUri == null || photoFrontUri == null) {
-                    Toast.makeText(this, "Please upload  Pan image", Toast.LENGTH_SHORT).show()
+                if (panNumber.isBlank() || !panRegex.matches(panNumber.uppercase())) {
+                    Toast.makeText(this, "Enter a valid PAN number (e.g., ABCDE1234F)", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
+                if(!checkPanNumber){
+                    Toast.makeText(this, "Enter a valid PAN number ", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
+                    // Image URI validation
+                    if (photoFrontUri == null || photoFrontUri == null) {
+                        Toast.makeText(this, "Please upload  Pan image", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                }
+
+                hitApiForCheckIsEligibleOrNotForLoan(panNumber)
+
             }
 
-            hitApiForCheckIsEligibleOrNotForLoan(panNumber)
-
-        }
 
         binding.uploadtextfront.setOnClickListener {
             checkCameraPermissionAndOpenCamera()
@@ -255,7 +260,7 @@ class PanCardVerificationPage : AppCompatActivity() {
         var panverificationreq = PanVerificationReq(
             panNumber = pannumber,
            /* firstName = firstName,*/
-            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+            registrationId = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
         Log.d("PanVerificationreq", Gson().toJson(panverificationreq))
 
@@ -266,7 +271,7 @@ class PanCardVerificationPage : AppCompatActivity() {
                         it.data.let { users ->
                             users!!.body().let { response ->
 
-                                ConstantClass.dialog.dismiss()
+                                ConstantClass.dialog!!.dismiss()
                                 Log.d("PanVerificationResp", Gson().toJson(response))
                                 if (response!!.httpResponseCode == 203) {
                                     Toast.makeText(this@PanCardVerificationPage, "Please enter valid pan number!!", Toast.LENGTH_SHORT).show()
@@ -322,7 +327,7 @@ class PanCardVerificationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -342,7 +347,8 @@ class PanCardVerificationPage : AppCompatActivity() {
 
         var eligiblereq = GetIsEligibleLoanReq(
             panNumber = pannumber,
-            aadharNumber = ""
+            aadharNumber = "",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
         Log.d("IsEligibleReq", Gson().toJson(eligiblereq))
 
@@ -355,20 +361,20 @@ class PanCardVerificationPage : AppCompatActivity() {
                                 Log.d("CheckEligibleResp", Gson().toJson(response))
 
                                 if(response!!.statuss.equals("True")){
-                                    if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (CheckOnlineOrOffline.equals(ConstantClass.online)) {
+                                        hitApiForPanVerification(pannumber)
+                                    }
+                                    else {
+                                        ConstantClass.dialog!!.dismiss()
                                         PanNumber = pannumber
                                         PanNumberVerified = "no"
                                         PanFrontImageUri = photoFrontUri
                                         finish()
                                     }
-                                    else {
-                                        hitApiForPanVerification(pannumber)
-                                    }
 
                                 }
                                 else{
-                                    ConstantClass.dialog.dismiss()
+                                    ConstantClass.dialog!!.dismiss()
                                     OpenPopUpForVAlert()
                                 }
 
@@ -379,7 +385,7 @@ class PanCardVerificationPage : AppCompatActivity() {
                     }
 
                     ApiStatus.ERROR -> {
-                        ConstantClass.dialog.dismiss()
+                        ConstantClass.dialog!!.dismiss()
                     }
 
                     ApiStatus.LOADING -> {
@@ -395,22 +401,22 @@ class PanCardVerificationPage : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert(){
         dialog = Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.signoutalert)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setContentView(R.layout.signoutalert)
 
 
-        dialog.window?.apply {
+        dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnCancel)
-        val done = dialog.findViewById<Button>(R.id.btnLogout)
-        val txt = dialog.findViewById<TextView>(R.id.dialog_message)
-        val image = dialog.findViewById<ImageView>(R.id.imageview)
+        val cancel = dialog!!.findViewById<Button>(R.id.btnCancel)
+        val done = dialog!!.findViewById<Button>(R.id.btnLogout)
+        val txt = dialog!!.findViewById<TextView>(R.id.dialog_message)
+        val image = dialog!!.findViewById<ImageView>(R.id.imageview)
 
         image.visibility=View.VISIBLE
         done.visibility= View.GONE
@@ -421,7 +427,7 @@ class PanCardVerificationPage : AppCompatActivity() {
             finish()
         }
 
-        dialog.show()
+        dialog!!.show()
 
     }
 
@@ -450,6 +456,7 @@ class PanCardVerificationPage : AppCompatActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -461,8 +468,8 @@ class PanCardVerificationPage : AppCompatActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@PanCardVerificationPage, response.status, preference)
                             }
@@ -483,8 +490,7 @@ class PanCardVerificationPage : AppCompatActivity() {
         var request = ValidateSessionRequest(
             preference.getStringValue(ConstantClass.RetailerCode, ""),
             preference.getStringValue(ConstantClass.DEVICEID, ""),
-            preference.getStringValue(ConstantClass.FCMTOKEN, "")
-        )
+            preference.getStringValue(ConstantClass.FCMTOKEN, ""))
 
         Log.d("validaterequest", Gson().toJson(request))
         viewModel.getSessionExpiredReq(request).observe(this){resources ->
@@ -517,8 +523,7 @@ class PanCardVerificationPage : AppCompatActivity() {
 
     fun hitApiForRetailerLogout() {
         var loginRequest = LogoutReq(
-            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-        )
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""))
 
         Log.d("LogoutReq", Gson().toJson(loginRequest))
 
