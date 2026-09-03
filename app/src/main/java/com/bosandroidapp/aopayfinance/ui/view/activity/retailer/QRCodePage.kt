@@ -256,7 +256,6 @@ class QRCodePage : BaseActivity() {
         }
 
 
-
         binding.LoanCreatelayout.setOnClickListener {
             if (loancreatedreq != null) {
                 if (loaneCode.trim().isNotEmpty() && BankIFSCCode.trim().isNotEmpty() && ConstantClass.AccountHolderName.trim().isNotEmpty() && AccountType.trim().isNotEmpty()) {
