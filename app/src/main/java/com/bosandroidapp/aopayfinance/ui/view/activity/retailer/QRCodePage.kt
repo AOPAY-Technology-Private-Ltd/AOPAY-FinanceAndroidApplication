@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
@@ -130,6 +132,7 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetIsEligibleLoanRe
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoanCreatedReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RegisterCustomerResp
+import com.bosandroidapp.aopayfinance.data.pennydrop.BankListReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
@@ -149,6 +152,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.Response
 import kotlin.math.roundToInt
+import kotlin.text.equals
+import kotlin.text.toDouble
 import kotlin.text.trim
 
 
@@ -163,10 +168,13 @@ class QRCodePage : BaseActivity() {
     var isEmandateVerified : String= ""
     var isPannydropVerified : String= "Yes"
     var loancreatedreq: LoanCreatedReq? = null
+    var bankList = mutableListOf<Pair<String, Int>>()
+
 
     companion object{
         var isEnachCancelled : Boolean = false
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -190,13 +198,234 @@ class QRCodePage : BaseActivity() {
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         panViewModel = ViewModelProvider(this, com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
 
-        binding.accesstoken.filters = arrayOf(InputFilter.AllCaps())
-        binding.accesstoken.inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+      /*  binding.accesstoken.filters = arrayOf(InputFilter.AllCaps())
+        binding.accesstoken.inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS*/
+
+
+        if(preference.getStringValue(ConstantClass.CustomerCode,"").isNotEmpty()&& ! ConstantClass.ClickOnCardLowCibilScore.equals(CardType)){
+            updateLoanRequest(true)
+        }
+        else{
+            binding.LoanCreatelayout.visibility = View.GONE
+            binding.nextlayout.visibility = View.VISIBLE
+            updateUI(false)
+        }
 
         setOnClickListner()
         hitApiForMemberShipFee()
 
     }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateLoanRequest(showPopup: Boolean) {
+        val startDate = getCurrentStartDate()
+        val endDate = calculateEmiEndDateFromNow(Tenure.toInt())
+        val firstName = preference.getStringValue(ConstantClass.FirstName, "").orEmpty()
+        val lastName = preference.getStringValue(ConstantClass.LastName, "").orEmpty()
+        val safeLastName = if (!lastName.isNullOrBlank() && lastName != "null") lastName else ""
+        val createdBy = firstName.plus(" ").plus(safeLastName)
+
+        if (ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.offline)) {
+            loancreatedreq = LoanCreatedReq(
+                modetype = "INSERT",
+                rid = 0,
+                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                loanAmount = ConstantClass.LoanAmount ?: 0.0,
+                downPayment = DownPayment?.toDoubleOrNull() ?: 0.0,
+                emiAmount = EmiAmount?.toDoubleOrNull() ?: 0.0,
+                tenure = Tenure?.toInt() ?: 0,
+                interestRate = InterestRate?.toDoubleOrNull() ?: 0.0,
+                startDate = startDate,
+                endDate = endDate,
+                imeiNumber = ImeiNumber1,
+                createdBy = createdBy,
+                brandname = BrandName,
+                modelname = ModelName,
+                variantname = ModelVarient,
+                avlcolor = ModelColor,
+                retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+                processingFees = ProcessingFees,
+                interestAmt = InterestAmt,
+                remarks = "",
+                recordStatus = LoanStatus,
+                creditScore = userScore.toString(),
+                validateKey = "",
+                defaultEmidebit = DefaulterEmiDebitPending,
+                sellingPrice = ConstantClass.SellingPrice?.toDoubleOrNull() ?: 0.0,
+                loanMode = ConstantClass.offline
+            )
+            LoanMode = ConstantClass.offline
+        } else {
+            loancreatedreq = LoanCreatedReq(
+                modetype = "INSERT",
+                rid = 0,
+                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                loanAmount = ConstantClass.LoanAmount.toDouble(),
+                downPayment = DownPayment.toDouble(),
+                emiAmount = EmiAmount.toDouble(),
+                tenure = Tenure.toInt(),
+                interestRate = InterestRate.toDouble(),
+                startDate = startDate,
+                endDate = endDate,
+                imeiNumber = ImeiNumber1,
+                createdBy = createdBy,
+                brandname = BrandName,
+                modelname = ModelName,
+                variantname = ModelVarient,
+                avlcolor = ModelColor,
+                retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+                processingFees = ProcessingFees,
+                interestAmt = InterestAmt,
+                remarks = "",
+                recordStatus = LoanStatus,
+                creditScore = userScore.toString(),
+                validateKey = "",
+                defaultEmidebit = DefaulterEmiDebitAutoApproved,
+                sellingPrice = ConstantClass.SellingPrice.toDouble(),
+                loanMode = ConstantClass.online
+            )
+            LoanMode = ConstantClass.online
+        }
+
+        when (BankID) {
+            0 -> {
+                hitApiForBankList(true, showPopup)
+            }
+            else -> {
+                updateUI(true, showPopup)
+            }
+        }
+
+        binding.LoanCreatelayout.visibility = View.VISIBLE
+        binding.nextlayout.visibility = View.GONE
+    }
+
+
+
+    override fun onStart() {
+        super.onStart()
+        hitApiForBankList(false)
+    }
+
+
+    fun hitApiForBankList(check: Boolean, showPopup: Boolean = true) {
+        bankList.clear()
+
+        var req = BankListReq(
+            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
+        )
+
+        Log.d("BankListReq", Gson().toJson(req))
+
+        panViewModel.getBankListReq(req).observe(this) { resources ->
+            resources.let {
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data.let { users ->
+                            users!!.body().let { response ->
+
+                                if (response!!.status!!.toLowerCase().equals("false")) {
+
+                                    Toast.makeText(this@QRCodePage, response.message, Toast.LENGTH_SHORT).show()
+                                }
+
+                                response?.data?.banks?.forEach {
+                                    bankList.add(Pair(it!!.name!!, it.id) as Pair<String, Int>)
+                                }
+
+                                if (bankList.isNotEmpty()) {
+                                    BankID = bankList.find { it.first == BankName }?.second!!
+                                    Log.d("FetchBankList", Gson().toJson(bankList))
+
+                                    if(check){
+                                        updateUI(true, showPopup)
+                                    }
+
+                                }
+
+                                Log.d("List", Gson().toJson(response?.data?.banks))
+
+                            }
+
+                        }
+
+                    }
+
+                    ApiStatus.ERROR -> {
+                        Toast.makeText(this@QRCodePage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                    }
+
+                    ApiStatus.LOADING -> {
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+    fun updateUI(isRegistered: Boolean, showPopup: Boolean = true) {
+
+        if (isRegistered) {
+            // STEP 2: Registered
+            if (showPopup) {
+                showSuccessPopup()
+            }
+            binding.statusCardContainer.setBackgroundResource(R.drawable.bg_status_success)
+            binding.statusTitle.text = "Customer Status"
+            binding.statusTitle.setTextColor(Color.parseColor("#2E7D32")) // Green
+            binding.statusIcon.setImageResource(R.drawable.ic_check_circle)
+            binding.statusIcon.setBackgroundResource(R.drawable.bg_circle_light_green)
+            binding.statusTextMain.text = "Registered Successfully"
+            binding.statusTextSub.text = "You can now create a loan for this customer."
+
+            binding.nextlayout.visibility = View.GONE
+            binding.LoanCreatelayout.visibility = View.VISIBLE
+        }
+        else
+        {
+            // STEP 1: Not Registered
+            binding.statusCardContainer.setBackgroundResource(R.drawable.bg_status_pending)
+            binding.statusTitle.setTextColor(Color.parseColor("#7B1FA2")) // Purple
+            binding.statusIcon.setImageResource(R.drawable.ic_person_add)
+            binding.statusIcon.setBackgroundResource(R.drawable.bg_circle_light_purple)
+
+            binding.nextlayout.visibility = View.VISIBLE
+            binding.LoanCreatelayout.visibility = View.GONE
+        }
+
+    }
+
+
+    private fun showSuccessPopup() {
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_success)
+        dialog.setCancelable(false)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialog.show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+
+        }, 3000)
+
+    }
+
 
 
     override fun onResume() {
@@ -205,6 +434,7 @@ class QRCodePage : BaseActivity() {
         hitApiForLogin()
 
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -224,13 +454,13 @@ class QRCodePage : BaseActivity() {
         }
 
 
-        binding.validatekeylayout.setOnClickListener {
+       /* binding.validatekeylayout.setOnClickListener {
             if (!binding.accesstoken.text.toString().isNullOrBlank()) {
                 hitApiForValidateKey()
             } else {
                 Toast.makeText(this@QRCodePage, "Enter access key first!!", Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
 
 
         binding.nextlayout.setOnClickListener {
@@ -251,9 +481,9 @@ class QRCodePage : BaseActivity() {
         }
 
 
-        binding.clicktoopenappqr.setOnClickListener {
+       /*  binding.clicktoopenappqr.setOnClickListener {
             OpenPopUpForQRScanAlert()
-        }
+        }*/
 
 
         binding.LoanCreatelayout.setOnClickListener {
@@ -545,10 +775,10 @@ class QRCodePage : BaseActivity() {
                                 if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
                                     ConstantClass.dialog!!.dismiss()
                                 }
-                                binding.validateKeyLayout.visibility = View.GONE
+                                binding.LoanCreatelayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 CheckOnlineOrOffline =""
-                                binding.nextlayout.isEnabled= true
+                                updateUI(false)
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
                                 startActivity(Intent(this@QRCodePage, DashBoard::class.java))
                                 finish()
@@ -558,8 +788,9 @@ class QRCodePage : BaseActivity() {
                                 if (ConstantClass.dialog?.isShowing == true) {
                                     ConstantClass.dialog!!.dismiss()
                                 }
+                                updateUI(false)
                                 binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
+                                binding.LoanCreatelayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
                             }
@@ -570,16 +801,18 @@ class QRCodePage : BaseActivity() {
                                     if (ConstantClass.dialog?.isShowing == true) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
+                                    updateUI(false)
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.LoanCreatelayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 } else if (body.statuss.equals("219")) {
                                     if (ConstantClass.dialog?.isShowing == true) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
+                                    updateUI(false)
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.LoanCreatelayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -587,8 +820,9 @@ class QRCodePage : BaseActivity() {
                                     if (ConstantClass.dialog?.isShowing == true) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
+                                    updateUI(false)
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.LoanCreatelayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -596,8 +830,9 @@ class QRCodePage : BaseActivity() {
                                     if (ConstantClass.dialog?.isShowing == true) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
+                                    updateUI(false)
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    binding.LoanCreatelayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -607,8 +842,9 @@ class QRCodePage : BaseActivity() {
                                         if (ConstantClass.dialog?.isShowing == true) {
                                             ConstantClass.dialog!!.dismiss()
                                         }
+                                        updateUI(false)
                                         binding.nextlayout.isEnabled= true
-                                        binding.validateKeyLayout.visibility = View.GONE
+                                        binding.LoanCreatelayout.visibility = View.GONE
                                         binding.nextlayout.visibility = View.VISIBLE
                                         Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                     }else{
@@ -638,7 +874,7 @@ class QRCodePage : BaseActivity() {
                                             remarks = "",
                                             recordStatus = CustomerLoanStatusPending,
                                             creditScore = userScore.toString(),
-                                            validateKey = binding.accesstoken.text.toString(),
+                                            validateKey = "",
                                             defaultEmidebit = DefaulterEmiDebitPending,
                                             sellingPrice = ConstantClass.SellingPrice.toDouble(),
                                             loanMode = ConstantClass.online,
@@ -646,11 +882,13 @@ class QRCodePage : BaseActivity() {
                                         )
                                         Log.d("LoanCreateReq", Gson().toJson(loancreatedreq))
 
+                                        LoanMode = ConstantClass.online
+
                                         if (ConstantClass.dialog?.isShowing == true) {
                                             ConstantClass.dialog!!.dismiss()
                                         }
 
-                                        binding.validateKeyLayout.visibility = View.VISIBLE
+                                        //binding.validateKeyLayout.visibility = View.VISIBLE
                                         binding.nextlayout.visibility = View.GONE
 
 
@@ -838,7 +1076,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 CheckOnlineOrOffline =""
                                 binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
                                 startActivity(Intent(this@QRCodePage, DashBoard::class.java))
@@ -850,7 +1088,7 @@ class QRCodePage : BaseActivity() {
                                 if (ConstantClass.dialog?.isShowing == true) {
                                     ConstantClass.dialog!!.dismiss()
                                 }
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
                             }
@@ -860,7 +1098,7 @@ class QRCodePage : BaseActivity() {
                                     ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                             }
@@ -869,7 +1107,7 @@ class QRCodePage : BaseActivity() {
                                     ConstantClass.dialog!!.dismiss()
                                 }
                                 binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                             }
@@ -884,7 +1122,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -915,7 +1153,7 @@ class QRCodePage : BaseActivity() {
                                         remarks = "",
                                         recordStatus = ConstantClass.CustomerLoanStatus,
                                         creditScore = userScore.toString(),
-                                        validateKey = binding.accesstoken.text.toString(),
+                                        validateKey = "",
                                         defaultEmidebit = DefaulterEmiDebitAutoApproved,
                                         sellingPrice = ConstantClass.SellingPrice.toDouble(),
                                         loanMode = ConstantClass.online,
@@ -927,7 +1165,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
 
-                                    binding.validateKeyLayout.visibility = View.VISIBLE
+                                    //binding.validateKeyLayout.visibility = View.VISIBLE
                                     binding.nextlayout.visibility = View.GONE
                                 }
                             }
@@ -1047,7 +1285,7 @@ class QRCodePage : BaseActivity() {
                                 }
                                 CheckOnlineOrOffline =""
                                 binding.nextlayout.isEnabled= true
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 Log.d("customer create", body.message)
                                 Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_LONG).show()
@@ -1056,7 +1294,7 @@ class QRCodePage : BaseActivity() {
                                 clearData()
                             }
                             else if (body!!.statuss.equals("401")) {
-                                binding.validateKeyLayout.visibility = View.GONE
+                                //binding.validateKeyLayout.visibility = View.GONE
                                 binding.nextlayout.visibility = View.VISIBLE
                                 if (ConstantClass.dialog?.isShowing == true) {
                                     ConstantClass.dialog!!.dismiss()
@@ -1071,7 +1309,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
 
@@ -1080,7 +1318,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -1089,7 +1327,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -1098,7 +1336,7 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                     }
                                     binding.nextlayout.isEnabled= true
-                                    binding.validateKeyLayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.nextlayout.visibility = View.VISIBLE
                                     Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                 }
@@ -1109,7 +1347,7 @@ class QRCodePage : BaseActivity() {
                                             ConstantClass.dialog!!.dismiss()
                                         }
                                         binding.nextlayout.isEnabled= true
-                                        binding.validateKeyLayout.visibility = View.GONE
+                                        //binding.validateKeyLayout.visibility = View.GONE
                                         binding.nextlayout.visibility = View.VISIBLE
                                         Toast.makeText(this@QRCodePage, body.message, Toast.LENGTH_SHORT).show()
                                     }
@@ -1140,7 +1378,7 @@ class QRCodePage : BaseActivity() {
                                             remarks = "",
                                             recordStatus = ConstantClass.CustomerLoanStatus,
                                             creditScore = userScore.toString(),
-                                            validateKey = binding.accesstoken.text.toString(),
+                                            validateKey = "",
                                             defaultEmidebit = DefaulterEmiDebitPending,
                                             sellingPrice = ConstantClass.SellingPrice.toDouble(),
                                             loanMode = ConstantClass.CheckOnlineOrOffline,
@@ -1152,7 +1390,7 @@ class QRCodePage : BaseActivity() {
                                             ConstantClass.dialog!!.dismiss()
                                         }
 
-                                        binding.validateKeyLayout.visibility = View.VISIBLE
+                                        //binding.validateKeyLayout.visibility = View.VISIBLE
                                         binding.nextlayout.visibility = View.GONE
                                     }
                                 }
@@ -1303,7 +1541,6 @@ class QRCodePage : BaseActivity() {
     }
 
 
-
     fun String.toRequestBody(): RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), this)
 
 
@@ -1398,8 +1635,8 @@ class QRCodePage : BaseActivity() {
                                         ConstantClass.dialog!!.dismiss()
                                         binding.membershipfee.text = "₹ ".plus(response.membershipFee?.toDouble())
                                         Log.d("membership", ":".plus(response.membershipFee))
-                                        binding.username.text = CustFirstName.plus(" ").plus(CustLastName)
-                                        binding.customerimage.setImageURI(CustPhotoPath)
+                                        /*binding.username.text = CustFirstName.plus(" ").plus(CustLastName)
+                                        binding.customerimage.setImageURI(CustPhotoPath)*/
                                         binding.downpayment.text = "₹ ".plus(DownPayment)
                                         val processingFee = (ToBePaidAmount.toDoubleOrNull() ?: 0.0) - (DownPayment.toDoubleOrNull() ?: 0.0)
                                         binding.processingfee.text = "₹ ${String.format("%.2f", processingFee)}"
@@ -1640,7 +1877,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
-    fun hitApiForValidateKey() {
+     /*    fun hitApiForValidateKey() {
         var keyvalidatereq = ValidateAccessKeyReq(
             apiacessKey = binding.accesstoken.text.toString().trim(),
             clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
@@ -1661,13 +1898,13 @@ class QRCodePage : BaseActivity() {
                                 if (response.success!! && response.statusCode == 200) {
                                     binding.accesstoken.isEnabled= false
                                     binding.verifykeyicon.visibility= View.VISIBLE
-                                    binding.validatekeylayout.visibility = View.GONE
+                                    //binding.validateKeyLayout.visibility = View.GONE
                                     binding.LoanCreatelayout.visibility = View.VISIBLE
                                 }
                                 else {
                                     binding.accesstoken.isEnabled= true
                                     binding.verifykeyicon.visibility= View.GONE
-                                    binding.validateKeyLayout.visibility = View.VISIBLE
+                                    //binding.validateKeyLayout.visibility = View.VISIBLE
                                     binding.LoanCreatelayout.visibility = View.GONE
                                 }
 
@@ -1678,7 +1915,7 @@ class QRCodePage : BaseActivity() {
 
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog!!.dismiss()
-                        binding.validatekeylayout.visibility = View.VISIBLE
+                        //binding.validateKeyLayout.visibility = View.VISIBLE
                         binding.accesstoken.isEnabled = true
                         binding.nextlayout.visibility = View.GONE
                     }
@@ -1692,7 +1929,7 @@ class QRCodePage : BaseActivity() {
 
         }
 
-    }
+    }*/
 
 
     fun hitApiForEnach(request: EMandateRequest,check: Boolean) {
@@ -1814,7 +2051,6 @@ class QRCodePage : BaseActivity() {
         }
     }
 
-    
 
     fun  hitApiForUploadEnachMandateDataResponse(request:EnachDateUploadReq){
 

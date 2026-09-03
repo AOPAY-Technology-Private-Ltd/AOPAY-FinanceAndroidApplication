@@ -166,7 +166,7 @@ class IMEIDetailsPage : BaseActivity() {
       
         viewModel = ViewModelProvider(
             this,
-            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN))
+            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
         preference = SharedPreference(this)
         seonClickListner()

@@ -369,4 +369,6 @@ CLIENT shall access your Credit Information as your authorized representative an
     <string name="payment_mode_label">Payment Mode</string>
     <string name="payout_mode_label">Payout Mode</string>
     <string name="remarks">Remarks</string>
+
+    <string name="loan_create">Loan Create</string>
 </resources>

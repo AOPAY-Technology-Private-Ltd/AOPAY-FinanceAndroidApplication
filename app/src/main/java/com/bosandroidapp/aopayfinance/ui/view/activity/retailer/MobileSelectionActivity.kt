@@ -157,6 +157,7 @@ class MobileSelectionActivity : BaseActivity() {
     }
 
 
+
     fun setViewData(MobileDataList : MutableList<DataItem>){
         adapter = MobileListAdapter(MobileDataList,this@MobileSelectionActivity)
         binding.showingMobileList.adapter = adapter
