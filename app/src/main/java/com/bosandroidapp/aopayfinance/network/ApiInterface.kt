@@ -23,6 +23,7 @@ import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenResponse
 import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerResponse
+import com.bosandroidapp.aopayfinance.data.model.Getproductclientreq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawResp
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
@@ -30,6 +31,7 @@ import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportResp
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportResponse
 import com.bosandroidapp.aopayfinance.data.model.MakepaymentResp
+import com.bosandroidapp.aopayfinance.data.model.ProductListModelResponse
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletPayoutAtMakePaymentTimeReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletPayoutAtMakePaymentTimeResp
@@ -191,7 +193,7 @@ interface ApiInterface {
 
 
     @POST("api/V1/AopayFinance/GetAllDeviceDetails")
-    suspend fun getAllDeviceDetails(@Body req : GetDevicedetailsReq): Response<GetAllMobileDetailsListRes>?
+    suspend fun getAllDeviceDetails(@Body req : Getproductclientreq): Response<ProductListModelResponse>?
 
 
     @POST("api/V1/AopayFinance/GetModelWiseLoanDetails")

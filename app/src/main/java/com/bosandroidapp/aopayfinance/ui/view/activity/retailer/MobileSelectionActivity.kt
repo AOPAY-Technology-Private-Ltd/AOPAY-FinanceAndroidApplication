@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -34,6 +35,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
+import com.bosandroidapp.aopayfinance.data.model.Getproductclientreq
+import com.bosandroidapp.aopayfinance.data.model.ProductDataItem
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.DataItem
@@ -64,8 +67,11 @@ class MobileSelectionActivity : BaseActivity() {
 
     companion object{
         var MobileList : MutableList<com.bosandroidapp.aopayfinance.ui.view.model.MobileListModel> = mutableListOf()
-        var MobileDataList : MutableList<DataItem> = mutableListOf()
-        var FilterDataList : MutableList<DataItem> = mutableListOf()
+       /* var MobileDataList : MutableList<DataItem> = mutableListOf()
+        var FilterDataList : MutableList<DataItem> = mutableListOf()*/
+
+        var MobileDataList : MutableList<ProductDataItem> = mutableListOf()
+        var FilterDataList : MutableList<ProductDataItem> = mutableListOf()
 
     }
 
@@ -139,7 +145,7 @@ class MobileSelectionActivity : BaseActivity() {
                 override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     val search = s.toString().lowercase().trim()
                     val result = MobileDataList.filter {
-                        it.brandName.lowercase().contains(search) || it.modelName.lowercase().contains(search)
+                        it.brandName!!.lowercase().contains(search) || it.modelName!!.lowercase().contains(search)
                     }
                     FilterDataList.clear()
                     FilterDataList.addAll(result)
@@ -157,7 +163,7 @@ class MobileSelectionActivity : BaseActivity() {
     }
 
 
-    fun setViewData(MobileDataList : MutableList<DataItem>){
+    fun setViewData(MobileDataList :  MutableList<ProductDataItem> ){
         adapter = MobileListAdapter(MobileDataList,this@MobileSelectionActivity)
         binding.showingMobileList.adapter = adapter
 
@@ -165,38 +171,83 @@ class MobileSelectionActivity : BaseActivity() {
 
 
     fun hitApiForGetMobileDataList(){
-        var req = GetDevicedetailsReq(
-            clientcode = preference.getStringValue(ConstantClass.ClientCode,"")
+        var req = Getproductclientreq(
+            clientcode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
-        viewModel.getMobileList(req).observe(this){ resources->resources.let {
-            when(it.apiStatus){
-                ApiStatus.SUCCESS -> {
-                    it.data?.let { users ->
-                        users.body()?.let { response ->
-                            ConstantClass.dialog!!.dismiss()
-                            Log.d("MobileRes", response.message)
-                            if(response.status.equals("True")){
-                                MobileDataList = response.data!!
-                                Log.d("List",Gson().toJson(MobileDataList))
-                                setViewData(MobileDataList)
-                            }
-                        }
-                    }
-                }
+        Log.d("MobileReq", Gson().toJson(req))
 
-                ApiStatus.ERROR -> {
-                    ConstantClass.dialog!!.dismiss()
-                }
+        viewModel.getMobileList(req).observe(this) { resource ->
+
+            when (resource.apiStatus) {
 
                 ApiStatus.LOADING -> {
                     ConstantClass.OpenPopUpForVeryfyOTP(this)
                 }
 
+                ApiStatus.SUCCESS -> {
+                    ConstantClass.dialog!!.dismiss()
+
+                    try {
+                        val response = resource.data?.body()
+
+                        if (response == null) {
+                            Toast.makeText(
+                                this,
+                                "Something went wrong. Please try again.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@observe
+                        }
+
+                        Log.d("MobileRes", response.message.orEmpty())
+
+                        if (response.status.equals("true", ignoreCase = true)) {
+
+                            val data = response.data
+
+                            if (!data.isNullOrEmpty()) {
+                                MobileDataList = response.data!! as MutableList<ProductDataItem>
+                                Log.d("MobileDataList", Gson().toJson(MobileDataList))
+
+                                setViewData(MobileDataList)
+                            }
+                            else {
+                                MobileDataList.clear()
+
+                                Toast.makeText(this, response.message ?: "No data found.", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } else {
+                            // API returned failure status
+                            Toast.makeText(this, response.message ?: "Something went wrong.", Toast.LENGTH_SHORT).show()
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("MobileAPI", "Response parsing error", e)
+
+                        Toast.makeText(this, "Unable to process server response.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+
+                    // Get error message from your Resource class
+                    val errorMessage = resource.message
+                        ?: "Unable to connect to server. Please try again."
+
+                    Log.e("MobileAPI", errorMessage)
+
+                    Toast.makeText(
+                        this,
+                        errorMessage,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-
-          }
-
         }
+
+
     }
 
 

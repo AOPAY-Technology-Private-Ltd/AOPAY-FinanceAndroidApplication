@@ -110,14 +110,16 @@ object ConstantClass {
 
        /* const val BASE_URL = "https://api.aopay.finance/"
           const val BASE_URL_IMAGE = "https://api.aopay.finance"
+          const val BASE_URL_PRODUCT_IMAGE = "https://admin.aopay.finance"
           const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
+          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
+       */
 
 
      // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-
+       const val BASE_URL_PRODUCT_IMAGE = "https://admin.aopay.co.in"
        const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
        const val PENNYDROP_REGISTRATION_ID = "AOP-554"
 

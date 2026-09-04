@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityEmicalculationDetailsPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.BASE_URL_PRODUCT_IMAGE
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.BrandName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ClickOnCardDashboard
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DownPayment
@@ -54,6 +55,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.SellingPrice
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Tenure
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ToBePaidAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
+import com.bosandroidapp.aopayfinance.data.model.ProductDataItem
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.DataItem
@@ -96,7 +98,7 @@ class EMICalculationDetailsPage : BaseActivity() {
     companion object {
         var EmiSplitDataModel: MutableList<DataItems> = mutableListOf()
         var FilterDataEmiSplitDataModel: MutableList<DataItems> = mutableListOf()
-        lateinit var MobileData: DataItem
+        lateinit var MobileData: ProductDataItem
     }
 
 
@@ -111,11 +113,11 @@ class EMICalculationDetailsPage : BaseActivity() {
 
             Log.d("ColorList", Gson().toJson(colorList))
 
-            var color = colorList.split(",").map { it.trim() }
+            var color = colorList!!.split(",").map { it.trim() }
         }
 
         if (EmiSplitDataModel.isEmpty()) {
-            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
+            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
         }
 
 
@@ -144,7 +146,7 @@ class EMICalculationDetailsPage : BaseActivity() {
             binding.nextbuttonlayout.visibility = View.GONE
         }
 
-        hitApiForGetEmiPercent(MobileData.brandName, MobileData.modelName)
+        hitApiForGetEmiPercent(MobileData.brandName!!, MobileData.modelName!!)
 
         setonClickListner()
 
@@ -282,7 +284,7 @@ class EMICalculationDetailsPage : BaseActivity() {
 
 
     fun setDataOnUI(SellingPrice: String,mrp:String) {
-        Glide.with(this).load(MobileData.imagePath).placeholder(R.drawable.samsung).error(R.drawable.samsung).into(binding.deviceImage)
+        Glide.with(this).load(BASE_URL_PRODUCT_IMAGE+MobileData.imagePath).placeholder(R.drawable.samsung).error(R.drawable.samsung).into(binding.deviceImage)
         binding.brandname.text = MobileData.brandName
         binding.designtype.text = MobileData.modelName
         binding.editiontxt.text = "Android OS  : ${MobileData.remark}"
@@ -312,14 +314,14 @@ class EMICalculationDetailsPage : BaseActivity() {
             isApiRunning = false
             EmiSplitDataModel.clear()
             FilterDataEmiSplitDataModel.clear()
-            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
+            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
         }
 
         binding.resetdata.setOnClickListener {
             isApiRunning = false
             EmiSplitDataModel.clear()
             FilterDataEmiSplitDataModel.clear()
-            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
+            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
         }
 
         binding.stroage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

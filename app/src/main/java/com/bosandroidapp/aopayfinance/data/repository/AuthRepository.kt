@@ -11,6 +11,7 @@ import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
+import com.bosandroidapp.aopayfinance.data.model.Getproductclientreq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
@@ -147,7 +148,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
 
   suspend fun forgotPassword(req: ForgotPasswordReq) = apiInterface.forgotPassword(req)
 
-  suspend fun getMobileList(req:GetDevicedetailsReq) = apiInterface.getAllDeviceDetails(req)
+  suspend fun getMobileList(req:Getproductclientreq) = apiInterface.getAllDeviceDetails(req)
 
   suspend fun verifycustomerReq(req: VerifyCustomerReq) = apiInterface.verifycustomerReq(req)
 

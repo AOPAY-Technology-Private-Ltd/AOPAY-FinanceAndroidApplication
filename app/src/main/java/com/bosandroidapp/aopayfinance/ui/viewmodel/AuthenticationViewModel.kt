@@ -15,6 +15,7 @@ import com.bosandroidapp.aopayfinance.data.model.DueOverdueRequest
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.GetDevicedetailsReq
 import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
+import com.bosandroidapp.aopayfinance.data.model.Getproductclientreq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
@@ -131,7 +132,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         }
     }
 
-    fun getMobileList(req:GetDevicedetailsReq) = liveData(Dispatchers.IO) {
+    fun getMobileList(req:Getproductclientreq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
             emit(ApiResponse.success(data = repository.getMobileList(req)))
