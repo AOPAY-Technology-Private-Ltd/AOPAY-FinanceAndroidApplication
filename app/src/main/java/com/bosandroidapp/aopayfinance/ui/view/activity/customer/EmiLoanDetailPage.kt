@@ -595,7 +595,7 @@ class EmiLoanDetailPage : BaseActivity() {
                                 payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
                                 customerEmailID = email,
                                 registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                                payCartAmount = "1"/*emiamount.toString()*/,
+                                payCartAmount = emiamount.toString(),
                                 eMINumbers = "EMI${emiNumbers}",
                                 customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
                                 payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
