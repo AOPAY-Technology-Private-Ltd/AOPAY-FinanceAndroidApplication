@@ -277,4 +277,13 @@ class AuthRepository(private val apiInterface: ApiInterface) {
 
   suspend fun getRequestKitOption(req: KitOptionRequest) = apiInterface.getRequestKitOption(req)
 
+
+  suspend fun uploadInVoiceRequest(customerCode: String, columnName: String, newValue: String, imagePart: MultipartBody.Part) =
+    apiInterface.uploadInVoiceRequest(
+      customerCode,
+      columnName,
+      newValue,
+      imagePart
+    )
+
 }

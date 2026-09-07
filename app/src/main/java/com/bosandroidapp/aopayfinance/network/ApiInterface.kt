@@ -656,4 +656,16 @@ interface ApiInterface {
     suspend fun getRequestKitOption(@Body req : KitOptionRequest) : Response<KitOptionResponse>?
 
 
+
+    // upload invoice file...............
+    @Multipart
+    @POST("api/V1/AopayFinance/UpdateCustomerPhotoPath")
+    suspend fun uploadInVoiceRequest(
+        @Query("CustomerCode") customerCode: String,
+        @Query("ColumnName") columnName: String,
+        @Query("NewValue") newValue: String,
+        @Part invoiceImage: MultipartBody.Part
+    ): Response<CustomerMakePaymentResp>?
+
+
 }

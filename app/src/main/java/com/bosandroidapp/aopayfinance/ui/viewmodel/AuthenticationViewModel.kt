@@ -53,7 +53,9 @@ import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureN
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.utils.ApiResponse
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MultipartBody
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
 class AuthenticationViewModel (private val repository: AuthRepository):ViewModel(){
@@ -472,6 +474,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         }
     }
 
+
     fun uploadDeviceInfo(req: UploadDeviceInfoReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -481,6 +484,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
 
     fun UpdateEmandateDetails(req: EnachDateUploadReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
@@ -526,7 +530,6 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
-
     fun GetAdminBankDetailsReq(req: AdminBankDetailsReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -538,7 +541,6 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
-
     fun uploadDocumentForRaisAmountTransferAdminReq(req: RaiseMakePaymentReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -548,7 +550,6 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
-
 
 
     fun MakePaymentAdminReportRequest(req: MakePaymentAdminReportRequest) = liveData(Dispatchers.IO) {
@@ -569,6 +570,36 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         }
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
+        }
+    }
+
+
+    fun uploadInVoiceRequest(customerCode: String, columnName: String, newValue: String, imagePart: MultipartBody.Part) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.uploadInVoiceRequest(customerCode, columnName, newValue, imagePart), "Invoice Upload"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    private fun <T> handleApiResponse(response: Response<T>?, feature: String) = when {
+        response == null -> ApiResponse.error(data = null, message = "No response from server")
+        response.isSuccessful -> ApiResponse.success(data = response)
+        else -> {
+            val code = response.code()
+            val message = when (code) {
+                400 -> "Bad Request (400)"
+                401 -> "Session Expired / Unauthorized (401)"
+                403 -> "Forbidden Access (403)"
+                404 -> "$feature Not Found (404)"
+                500 -> "Internal Server Error (500)"
+                502 -> "Bad Gateway (502)"
+                503 -> "Service Unavailable (503)"
+                else -> "Unexpected error occurred: $code"
+            }
+            Log.e("API_ERROR", "$feature - Code: $code | Body: ${response.errorBody()?.string()}")
+            ApiResponse.error(data = null, message = message)
         }
     }
 

@@ -305,6 +305,7 @@
                     android:text="Create Loan"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_13ssp" />
+
             </LinearLayout>
 
 

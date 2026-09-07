@@ -353,6 +353,11 @@ object ConstantClass {
     var isMandate = "Yes"
     var internetSettingsOpened = false
 
+    var LoanRID : Int = 0
+
+
+
+
     private var noInternetDialog: AlertDialog? = null
 
     fun showNoInternetDialog(context: Context) {

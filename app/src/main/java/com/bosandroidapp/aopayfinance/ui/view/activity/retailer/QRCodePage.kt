@@ -140,6 +140,7 @@ import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
+import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AppScanInstallPage.Companion.LoanMode
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.RetailerEMandateVerifyPage.Companion.webUrl
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
@@ -401,6 +402,7 @@ class QRCodePage : BaseActivity() {
         }
 
     }
+
 
 
     private fun showSuccessPopup() {
@@ -1469,6 +1471,7 @@ class QRCodePage : BaseActivity() {
 
                                 if (response.status?.toLowerCase().equals(ConstantClass.LoanSuccessStatus)) {
                                     loaneCode = response.data!!.loanCode!!
+                                    ConstantClass.LoanRID = response.data!!.rid!!
                                     FirstName = CustFirstName
                                     MiddleName = CustMiddleName
                                     LastName = CustLastName
