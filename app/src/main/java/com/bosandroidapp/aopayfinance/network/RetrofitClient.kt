@@ -2,6 +2,7 @@ package com.bos.payment.appName.network
 
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.google.gson.GsonBuilder
+import com.stacker.stacker.StackerOkHttpInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -21,7 +22,7 @@ object RetrofitClient {
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .addInterceptor(logging)
+            .addInterceptor(StackerOkHttpInterceptor())
             .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
             .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout
@@ -40,6 +41,7 @@ object RetrofitClient {
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
+            .addInterceptor(StackerOkHttpInterceptor())
             .connectTimeout(120, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(120, TimeUnit.SECONDS)      // server response time
             .writeTimeout(120, TimeUnit.SECONDS)     // request send time
@@ -59,6 +61,7 @@ object RetrofitClient {
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
+            .addInterceptor(StackerOkHttpInterceptor())
             .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
             .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout

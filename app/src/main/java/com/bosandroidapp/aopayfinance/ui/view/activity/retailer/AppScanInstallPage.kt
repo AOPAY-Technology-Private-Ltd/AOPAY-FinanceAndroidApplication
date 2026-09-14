@@ -38,17 +38,42 @@ import androidx.core.content.FileProvider
 import com.bos.payment.appName.network.ApiInterface
 import com.bos.payment.appName.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadharVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AccountNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AccountType
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.BankIFSCCode
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.BankName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.BranchName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.BrandName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CibilResponse
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.ClickOnCardLowCibilScore
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAlternateMobileNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAlternateMobileOTP
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAlternateMobileVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAreaSector
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustCityName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustCode
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustCountry
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustCurrentAddress
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustFirstName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustFlatNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustLastName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustMiddleName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPhotoPath
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPinCode
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryMobileNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryMobileVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryOTP
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustStateName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CusteMailID
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustomerCodeForEnach
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DefaulterEmiDebitPending
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DownPayment
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.EmiAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.FirstName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ImeiNumber1
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.ImeiNumber2
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.InterestAmt
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.InterestRate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Invoive_Path
@@ -59,20 +84,32 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoanStartDate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ModelColor
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ModelName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ModelVarient
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanNumberVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanResponse
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ProcessingFees
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefAddress
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefRelationShip
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefmobileNo
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.RetailerCodeForEnach
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Tenure
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.calculateEmiEndDateFromNow
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.createMultipartFromUri
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentStartDate
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.iisAggrementVerified
+import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
+import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoanCreatedReq
+import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityAppScanInstallPageBinding
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
+import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CongratulationPage.Companion.MiddleName
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CongratulationPage.Companion.loaneCode
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
@@ -120,6 +157,7 @@ class AppScanInstallPage : BaseActivity() {
 
     }
 
+
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {
             launchCamera()
@@ -127,6 +165,7 @@ class AppScanInstallPage : BaseActivity() {
             Toast.makeText(this, "Camera permission is required to upload invoice", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,7 +205,8 @@ class AppScanInstallPage : BaseActivity() {
             }
             else {
                 Glide.with(this).load(CustomerPhotoPath).
-                placeholder(R.drawable.customer).error(R.drawable.customer).into( binding.customerimage)
+                placeholder(com.bosandroidapp.aopayfinance.R.drawable.customer).
+                error(com.bosandroidapp.aopayfinance.R.drawable.customer).into( binding.customerimage)
             }
 
     }
@@ -315,33 +355,33 @@ class AppScanInstallPage : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForQRScanAlert() {
-        dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.appdownloadqrlayout)
+        ConstantClass.dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
+        ConstantClass.dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        ConstantClass.dialog!!.setContentView(com.bosandroidapp.aopayfinance.R.layout.appdownloadqrlayout)
 
 
-        dialog.window?.apply {
+        ConstantClass.dialog!!.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
 
-        dialog.setCanceledOnTouchOutside(false)
+        ConstantClass.dialog!!.setCanceledOnTouchOutside(false)
 
-        val cancel = dialog.findViewById<Button>(R.id.btnClose)
+        val cancel = ConstantClass.dialog!!.findViewById<Button>(com.bosandroidapp.aopayfinance.R.id.btnClose)
 
-        val provisioningQR = dialog.findViewById<ImageView>(R.id.qr_code_provising)
+        val provisioningQR = ConstantClass.dialog!!.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.qr_code_provising)
 
-        val progressbar = dialog.findViewById<ProgressBar>(R.id.progressbar)
+        val progressbar = ConstantClass.dialog!!.findViewById<ProgressBar>(com.bosandroidapp.aopayfinance.R.id.progressbar)
 
         hitApiForDownloadAppUrlLinkQR(provisioningQR,progressbar)
 
         cancel.setOnClickListener {
-            dialog.dismiss()
+            ConstantClass.dialog!!.dismiss()
         }
 
-        dialog.show()
+        ConstantClass.dialog!!.show()
 
     }
 
@@ -507,8 +547,8 @@ class AppScanInstallPage : BaseActivity() {
 
                                 }
                                 else {
-                                    if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                        ConstantClass.dialog.dismiss()
+                                    if (ConstantClass.dialog != null && ConstantClass.dialog!!.isShowing) {
+                                        ConstantClass.dialog!!.dismiss()
                                     }
                                 }
 
@@ -518,8 +558,8 @@ class AppScanInstallPage : BaseActivity() {
 
                     ApiStatus.ERROR -> {
 
-                        if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                            ConstantClass.dialog.dismiss()
+                        if (ConstantClass.dialog != null && ConstantClass.dialog!!.isShowing) {
+                            ConstantClass.dialog!!.dismiss()
                         }
 
                         // ✅ Print the full error details
@@ -555,6 +595,7 @@ class AppScanInstallPage : BaseActivity() {
 
         var sessionOutReq = SessionOutReq(
             retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,"")
         )
 
         Log.d("SessionOutReq", Gson().toJson(sessionOutReq))
@@ -565,8 +606,8 @@ class AppScanInstallPage : BaseActivity() {
                         it.data?.let { users ->
                             users.body()?.let { response ->
                                 Log.d("SessionOutResponse", Gson().toJson(response))
-                                if (ConstantClass.dialog != null && ConstantClass.dialog.isShowing) {
-                                    ConstantClass.dialog.dismiss()
+                                if (ConstantClass.dialog != null && ConstantClass.dialog!!.isShowing) {
+                                    ConstantClass.dialog!!.dismiss()
                                 }
                                 ConstantClass.checkActiveStatusAndLogout(this@AppScanInstallPage, response.status, preference)
                             }

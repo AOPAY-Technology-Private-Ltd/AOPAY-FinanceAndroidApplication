@@ -6,13 +6,13 @@ plugins {
 
 android {
     namespace = "com.bosandroidapp.aopayfinance"
-    compileSdk = 34
+    compileSdk = 36
 
 
     defaultConfig {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 8
         versionName = "1.0.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -116,5 +116,14 @@ dependencies {
 
 
     implementation(libs.play.services.auth)
+
+    val stacker = "com.github.jatinsinghsatija.Stacker"
+    val stackerVersion = "v0.2.0"
+
+    debugImplementation("$stacker:stacker_inspector_debug:$stackerVersion")
+    debugImplementation("$stacker:flutter_debug:$stackerVersion")
+
+    releaseImplementation("$stacker:stacker_inspector_release:$stackerVersion")
+    releaseImplementation("$stacker:flutter_release:$stackerVersion")
 
 }

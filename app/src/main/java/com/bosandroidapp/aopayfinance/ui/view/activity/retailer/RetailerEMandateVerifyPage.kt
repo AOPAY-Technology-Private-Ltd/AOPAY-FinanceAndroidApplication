@@ -330,9 +330,11 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                             users!!.body().let { response ->
                                 Log.d("EmandateUploadRes", Gson().toJson(response))
                                 if(isMandate.equals(ConstantClass.isMandate)){
-                                    startActivity(Intent(this@RetailerEMandateVerifyPage, CongratulationPage::class.java))
+                                    // success response
+                                    startActivity(Intent(this@RetailerEMandateVerifyPage, AppScanInstallPage::class.java))
+                                   /* startActivity(Intent(this@RetailerEMandateVerifyPage, CongratulationPage::class.java))
                                     clearData()
-                                    finish()
+                                    finish()*/
                                 }
                                 else{
                                     isEnachCancelled = true

@@ -156,6 +156,7 @@ import kotlin.math.roundToInt
 import kotlin.text.equals
 import kotlin.text.toDouble
 import kotlin.text.trim
+import kotlin.toString
 
 
 class QRCodePage : BaseActivity() {
@@ -202,7 +203,7 @@ class QRCodePage : BaseActivity() {
       /*  binding.accesstoken.filters = arrayOf(InputFilter.AllCaps())
         binding.accesstoken.inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS*/
 
-
+       // peding for lowcibil case  recordStatus = CustomerLoanStatusPending
         if(preference.getStringValue(ConstantClass.CustomerCode,"").isNotEmpty()&& ! ConstantClass.ClickOnCardLowCibilScore.equals(CardType)){
             updateLoanRequest(true)
         }
@@ -232,11 +233,11 @@ class QRCodePage : BaseActivity() {
                 modetype = "INSERT",
                 rid = 0,
                 customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                loanAmount = ConstantClass.LoanAmount ?: 0.0,
-                downPayment = DownPayment?.toDoubleOrNull() ?: 0.0,
-                emiAmount = EmiAmount?.toDoubleOrNull() ?: 0.0,
-                tenure = Tenure?.toInt() ?: 0,
-                interestRate = InterestRate?.toDoubleOrNull() ?: 0.0,
+                loanAmount = ConstantClass.LoanAmount.toDouble(),
+                downPayment = downPayment.toDouble(),
+                emiAmount = EmiAmount.toDouble(),
+                tenure = Tenure.toInt(),
+                interestRate = InterestRate.toDouble(),
                 startDate = startDate,
                 endDate = endDate,
                 imeiNumber = ImeiNumber1,
@@ -245,25 +246,27 @@ class QRCodePage : BaseActivity() {
                 modelname = ModelName,
                 variantname = ModelVarient,
                 avlcolor = ModelColor,
-                retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+                retailerCode =  preference.getStringValue(ConstantClass.RetailerCode, ""),
                 processingFees = ProcessingFees,
                 interestAmt = InterestAmt,
                 remarks = "",
-                recordStatus = LoanStatus,
+                recordStatus = ConstantClass.CustomerLoanStatus,
                 creditScore = userScore.toString(),
                 validateKey = "",
                 defaultEmidebit = DefaulterEmiDebitPending,
-                sellingPrice = ConstantClass.SellingPrice?.toDoubleOrNull() ?: 0.0,
-                loanMode = ConstantClass.offline
+                sellingPrice = ConstantClass.SellingPrice.toDouble(),
+                loanMode = ConstantClass.offline,
+                clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
             )
             LoanMode = ConstantClass.offline
-        } else {
+        }
+        else {
             loancreatedreq = LoanCreatedReq(
                 modetype = "INSERT",
                 rid = 0,
                 customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
                 loanAmount = ConstantClass.LoanAmount.toDouble(),
-                downPayment = DownPayment.toDouble(),
+                downPayment = downPayment.toDouble(),
                 emiAmount = EmiAmount.toDouble(),
                 tenure = Tenure.toInt(),
                 interestRate = InterestRate.toDouble(),
@@ -279,12 +282,13 @@ class QRCodePage : BaseActivity() {
                 processingFees = ProcessingFees,
                 interestAmt = InterestAmt,
                 remarks = "",
-                recordStatus = LoanStatus,
+                recordStatus = ConstantClass.CustomerLoanStatus,
                 creditScore = userScore.toString(),
                 validateKey = "",
                 defaultEmidebit = DefaulterEmiDebitAutoApproved,
                 sellingPrice = ConstantClass.SellingPrice.toDouble(),
-                loanMode = ConstantClass.online
+                loanMode = ConstantClass.online,
+                clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
             )
             LoanMode = ConstantClass.online
         }
@@ -300,6 +304,8 @@ class QRCodePage : BaseActivity() {
 
         binding.LoanCreatelayout.visibility = View.VISIBLE
         binding.nextlayout.visibility = View.GONE
+
+
     }
 
 
@@ -404,7 +410,6 @@ class QRCodePage : BaseActivity() {
     }
 
 
-
     private fun showSuccessPopup() {
 
         val dialog = Dialog(this)
@@ -427,7 +432,6 @@ class QRCodePage : BaseActivity() {
         }, 3000)
 
     }
-
 
 
     override fun onResume() {
@@ -490,7 +494,7 @@ class QRCodePage : BaseActivity() {
 
         binding.LoanCreatelayout.setOnClickListener {
             if (loancreatedreq != null) {
-                if (loaneCode.trim().isNotEmpty() && BankIFSCCode.trim().isNotEmpty() && ConstantClass.AccountHolderName.trim().isNotEmpty() && AccountType.trim().isNotEmpty()) {
+                /*if (loaneCode.trim().isNotEmpty() && BankIFSCCode.trim().isNotEmpty() && ConstantClass.AccountHolderName.trim().isNotEmpty() && AccountType.trim().isNotEmpty()) {
                     // Loan already created in a previous attempt, retry E-Nach directly
 
                     val startDate = LoanStartDate
@@ -525,11 +529,16 @@ class QRCodePage : BaseActivity() {
                     hitApiForEnach(request,true)
 
                 }
-                else {
+                else {*/
                     // No loan created yet, proceed with the normal flow
+                    binding.LoanCreatelayout.isEnabled= false
                     hitApiForCheckLoanCharge(loancreatedreq!!)
-                }
+               /* }*/
             }
+            else{
+                binding.LoanCreatelayout.isEnabled= true
+            }
+
         }
 
 
@@ -1470,17 +1479,26 @@ class QRCodePage : BaseActivity() {
                                 Log.d("customerres", Gson().toJson(response))
 
                                 if (response.status?.toLowerCase().equals(ConstantClass.LoanSuccessStatus)) {
+                                    binding.LoanCreatelayout.isEnabled = false
                                     loaneCode = response.data!!.loanCode!!
                                     ConstantClass.LoanRID = response.data!!.rid!!
                                     FirstName = CustFirstName
                                     MiddleName = CustMiddleName
                                     LastName = CustLastName
-                                    CustomerCodeForEnach = response.data!!.customerCode!!
+                                    if(response.data!!.customerCode.isNullOrBlank()){
+                                        Toast.makeText(this@QRCodePage,"Customer code not found after loan creation",
+                                            Toast.LENGTH_SHORT).show()
+                                        CustomerCodeForEnach=""
+                                    }
+                                    else{
+                                        CustomerCodeForEnach = response.data!!.customerCode!!
+                                    }
                                     LoanCodeForEnach = response.data!!.loanCode!!
                                     RetailerCodeForEnach = response.data!!.retailerCode!!
 
                                     LoanStartDate = response.data.startDate!!
                                     LoanEndDate = response.data.endDate!!
+
                                     val emiAmount = EmiAmount.toDouble().roundToInt()
 
                                     if(BankIFSCCode.trim().isNotEmpty() &&ConstantClass.AccountHolderName.trim().isNotEmpty() && AccountType.trim().isNotEmpty()){
@@ -1510,9 +1528,12 @@ class QRCodePage : BaseActivity() {
                                         hitApiForEnach(request,false)
                                     }
                                     else{
-                                        startActivity(Intent(this@QRCodePage, CongratulationPage::class.java))
+                                       /* startActivity(Intent(this@QRCodePage, CongratulationPage::class.java))
                                         clearData()
-                                        finish()
+                                        finish()*/
+
+                                        startActivity(Intent(this@QRCodePage, AppScanInstallPage::class.java))
+
                                     }
 
                                 }
@@ -2031,10 +2052,18 @@ class QRCodePage : BaseActivity() {
                                     hitApiForRetailerCreatedLoan(loancreatedreq)
                                 }
                                 else {
-                                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                    if (ConstantClass.dialog != null && ConstantClass.dialog!!.isShowing) {
                                         ConstantClass.dialog!!.dismiss()
                                     }
-                                    Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
+
+                                    binding.LoanCreatelayout.isEnabled= false
+                                    if(response.message.isNullOrBlank()){
+                                        Toast.makeText(this,"Loan charge failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else{
+                                        binding.LoanCreatelayout.isEnabled= true
+                                        Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
+                                    }
                                 }
 
                             }
@@ -2042,6 +2071,8 @@ class QRCodePage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
+                        binding.LoanCreatelayout.isEnabled= true
+                        Toast.makeText(this@QRCodePage, resources.message ?: "Loan charge failed", Toast.LENGTH_SHORT).show()
                         handleApiError(it.data?.code() ?: 0, it.message)
                     }
 
