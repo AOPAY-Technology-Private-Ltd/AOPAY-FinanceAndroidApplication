@@ -35,36 +35,34 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.binding.tvReceiptNo.text = ledgerReportList[position]!!.receiptNo
-        holder.binding.tvPendingAmount.text = formatIndianAmount(ledgerReportList[position]!!.pendingAmount.toString())
 
-        if (ledgerReportList[position]!!.recordStatus!!.toLowerCase().equals("paid")) {
-            holder.binding.doneimage.setImageDrawable(
-                ContextCompat.getDrawable(
-                    context,
-                    com.bosandroidapp.aopayfinance.R.drawable.doneicon
-                )
-            )
+        if (ledgerReportList[position]!!.recordStatus!!.toLowerCase().equals("paid",ignoreCase = true)) {
+            holder.binding.doneimage.setImageDrawable(ContextCompat.getDrawable(context, com.bosandroidapp.aopayfinance.R.drawable.doneicon))
             holder.binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.paid_amount)
             holder.binding.tvRecordStatus.setTextColor(context.resources.getColor(com.bosandroidapp.aopayfinance.R.color.green))
+            holder.binding.tvPendingAmount.text = /*formatIndianAmount(*/ledgerReportList[position]!!.emiAmount.toString()/*)*/
+
         }
         else {
             holder.binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.due_amount)
             holder.binding.tvRecordStatus.setTextColor(context.resources.getColor(com.bosandroidapp.aopayfinance.R.color.red))
             holder.binding.doneimage.setImageDrawable(ContextCompat.getDrawable(context, com.bosandroidapp.aopayfinance.R.drawable.crossicon))
+            holder.binding.tvPendingAmount.text = /*formatIndianAmount(*/ledgerReportList[position]!!.pendingAmount.toString()/*)*/
+
         }
 
 
-        holder.binding.tvEmiAmount.text = formatIndianAmount(ledgerReportList[position]?.emiAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvEmiAmount.text = /*formatIndianAmount(*/ledgerReportList[position]?.emiAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
-        holder.binding.tvFineAmount.text = formatIndianAmount(ledgerReportList[position]?.fine?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvFineAmount.text = /*formatIndianAmount(*/ledgerReportList[position]?.fine?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
-        holder.binding.tvBounceAmount.text = formatIndianAmount(ledgerReportList[position]?.bouncingCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvBounceAmount.text = /*formatIndianAmount(*/ledgerReportList[position]?.bouncingCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
-        holder.binding.tvOtherAmount.text = formatIndianAmount(ledgerReportList[position]?.otherCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvOtherAmount.text = /*formatIndianAmount(*/ledgerReportList[position]?.otherCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
-        holder.binding.tvWaiveAmount.text = formatIndianAmount(ledgerReportList[position]?.waiveOffAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvWaiveAmount.text =/* formatIndianAmount(*/ledgerReportList[position]?.waiveOffAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
-        holder.binding.tvTotalChargesAmount.text = formatIndianAmount(ledgerReportList[position]?.totalCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        holder.binding.tvTotalChargesAmount.text =/* formatIndianAmount(*/ledgerReportList[position]?.totalCharges?.toString().takeIf { !it.isNullOrBlank() } ?: "0"/*)*/
 
         holder.binding.tvPaymentMode.text = ledgerReportList[position]!!.paymentMode
         holder.binding.tvRecordStatus.text = ledgerReportList[position]!!.recordStatus

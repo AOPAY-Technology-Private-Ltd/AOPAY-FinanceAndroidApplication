@@ -160,6 +160,7 @@ class KioskActivity : AppCompatActivity() {
     }
 
 
+
     fun setOnClickListner(){
 
         binding.submitpayment.setOnClickListener {
@@ -241,22 +242,27 @@ class KioskActivity : AppCompatActivity() {
                      Toast.makeText(this@KioskActivity,"Please connect with internet", Toast.LENGTH_SHORT).show()
                  }
         }
+
     }
+
 
     override fun onPause() {
         super.onPause()
         if(isLocked()) finish()
     }
 
+
     override fun onStop() {
         super.onStop()
         Log.d("Accessibility","onStop")
     }
 
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) enterImmersiveMode()
     }
+
 
     fun hitapiforGetUpdateProfile(){
 
@@ -313,6 +319,7 @@ class KioskActivity : AppCompatActivity() {
             }
         }
     }
+
 
     fun HitApiForEmiList(){
         if (isApiRunning) {
@@ -395,7 +402,9 @@ class KioskActivity : AppCompatActivity() {
             Log.d("DueList", "Data". plus(listOfDueWithGraceDate))
             setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(),LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0)
         }
+
     }
+
     fun setDataInspinner(tenure:Int,emiAmount:Double?){
         val emiOptions = ConstantClass.generateEMIOptions(tenure)
         val noOfEmiAdapter = ArrayAdapter(this, R.layout.mobilenamelayout, emiOptions )
@@ -408,6 +417,7 @@ class KioskActivity : AppCompatActivity() {
                 val selectedItem = parent.getItemAtPosition(position).toString().toInt()
                 var totalEmiAmount = 0.0   // use Double for calculation
                 Log.d("ListDueGrace",":".plus(listOfDueWithGraceDate))
+
                 if(listOfDueWithGraceDate.isNotEmpty()){
 
                     for (j in 1..selectedItem) {

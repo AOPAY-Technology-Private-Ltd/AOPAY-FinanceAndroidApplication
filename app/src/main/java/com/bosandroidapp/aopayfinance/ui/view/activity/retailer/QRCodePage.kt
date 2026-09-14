@@ -1373,6 +1373,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
+
     fun hitApiForMemberShipFee() {
 
         val startTime = System.currentTimeMillis()
@@ -1447,6 +1448,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
+
     fun hitApiForDownloadAppUrlLinkQR(qrCodeProvising: ImageView, progressBar: ProgressBar) {
         lifecycleScope.launch {
 
@@ -1489,6 +1491,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
+
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
@@ -1525,6 +1528,7 @@ class QRCodePage : BaseActivity() {
         dialog!!.show()
 
     }
+
 
 
     fun hitApiForLogin() {
@@ -1598,7 +1602,9 @@ class QRCodePage : BaseActivity() {
             }
         }
 
+
     }
+
 
 
     fun hitApiForRetailerLogout() {
@@ -1703,7 +1709,9 @@ class QRCodePage : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data.let { users ->
+
                             if(users!!.isSuccessful){
+
                                 users!!.body().let { response ->
                                     Log.d("eMandateRes", Gson().toJson(response))
 
@@ -1814,7 +1822,6 @@ class QRCodePage : BaseActivity() {
         }
     }
 
-    
 
     fun  hitApiForUploadEnachMandateDataResponse(request:EnachDateUploadReq){
 
@@ -1857,6 +1864,7 @@ class QRCodePage : BaseActivity() {
         }
 
     }
+
 
 
     /* fun hitApiForEMandateStatus(request: ENachStatusReq) {
@@ -1914,5 +1922,6 @@ class QRCodePage : BaseActivity() {
 
       }
   }*/
+
 
 }

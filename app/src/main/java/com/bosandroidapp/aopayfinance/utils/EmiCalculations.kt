@@ -122,6 +122,41 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.R)
+suspend fun Context.forceSyncEmis() = withContext(Dispatchers.IO) {
+    val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+    currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
+
+    fetchAndStoreEmis(sharedPref)
+    isEMIDue(sharedPref)
+
+}
+
+
+private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
+    val preference = SharedPreference(this)
+
+    var loanemireq = GetCustomerLoanDetailsReq(
+        loancode = "",
+        customercode = preference.getStringValue(ConstantClass.CustomerCode, ""), // for testing purpose
+        clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
+    )
+    try {
+        Log.d("Loanreq", Gson().toJson(loanemireq))
+        val loanDetails = getCustomerLoanEmiDetailsReq(loanemireq)
+        currentDate = loanDetails?.body()?.indiaTimeIST!!.convertDate()
+        val list = loanDetails?.body()?.data?.toList()
+
+        list?.let { loans ->
+            val obj = loans.getLoansStringObject()
+            sharedPref.edit().putString("LoanData", obj).apply()
+        }
+    } catch (e: Exception) {
+        Log.e(ACCESSIBILITYTAG, "Error fetching EMIs: ${e.localizedMessage}")
+    }
+}
+
+
 
 @RequiresApi(Build.VERSION_CODES.R)
 private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContext(Dispatchers.IO) {
@@ -152,7 +187,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
 
                         Log.d("currentDate", currentDate!!)
                         uploadDataOnFirebaseConsole("$currentDate", "currentDate")
-                        val grossDue = it.startDate.toFormattedDate().getGrossDate(grossPeriod)
+                        val grossDue = it.startDate.toFormattedDate().getJumpedDate(paidMonths).getGrossDate(grossPeriod)
                         Log.d("grossDueDate", grossDue)
                         if (grossDue.isLateFeesApplicable(currentDate)) {
                             lateEMIs++
@@ -241,26 +276,38 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
 
 
 fun String.toFormattedDate(): String {
-    return try {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
-        val date = inputFormat.parse(this)
-        date?.let { outputFormat.format(it) } ?: this
-    } catch (e: Exception) {
-        this // return original if parsing fails
+    val formats = listOf("yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "d/M/yyyy")
+    val outputFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+    for (format in formats) {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.getDefault())
+            val date = sdf.parse(this)
+            if (date != null) return outputFormat.format(date)
+        } catch (e: Exception) {
+            // continue
+        }
     }
+    return this
 }
 
 
 private fun String.getJumpedDate(paidMonths: Long): String {
     val splitDate = this.trim().split("/")
-    val monthIncreased = splitDate[1].toLong() + paidMonths
-    if (monthIncreased > 12) {
-        val years = monthIncreased / 12
-        val month = monthIncreased % 12
-        return "${splitDate[0]}/$month/${splitDate[2].toLong() + years}"
-    } else {
-        return "${splitDate[0]}/${splitDate[1].toLong() + paidMonths}/${splitDate[2]}"
+    if (splitDate.size < 3) return this
+
+    return try {
+        val day = splitDate[0].toInt()
+        val month = splitDate[1].toInt()
+        val year = splitDate[2].toInt()
+
+        val cal = Calendar.getInstance()
+        cal.set(year, month - 1, day)
+        cal.add(Calendar.MONTH, paidMonths.toInt())
+
+        val sdf = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+        sdf.format(cal.time)
+    } catch (e: Exception) {
+        this
     }
 }
 
@@ -422,17 +469,12 @@ private fun String.getGrossDate(grossPeriod: Int): String {
     val validDate: Date? = try {
         sdf.parse(this)
     } catch (e: Exception) {
-        val parts = this.split("-", " ", "/")
-        if (parts.size < 2) return ""
-
-        val year = parts[2].toIntOrNull() ?: return ""
-        val month = parts[1].toIntOrNull()?.minus(1) ?: return ""
-
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.YEAR, year)
-        cal.set(Calendar.MONTH, month)
-        val lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        sdf.parse("%02d/%02d/%04d".format(lastDay, month + 1, year))
+        val formatted = this.toFormattedDate()
+        try {
+            sdf.parse(formatted)
+        } catch (e2: Exception) {
+            null
+        }
     }
 
 
@@ -489,6 +531,12 @@ private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
         false
     }
 }
+
+
+
+
+
+
 
 
 fun Context.hasDateChanged(): Boolean {

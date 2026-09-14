@@ -190,6 +190,10 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 customerImagePath = imageFile!!.absolutePath
                 binding.imagenotuploaded.visibility = View.GONE
             }
+            else{
+                photoUri = null
+                customerImagePath=""
+            }
 
         }
 

@@ -99,9 +99,9 @@ dependencies {
 
     // firebase ...................................
     implementation(libs.firebase.messaging)
-    // ✅ Firebase BOM MUST be platform()
+    // Firebase BOM MUST be platform()
     implementation(platform(libs.firebase.bom))
-    // ✅ Firestore KTX
+    //  Firestore KTX
     implementation(libs.firebase.firestore.ktx)
     // (optional)
     implementation(libs.firebase.storage)

@@ -20,6 +20,7 @@ data class CustomerLoanEmiResp(
 	val status: String? = null
 )
 
+
 data class CustomerDataItem(
 
 	@field:SerializedName("gracePeriod")

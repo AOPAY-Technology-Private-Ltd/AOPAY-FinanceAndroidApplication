@@ -120,6 +120,7 @@ interface ApiInterface {
     suspend fun getPanVarification(@Body req : PanVerificationReq): Response<PanVerificationResponse>?
 
 
+
     // Adhar verification
     @POST("api/AOP/V1/Validation/AadhaarValidateUrl")
     suspend fun getAadharVarification(@Body req : AadharVerificationReq): Response<AadharVerificationResp>?

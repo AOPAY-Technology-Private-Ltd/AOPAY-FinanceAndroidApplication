@@ -98,6 +98,7 @@ class SignupPage : BaseActivity() {
         profilePhotoUri = savedInstanceState.getParcelable("profile_uri")
     }
 
+
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             // We use currentCaptureMode because booleans can reset to false if the OS kills the app in the background
@@ -216,9 +217,41 @@ class SignupPage : BaseActivity() {
 
             }
 
-        } else {
+        }
+        else {
             // Optional: Handle failure or cancellation
             Log.d("BOS_CAMERA", "Capture failed or cancelled for mode: $currentCaptureMode")
+            when (currentCaptureMode) {
+
+                "PROFILE" -> {
+                    profilePhotoUri = null
+                }
+
+                "AADHAAR_FRONT" -> {
+                    aadhaarFronthotoUri=null
+                }
+
+                "AADHAAR_BACK" -> {
+                    aadhaarBackhotoUri=null
+                }
+
+                "PANCARD" -> {
+                    pancardphotoUri=null
+                }
+
+                "STORE" -> {
+                    storePhotoUri=null
+                }
+
+                "COMPANYDOCUMENT" -> {
+                    companyCodePhotoUri=null
+                }
+
+                "CANCELCHEQUE" -> {
+                    chequePhotoUri = null
+                }
+
+            }
         }
     }
 
@@ -240,6 +273,7 @@ class SignupPage : BaseActivity() {
 
         return compressedFile.absolutePath
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

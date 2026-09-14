@@ -229,25 +229,37 @@ class PGWebViewActivity : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
-                            users.body()?.let {
-                                response ->
-                                Log.d("loanEmiReceiveResp", response.toString())
+                            if(users.isSuccessful){
+                                users.body()?.let {
+                                        response ->
 
-                                if(loopcount==emicount){
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
-                                        ConstantClass.dialog!!.dismiss()
+                                    Log.d("loanEmiReceiveResp", response.toString())
+
+                                    if(loopcount==emicount){
+                                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                            ConstantClass.dialog!!.dismiss()
+                                        }
+                                        emiList .clear()
+                                        EMIamountPG  =""
+                                        LoanCodePG  = ""
+                                        Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
+                                        val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+
                                     }
-                                     emiList .clear()
-                                     EMIamountPG  =""
-                                     LoanCodePG  = ""
-                                    Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    startActivity(intent)
 
                                 }
+                            }
+                            else{
+                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                    ConstantClass.dialog!!.dismiss()
+                                }
+                                var getdata = users.errorBody()?.string()
+                                Toast.makeText(this@PGWebViewActivity,getdata.toString(),Toast.LENGTH_SHORT).show()
 
                             }
+
                         }
 
                     }
@@ -297,10 +309,7 @@ class PGWebViewActivity : BaseActivity() {
 
         var Ok = dialog!!.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
 
-        /*Ok.setOnClickListener {
-            finish()
-            dialog!!.dismiss()
-        }*/
+
 
         Ok.setOnClickListener {
             isPgClosing = true

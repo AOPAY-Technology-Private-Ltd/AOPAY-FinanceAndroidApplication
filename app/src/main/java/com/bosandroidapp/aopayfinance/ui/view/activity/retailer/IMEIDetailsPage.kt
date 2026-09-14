@@ -92,6 +92,7 @@ class IMEIDetailsPage : BaseActivity() {
     }
 
 
+
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             if(imei1photo){
@@ -149,6 +150,25 @@ class IMEIDetailsPage : BaseActivity() {
 
         }
 
+        else{
+
+            if(imei1photo){
+                imei1photoUri= null
+            }
+
+            else if(imei2photo){
+                imei2photoUri=null
+            }
+
+            else if(ImeiPhoto){
+                ImeiPhotoUri= null
+            }
+
+            else if(invoicePhoto){
+                invoicePhotoUri=null
+            }
+
+        }
 
     }
 
