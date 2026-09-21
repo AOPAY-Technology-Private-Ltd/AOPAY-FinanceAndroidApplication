@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
@@ -166,6 +167,7 @@ class ChooseYourRolePage : BaseActivity() {
             deviceName = DeviceName,
             manufacturer = deviceManufacturer
         )
+
         Log.d("DeviceInfoReq", Gson().toJson(request))
 
         viewModel.uploadDeviceInfo(request).observe(this) { it ->
@@ -201,6 +203,7 @@ class ChooseYourRolePage : BaseActivity() {
         }
 
     }
+
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

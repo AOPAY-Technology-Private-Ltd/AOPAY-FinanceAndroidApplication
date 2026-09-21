@@ -124,6 +124,42 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
 
 
 @RequiresApi(Build.VERSION_CODES.R)
+suspend fun Context.forceSyncEmis() = withContext(Dispatchers.IO) {
+    val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+    currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
+
+    fetchAndStoreEmis(sharedPref)
+    isEMIDue(sharedPref)
+
+}
+
+
+
+private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
+    val preference = SharedPreference(this)
+    var loanemireq = GetCustomerLoanDetailsReq(
+        loancode = "",
+        customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+        clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
+    )
+    try {
+        Log.d("Loanreq", Gson().toJson(loanemireq))
+        val loanDetails = getCustomerLoanEmiDetailsReq(loanemireq)
+        currentDate = loanDetails?.body()?.indiaTimeIST!!.convertDate()
+        val list = loanDetails?.body()?.data?.toList()
+
+        list?.let { loans ->
+            val obj = loans.getLoansStringObject()
+            sharedPref.edit().putString("LoanData", obj).apply()
+        }
+    } catch (e: Exception) {
+        Log.e(ACCESSIBILITYTAG, "Error fetching EMIs: ${e.localizedMessage}")
+    }
+}
+
+
+
+@RequiresApi(Build.VERSION_CODES.R)
 private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContext(Dispatchers.IO) {
     var malfunctionedDates = 0
     var emiDues: Int? = null
@@ -177,6 +213,8 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
         }
 
         Logger.d(ACCESSIBILITYTAG,"EMIDUES: $emiDues")
+
+
 
         if (emiDues != null) {
             if (emiDues!! > 0) {

@@ -34,6 +34,28 @@ import com.bos.payment.appName.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityPanCardVerificationPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerAccountNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerAccountType
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerAearSector
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerAlternateMobileNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerBankIFSCCode
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerBankName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerBranchName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerCityName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerCodeHaveEligiblity
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerCountry
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerCurrentAddress
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerFirstName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerFlatNo
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerImage
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerLastName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerPinCode
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerPrimaryMobileNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerRefAddress
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerRefName
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerRefRelationShip
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerRefmobileNo
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.AlreadyCustomerStateName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.CheckOnlineOrOffline
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ENTEREDCUSTOMERDOB
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
@@ -77,6 +99,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.text.equals
 
 class PanCardVerificationPage : BaseActivity() {
     lateinit var binding: ActivityPanCardVerificationPageBinding
@@ -360,17 +383,60 @@ class PanCardVerificationPage : BaseActivity() {
                             users!!.body().let { response ->
                                 Log.d("CheckEligibleResp", Gson().toJson(response))
 
-                                if(response!!.statuss.equals("True")){
-                                    if (CheckOnlineOrOffline.equals(ConstantClass.online)) {
-                                        hitApiForPanVerification(pannumber)
+                                if(response!!.statuss!!.toLowerCase().equals("true",ignoreCase = true)){
+
+                                    if(response.value!=null){
+
+                                        AlreadyCustomerCodeHaveEligiblity = response.value!!.customerCode!!
+                                        AlreadyCustomerImage = response.value.custPhotoPath!!
+                                        AlreadyCustomerFirstName = response.value.firstName!!
+                                        //AlreadyCustomerMiddleName = response.value.middleName!!
+                                        AlreadyCustomerLastName = response.value.lastName!!
+                                        AlreadyCustomerPrimaryMobileNumber = response.value.primaryMobileNumber!!
+                                        AlreadyCustomerAlternateMobileNumber = response.value.alternateMobileNumber!!
+                                        AlreadyCustomerFlatNo = response.value.flatNo!!
+                                        AlreadyCustomerAearSector = response.value.aearSector!!
+                                        AlreadyCustomerCurrentAddress = response.value.currentAddress!!
+                                        AlreadyCustomerCountry = response.value.country!!
+                                        AlreadyCustomerPinCode = response.value.pinCode!!
+                                        AlreadyCustomerStateName = response.value.stateName!!
+                                        AlreadyCustomerCityName = response.value.cityName!!
+                                        AlreadyCustomerAccountNumber = response.value.accountNumber!!
+                                        AlreadyCustomerBankIFSCCode = response.value.bankIFSCCode!!
+                                        AlreadyCustomerBankName = response.value.bankName!!
+                                        AlreadyCustomerAccountType = response.value.accountType!!
+                                        AlreadyCustomerBranchName = response.value.branchName!!
+                                        AlreadyCustomerRefName = response.value.refName!!
+                                        AlreadyCustomerRefRelationShip = response.value.refRelationShip!!
+                                        AlreadyCustomerRefmobileNo = response.value.refmobileNo!!
+                                        AlreadyCustomerRefAddress = response.value.refAddress!!
+
+                                        if (CheckOnlineOrOffline.equals(ConstantClass.offline)) {
+                                            ConstantClass.dialog!!.dismiss()
+                                            PanNumber = pannumber
+                                            PanNumberVerified = "no"
+                                            PanFrontImageUri = photoFrontUri
+                                            finish()
+                                        }
+                                        else {
+                                            hitApiForPanVerification(pannumber)
+                                        }
                                     }
-                                    else {
-                                        ConstantClass.dialog!!.dismiss()
-                                        PanNumber = pannumber
-                                        PanNumberVerified = "no"
-                                        PanFrontImageUri = photoFrontUri
-                                        finish()
+
+                                    else{
+                                        AlreadyCustomerCodeHaveEligiblity=""
+                                        if (CheckOnlineOrOffline.equals(ConstantClass.online)) {
+                                            hitApiForPanVerification(pannumber)
+                                        }
+                                        else {
+                                            ConstantClass.dialog!!.dismiss()
+                                            PanNumber = pannumber
+                                            PanNumberVerified = "no"
+                                            PanFrontImageUri = photoFrontUri
+                                            finish()
+                                        }
                                     }
+
 
                                 }
                                 else{

@@ -39,6 +39,7 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
         }
     }
 
+
     fun getpennyDropReq(req: PennyDropRequest) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -49,6 +50,7 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
         }
     }
 
+
     fun getpennyDropCheckStatusReq(req: PennyDropCheckStatusRequest) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -58,6 +60,7 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
 
     fun getEMandateRequestReq(req: EMandateRequest) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
@@ -80,6 +83,7 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
 
     fun geteMandateSatusRequest(req: ENachStatusReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
@@ -135,5 +139,28 @@ class PanViewModel(private val repository: PanRepository) : ViewModel() {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
     }
+
+
+  /*  fun getEMandateOnlineRequest(req: EMandateRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(ApiResponse.success(data = repository.EMandateOnlineRequest(req)))
+        }
+        catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
+        }
+    }*/
+
+
+    fun geteMandateOnlineSatusRequest(req: ENachStatusReq) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(ApiResponse.success(data = repository.geteMandateOnlineSatusRequest(req)))
+        }
+        catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
+        }
+    }
+
 
 }

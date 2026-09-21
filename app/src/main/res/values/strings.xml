@@ -174,6 +174,17 @@
         <item>4</item>
     </string-array>
 
+
+
+    <string-array name="customershortcutlist">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Approved</item>
+        <item>Rejected</item>
+    </string-array>
+
+
+
     <string name="sample_terms_text_customer">
 
     I hereby confirm that I am a citizen of India and competent to give this declaration/undertaking and to execute and submit this application form and all other documents for the purpose of availing loan, creation of security, and representing generally for all the purposes mentioned/required.

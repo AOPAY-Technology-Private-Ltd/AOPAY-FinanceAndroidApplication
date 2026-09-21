@@ -313,6 +313,7 @@ class AadharCardWebViewDIGILockerPage : BaseActivity() {
                                         ConstantClass.AadharImage = response.model!!.image!!
                                         AadharNumber =  response.model!!.maskedAdharNumber!!
                                         AadhaarResponse = Gson().toJson(response)
+                                        ConstantClass.AadharVerified="yes"
                                         val intent = Intent(this, NewCustomerRegistrationPage::class.java)
                                         startActivity(intent)
                                         finish()

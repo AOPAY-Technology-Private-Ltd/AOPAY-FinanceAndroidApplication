@@ -80,9 +80,11 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefRelationShip
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ReferenceAadharNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.RefmobileNo
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.UPIMandate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.validateLoginInput
+import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
@@ -105,6 +107,7 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.AadharCardWebVie
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import com.bosandroidapp.bosmobilefinance.ui.slideshow.ui.view.activity.retailer.cibilreportsfragment.BureauScore.Companion.userScore
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -112,6 +115,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.text.clear
 import kotlin.text.equals
+import kotlin.toString
 
 class PaymentInformation : BaseActivity() {
     lateinit var  binding : ActivityPaymentInformationBinding
@@ -173,7 +177,33 @@ class PaymentInformation : BaseActivity() {
         api = RetrofitClient.apiInterfaceSMS
         preference = SharedPreference(this)
 
-        setselectionForFirstCard()
+        // for doing shortcut option for customer
+        if(intent.hasExtra("EMandate")){
+            val eMandateStatus = intent.getStringExtra("EMandate") ?: ""
+
+            when {
+                eMandateStatus.isEmpty() -> {
+                    setselectionForFirstCard()
+                }
+                eMandateStatus.toLowerCase().equals("no", ignoreCase = true) -> {
+                    setselectionForSecondCard()
+                }
+                eMandateStatus.toLowerCase().equals("Yes", ignoreCase = true) -> {
+                    setselectionForThirdCard()
+                }
+                else -> {
+                    when (initialStep) {
+                        1 -> setselectionForFirstCard()
+                        2 -> setselectionForSecondCard()
+                        3 -> setselectionForThirdCard()
+                        else -> setselectionForFirstCard()
+                    }
+                }
+            }
+        }else{
+            setselectionForFirstCard()
+        }
+
         setView()
         hitApiForBankList()
         setDataInSpinner()
@@ -184,6 +214,7 @@ class PaymentInformation : BaseActivity() {
 
     companion object{
         var checkKYC : Boolean = false
+        var initialStep : Int = 1
     }
 
 
@@ -248,7 +279,11 @@ class PaymentInformation : BaseActivity() {
         bankList.clear()
 
         var req = BankListReq(
-            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
+            registrationID = if (ConstantClass.CheckOnlineOrOffline == ConstantClass.online) {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
+            } else {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE
+            }
         )
 
         panViewModel.getBankListReq(req).observe(this) { resources ->
@@ -481,11 +516,9 @@ class PaymentInformation : BaseActivity() {
 
         }
 
-
         binding.back.setOnClickListener {
             OpenPopUpForVAlert()
         }
-
 
         binding.bankname.setOnClickListener {
             binding.bankname.showDropDown()
@@ -500,6 +533,7 @@ class PaymentInformation : BaseActivity() {
         binding.nextlayout.setOnClickListener {
 
             when{
+
                 selectFirst -> {
 
                     val hasBankDetails =
@@ -529,11 +563,13 @@ class PaymentInformation : BaseActivity() {
                             hitApiForRequestPennyDrop()
                         }
 
-                    } else {
+                    }
+
+                    else {
 
                         // Offline case - Bank details optional
                         if (!hasBankDetails) {
-
+                            binding.nextlayout.isEnabled = false
                             AccountNumber = binding.accountnumber.text.toString().trim()
                             BankIFSCCode = binding.ifsccode.text.toString().trim()
                             BankName = binding.bankname.text.toString().trim()
@@ -542,11 +578,25 @@ class PaymentInformation : BaseActivity() {
                             AccountHolderName = binding.banificeryName.text.toString().trim()
                             BranchAddress = binding.branchaddress.text.toString().trim()
                             BankID = 0
+                            ConstantClass.isPannydropVerified = "No"
 
-                            setselectionForSecondCard()
+                            var req = ManageCustomerStepWiseReq(
+                                mode = "UPDATE",
+                                step = "3",
+                                rid = "",
+                                accountNumber = AccountNumber,
+                                bankIFSCCode = BankIFSCCode,
+                                bankName = BankName,
+                                IsPannyDrop = ConstantClass.isPannydropVerified,
+                                accountType = AccountType,
+                                branchName = BranchName,
+                                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                            )
 
-                        } else {
-
+                            Log.d("PaymentInformationreq", Gson().toJson(req))
+                            hitApiForUploadCustomerBankDataData(req)
+                        }
+                        else {
                             val (isValid, errorMessage) = isPaymentValidForm(
                                 accountNumber = binding.accountnumber.text.toString().trim(),
                                 ifscCode = binding.ifsccode.text.toString().trim(),
@@ -568,19 +618,54 @@ class PaymentInformation : BaseActivity() {
                 }
 
                 selectSecond -> {
+
                     if(!isBankVerified){
-                        setselectionForThirdCard()
+                        // setselectionForThirdCard()
+
+                        UPIMandate = "No"
+
+                        var req = ManageCustomerStepWiseReq(
+                            mode = "UPDATE" ,
+                            step = "4",
+                            rid = "",
+                            debitOrCreditCard="Debit",
+                            upiMandate= UPIMandate,
+                            customerCode= preference.getStringValue(ConstantClass.CustomerCode,"")
+                        )
+
+                        Log.d("PaymentInformationreq", Gson().toJson(req))
+
+                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                        hitApiForUploadCustomerEMandateData(req)
+
                     }
+
                     else{
+
                         var check = binding.aggrementchecked.isChecked
+
                         if(check){
-                            setselectionForThirdCard()
+                            // setselectionForThirdCard()
+                            UPIMandate = "Yes"
+
+                            var req = ManageCustomerStepWiseReq(
+                                mode = "UPDATE" ,
+                                step = "4",
+                                rid = "",
+                                debitOrCreditCard="Debit",
+                                upiMandate= UPIMandate,
+                                customerCode= preference.getStringValue(ConstantClass.CustomerCode,"")
+                            )
+
+                            Log.d("PaymentInformationreq", Gson().toJson(req))
+
+                            ConstantClass.OpenPopUpForVeryfyOTP(this)
+                            hitApiForUploadCustomerEMandateData(req)
                         }
                         else {
                             Toast.makeText(this@PaymentInformation, getString(R.string.please_accept_the_agreement), Toast.LENGTH_SHORT).show()
                         }
                     }
-
 
                 }
 
@@ -604,7 +689,23 @@ class PaymentInformation : BaseActivity() {
                                     RefRelationShip = binding.referrelatinonship.text.toString().trim()
                                     RefmobileNo = binding.refmobno.text.toString().trim()
                                     RefAddress = binding.refaddress.text.toString().trim()
-                                    startActivity(Intent(this@PaymentInformation, IMEIDetailsPage::class.java))
+                                   // startActivity(Intent(this@PaymentInformation, IMEIDetailsPage::class.java))
+
+                                    var req = ManageCustomerStepWiseReq(
+                                        mode = "UPDATE" ,
+                                        step = "5",
+                                        rid = "",
+                                        refName=RefName,
+                                        refRelationShip=RefRelationShip,
+                                        refmobileNo=RefmobileNo,
+                                        refAddress=RefAddress,
+                                        customerCode=preference.getStringValue(ConstantClass.CustomerCode,""),
+                                    )
+
+                                    Log.d("PaymentInformationreq", Gson().toJson(req))
+
+                                    ConstantClass.OpenPopUpForVeryfyOTP(this)
+                                    hitApiForUploadCustomerReferenceData(req)
                                 }
                                 else {
                                     binding.referenceKycChecked.isChecked = false
@@ -627,11 +728,35 @@ class PaymentInformation : BaseActivity() {
                             }
                             else
                             {
-                                RefName = binding.refername.text.toString().trim()
+                               /* RefName = binding.refername.text.toString().trim()
                                 RefRelationShip = binding.referrelatinonship.text.toString().trim()
                                 RefmobileNo = binding.refmobno.text.toString().trim()
                                 RefAddress =  binding.refaddress.text.toString().trim()
                                 startActivity(Intent(this@PaymentInformation, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IMEIDetailsPage::class.java))
+
+*/
+
+                                RefName = binding.refername.text.toString().trim()
+                                RefRelationShip = binding.referrelatinonship.text.toString().trim()
+                                RefmobileNo = binding.refmobno.text.toString().trim()
+                                RefAddress =  binding.refaddress.text.toString().trim()
+
+                                var req = ManageCustomerStepWiseReq(
+                                    mode = "UPDATE" ,
+                                    step = "5",
+                                    rid = "",
+                                    refName=RefName,
+                                    refRelationShip=RefRelationShip,
+                                    refmobileNo=RefmobileNo,
+                                    refAddress=RefAddress,
+                                    customerCode=preference.getStringValue(ConstantClass.CustomerCode,""),
+                                )
+
+                                Log.d("PaymentInformationreq", Gson().toJson(req))
+
+                                ConstantClass.OpenPopUpForVeryfyOTP(this)
+                                hitApiForUploadCustomerReferenceData(req)
+
                             }
 
                     }
@@ -643,6 +768,7 @@ class PaymentInformation : BaseActivity() {
             }
 
         }
+
     }
 
     fun hitApiForRequestPennyDrop(){
@@ -653,7 +779,11 @@ class PaymentInformation : BaseActivity() {
             address = binding.branchaddress.text.toString().trim(),
             paymentMode = ConstantClass.ModeOfPayment,
             iFSCCode = binding.ifsccode.text.toString().trim(),
-            registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
+            registrationID = if (ConstantClass.CheckOnlineOrOffline == ConstantClass.online) {
+                ConstantClass.PENNYDROP_REGISTRATION_ID
+            } else {
+                ConstantClass.PENNYDROP_REGISTRATION_ID_OFFLINE
+            },
             refID = "",
             accountNumber = binding.accountnumber.text.toString().trim()
         )
@@ -670,6 +800,7 @@ class PaymentInformation : BaseActivity() {
                                 ConstantClass.dialog!!.dismiss()
                                 if(response!!.model?.status.equals(ConstantClass.SUCCESS)){
                                     isBankVerified = true
+
                                     var beneficiaryName =  response.model!!.beneficiaryName
 
                                     val isMatch = beneficiaryName!!.trim()
@@ -721,6 +852,7 @@ class PaymentInformation : BaseActivity() {
 
     }
 
+
     fun hitApiForRequestPennyDropCheckStatus(refID: String){
         var request = PennyDropCheckStatusRequest(
             registrationID = ConstantClass.PENNYDROP_REGISTRATION_ID,
@@ -746,8 +878,26 @@ class PaymentInformation : BaseActivity() {
                                     AccountHolderName= binding.banificeryName.text.toString().trim()
                                     BranchAddress= binding.branchaddress.text.toString().trim()
                                     BankID = bankList.find { it.first == BankName }?.second!!
+                                    ConstantClass.isPannydropVerified="Yes"
                                     Log.d("BankID", "${BankID}")
-                                    setselectionForSecondCard()
+
+                                    var req = ManageCustomerStepWiseReq(
+                                        mode = "UPDATE",
+                                        step = "3",
+                                        rid = "",
+                                        accountNumber = AccountNumber,
+                                        bankIFSCCode = BankIFSCCode,
+                                        bankName = BankName,
+                                        IsPannyDrop = ConstantClass.isPannydropVerified,
+                                        accountType = AccountType,
+                                        branchName = BranchName,
+                                        customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                    )
+
+                                    Log.d("PaymentInformationreq", Gson().toJson(req))
+                                    hitApiForUploadCustomerBankDataData(req)
+
+                                   // setselectionForSecondCard()
                                 }
                                 else{
                                     Toast.makeText(this@PaymentInformation,response.message,Toast.LENGTH_SHORT).show()
@@ -773,6 +923,7 @@ class PaymentInformation : BaseActivity() {
         }
 
     }
+
 
     fun hitApiForSendOTP(mailidormobile: String, type: String) {
         var sendOtpReq = SendOtpReq(
@@ -1529,6 +1680,158 @@ class PaymentInformation : BaseActivity() {
         }
 
     }
+
+
+
+    fun hitApiForUploadCustomerBankDataData(request : ManageCustomerStepWiseReq){
+
+        viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS ->{
+                    resources.data.let { user->
+                        ConstantClass.dialog!!.dismiss()
+                        if(user!!.isSuccessful){
+                            var getData = user.body()
+                            var status = getData!!.success
+                            var errorCode = getData!!.code
+                            var customerCode = getData!!.data!!.customerCode
+                            Log.d("PaymentInformationresponse", Gson().toJson(getData))
+                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
+
+                            if(status==true ){
+                                setselectionForSecondCard()
+                            }else{
+                                binding.nextlayout.isEnabled = true
+                            }
+
+
+                        }
+                        else {
+                            var errorbody = user.errorBody()
+                            Log.e("API_ERROR", errorbody?.string() ?: "Unknown error")
+                            Toast.makeText(this@PaymentInformation, errorbody?.string(), Toast.LENGTH_SHORT).show()
+                            binding.nextlayout.isEnabled = true
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    Toast.makeText(this@PaymentInformation, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                    binding.nextlayout.isEnabled = true
+                }
+
+                ApiStatus.LOADING -> {
+                    ConstantClass.OpenPopUpForVeryfyOTP(this)
+                }
+
+            }
+        }
+
+
+    }
+
+
+    fun hitApiForUploadCustomerEMandateData(request : ManageCustomerStepWiseReq){
+
+        viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS ->{
+                    resources.data.let { user->
+                        ConstantClass.dialog!!.dismiss()
+                        if(user!!.isSuccessful){
+                            var getData = user.body()
+                            var status = getData!!.success
+                            var errorCode = getData!!.code
+                            var customerCode = getData!!.data!!.customerCode
+                            Log.d("PaymentInformationresponse", Gson().toJson(getData))
+                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
+
+                            if(status==true ){
+                                setselectionForThirdCard()
+                            }else{
+
+                            }
+
+
+                        }
+                        else {
+                            var errorbody = user.errorBody()
+                            Log.e("API_ERROR", errorbody?.string() ?: "Unknown error")
+                            Toast.makeText(this@PaymentInformation, errorbody?.string(), Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    Toast.makeText(this@PaymentInformation, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                }
+
+                ApiStatus.LOADING -> {
+
+                }
+
+            }
+        }
+
+
+    }
+
+
+    fun hitApiForUploadCustomerReferenceData(request : ManageCustomerStepWiseReq){
+
+        viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS ->{
+                    resources.data.let { user->
+                        ConstantClass.dialog!!.dismiss()
+                        if(user!!.isSuccessful){
+                            var getData = user.body()
+                            var status = getData!!.success
+                            var errorCode = getData!!.code
+                            var customerCode = getData!!.data!!.customerCode
+                            Log.d("PaymentInformationresponse", Gson().toJson(getData))
+                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
+
+                            if(status==true){
+                                startActivity(Intent(this@PaymentInformation, IMEIDetailsPage::class.java))
+                            }
+                            else{
+
+                            }
+
+                        }
+                        else {
+                            var errorbody = user.errorBody()
+                            Log.e("API_ERROR", errorbody?.string() ?: "Unknown error")
+                            Toast.makeText(this@PaymentInformation, errorbody?.string(), Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    Toast.makeText(this@PaymentInformation, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                }
+
+                ApiStatus.LOADING -> {
+
+                }
+
+            }
+        }
+
+
+    }
+
+
+
 
 
 

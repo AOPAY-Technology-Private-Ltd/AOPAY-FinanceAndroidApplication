@@ -23,6 +23,7 @@
             android:src="@drawable/back"
             app:tint="@color/darkgrey"
             android:layout_alignTop="@id/titlelayout"
+            android:visibility="gone"
             android:layout_alignBottom="@id/titlelayout"
             android:layout_marginLeft="@dimen/_10sdp" />
 
@@ -305,6 +306,60 @@
                     android:text="Create Loan"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_13ssp" />
+
+            </LinearLayout>
+
+            <!--  create option for selecte emandate option-->
+            <LinearLayout
+                android:id="@+id/emandateOptionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Select E-Mandate Service"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12ssp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/selectOptionForeMandate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    tools:listitem="@layout/emandate_option_item_layout"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <!-- Proceed Button for E-Mandate -->
+                <LinearLayout
+                    android:id="@+id/btnProceedMandate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_25sdp"
+                    android:background="@drawable/searchbutton"
+                    android:gravity="center"
+                    android:padding="@dimen/_12sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_marginRight="@dimen/_8sdp"
+                        android:src="@drawable/ic_check_circle"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:text="Proceed to E-Mandate"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13ssp" />
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -29,4 +29,11 @@ class PanRepository(private val apiInterface: ApiInterface) {
 
     suspend fun getPGRequestCall(req: PGRequestCall) = apiInterface.callPG(req)
 
+
+   // suspend fun EMandateOnlineRequest(req: EMandateRequest) = apiInterface.geteMandateOnlineRequest(req)
+
+    suspend fun geteMandateOnlineSatusRequest(req: ENachStatusReq) = apiInterface.geteMandateOnlineSatusRequest(req)
+
+
+
 }

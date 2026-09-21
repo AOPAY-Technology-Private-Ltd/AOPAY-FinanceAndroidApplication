@@ -25,6 +25,7 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.google.gson.Gson
 import com.stacker.stacker.StackerAndroid
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +46,7 @@ class ApplicationClass : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        StackerAndroid.enable(this)
+       StackerAndroid.enable(this)
 
         Log.d("ApplicationClass", "Application started")
 
@@ -81,7 +82,6 @@ class ApplicationClass : Application() {
 
 
 
-
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("CHANNEL_ID", "General Notifications", NotificationManager.IMPORTANCE_DEFAULT).apply {
@@ -92,5 +92,7 @@ class ApplicationClass : Application() {
             manager.createNotificationChannel(channel)
         }
     }
+
+
 
 }

@@ -2,6 +2,7 @@ package com.bos.payment.appName.network
 
 import com.bosandroidapp.bosmobilefinance.ui.slideshow.data.model.loginsignup.cibilscore.CibilScoreReq
 import com.bosandroidapp.aopayfinance.data.enach.EMandateRequest
+import com.bosandroidapp.aopayfinance.data.enach.EMandateOnlineRequest
 import com.bosandroidapp.aopayfinance.data.enach.EMandateResponse
 import com.bosandroidapp.aopayfinance.data.enach.ENachStatusReq
 import com.bosandroidapp.aopayfinance.data.enach.ENachStatusResp
@@ -30,6 +31,7 @@ import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportResp
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportResponse
 import com.bosandroidapp.aopayfinance.data.model.MakepaymentResp
+import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseResponse
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletPayoutAtMakePaymentTimeReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletPayoutAtMakePaymentTimeResp
@@ -37,6 +39,7 @@ import com.bosandroidapp.aopayfinance.data.model.RetailerWalletReportReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletReportResp
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutResponse
+import com.bosandroidapp.aopayfinance.data.model.UpdateCustomerDataIfAlreadyExistResponse
 import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoResp
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
@@ -46,6 +49,10 @@ import com.bosandroidapp.aopayfinance.data.model.ValidateSessionResp
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerResp
 import com.bosandroidapp.aopayfinance.data.model.cibilscore.CibilScroeResp
+import com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusReq
+import com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusResp
+import com.bosandroidapp.aopayfinance.data.model.emandate.EmandateOptionSelectetionReq
+import com.bosandroidapp.aopayfinance.data.model.emandate.EmandateOptionSelectetionResponse
 import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionResponse
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
@@ -86,6 +93,8 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.Aadhar
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AadharVerificationResp
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.PanVerificationReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.PanVerificationResponse
+import com.bosandroidapp.aopayfinance.data.model.staggingdatamodel.ShortCutCustomerRequest
+import com.bosandroidapp.aopayfinance.data.model.staggingdatamodel.ShortCutCustomerResponse
 import com.bosandroidapp.aopayfinance.data.notification.NotificationSendTokenRequest
 import com.bosandroidapp.aopayfinance.data.notification.NotificationSendTokenResponse
 import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
@@ -98,6 +107,20 @@ import com.bosandroidapp.aopayfinance.data.pennydrop.PennyDropRequest
 import com.bosandroidapp.aopayfinance.data.pennydrop.PennyDropResponse
 import com.bosandroidapp.aopayfinance.data.pg.PGRequestCall
 import com.bosandroidapp.aopayfinance.data.pg.PGRequestResponse
+import com.bosandroidapp.oqmobilefinance.data.model.CustomerSearchForShortCutLoanRequest
+import com.bosandroidapp.oqmobilefinance.data.model.CustomerSearchForShortCutLoanResponse
+import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyRequest
+import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyResponse
+import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGRequest
+import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGResponse
+import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
+import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineResponseCall
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UPIMandateRequest
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UPIMandateResponse
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UpiAutoOrderStatusRequest
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UpiAutoOrderStatusResponse
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UpiAutoTransactionRequest
+import com.bosandroidapp.oqmobilefinance.data.upiautomandate.UpiAutoTransactionResponse
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -277,6 +300,9 @@ interface ApiInterface {
         ): Response<RegisterCustomerResp>
 
 
+
+
+
     @Multipart
     @POST("api/V1/AopayFinance/ManageCustomer")
     suspend fun getRegisterCustomerReq(
@@ -339,6 +365,9 @@ interface ApiInterface {
         @Part aadharBack_Path: MultipartBody.Part?,
         @Part panFront_Path: MultipartBody.Part?
     ): Response<RegisterCustomerResp>
+
+
+
 
 
 
@@ -406,6 +435,80 @@ interface ApiInterface {
         @Part imeiNumber_PhotoPath: MultipartBody.Part?,
         @Part invoive_Path: MultipartBody.Part?,
         ): Response<RegisterCustomerResp>
+
+
+
+    @Multipart
+    @POST("api/V1/AopayFinance/ManageCustomerStepWise")
+    suspend fun getManageCustomerStepWiseReq(
+        @Part("Mode") mode: RequestBody,
+        @Part("Step") step: RequestBody,
+        @Part("RID") rid: RequestBody,
+        @Part("FirstName") firstName: RequestBody,
+        @Part("MiddleName") middleName: RequestBody,
+        @Part("LastName") lastName: RequestBody,
+        @Part("PrimaryMobileNumber") primaryMobileNumber: RequestBody,
+        @Part("PrimaryOTP") primaryOTP: RequestBody,
+        @Part("PrimaryMobileVerified") primaryMobileVerified: RequestBody,
+        @Part("AlternateMobileNumber") alternateMobileNumber: RequestBody,
+        @Part("AlternateMobileOTP") alternateMobileOTP: RequestBody,
+        @Part("PAlternateMobileVerified") pAlternateMobileVerified: RequestBody,
+        @Part("EMailID") eMailID: RequestBody,
+        @Part("FlatNo") flatNo: RequestBody,
+        @Part("AearSector") aearSector: RequestBody,
+        @Part("PinCode") pinCode: RequestBody,
+        @Part("CurrentAddress") currentAddress: RequestBody,
+        @Part("StateName") stateName: RequestBody,
+        @Part("CityName") cityName: RequestBody,
+        @Part("Country") country: RequestBody,
+        @Part("AadharNumber") aadharNumber: RequestBody,
+        @Part("AadharNumberVerified") aadharNumberVerified: RequestBody,
+        @Part("PANNumber") panNumber: RequestBody,
+        @Part("PANNumberVerified") panNumberVerified: RequestBody,
+        @Part("BrandName") brandName: RequestBody,
+        @Part("ModelName") modelName: RequestBody,
+        @Part("ModelVariant") modelVariant: RequestBody,
+        @Part("Color") color: RequestBody,
+        @Part("SellingPrice") sellingPrice: RequestBody,
+        @Part("DownPayment") downPayment: RequestBody,
+        @Part("Tenure") tenure: RequestBody,
+        @Part("EMIAmount") emiAmount: RequestBody,
+        @Part("IMEINumber1") imeiNumber1: RequestBody,
+        @Part("IMEINumber2") imeiNumber2: RequestBody,
+        @Part("AccountNumber") accountNumber: RequestBody,
+        @Part("BankIFSCCode") bankIFSCCode: RequestBody,
+        @Part("BankName") bankName: RequestBody,
+        @Part("IsPannyDrop") isPannyDrop: RequestBody,
+        @Part("AccountType") accountType: RequestBody,
+        @Part("BranchName") branchName: RequestBody,
+        @Part("RefName") refName: RequestBody,
+        @Part("RefRelationShip") refRelationShip: RequestBody,
+        @Part("RefmobileNo") refmobileNo: RequestBody,
+        @Part("RefAddress") refAddress: RequestBody,
+        @Part("DebitOrCreditCard") debitOrCreditCard: RequestBody,
+        @Part("UPIMandate") upiMandate: RequestBody,
+        @Part("CreatedBy") createdBy: RequestBody,
+        @Part("MemberShipFees") membershipfees: RequestBody,
+        @Part("RetailerCode") retailercode: RequestBody,
+        @Part("clientcode") clientcode: RequestBody,
+        @Part("CustomerCodes") customerCode: RequestBody,
+        @Part("CibilScore") cibilScore: RequestBody,
+        @Part("ActiveStatus") activeStatus: RequestBody,
+        @Part("CibilApiResponse") cibilApiResponse: RequestBody,
+        @Part("AadhaarApiResponse") aadhaarApiResponse: RequestBody,
+        @Part("PanApiResponse") panApiResponse: RequestBody,
+        @Part("IsAggrementVerified") isAggrementVerified: RequestBody,
+        @Part("IsRetailerAggrementVerified") IsRetailerAggrementVerified: RequestBody,
+        @Part custPhoto_File: MultipartBody.Part?,
+        @Part CustAdhaarProfilePhoto_File: MultipartBody.Part?,
+        @Part imeiNumber1_SealPhotoPath: MultipartBody.Part?,
+        @Part imeiNumber2_SealPhotoPath: MultipartBody.Part?,
+        @Part imeiNumber_PhotoPath: MultipartBody.Part?,
+        @Part invoive_Path: MultipartBody.Part?,
+        @Part aadharFront_Path: MultipartBody.Part?,
+        @Part aadharBack_Path: MultipartBody.Part?,
+        @Part panFront_Path: MultipartBody.Part?
+    ): Response<ManageCustomerStepWiseResponse>
 
 
 
@@ -563,6 +666,11 @@ interface ApiInterface {
     suspend fun validateTokenFromRetailerReq(@Body req : ValidateAccessKeyReq): Response<ValidateAccessKeyResp>?
 
 
+    // verify generated key customer side
+    @POST("api/V1/AopayFinance/customervalidatekey")
+    suspend fun getCustomerValidateKeyReq(@Body req : ValidateCustomerAccessKeyRequest): Response<ValidateCustomerAccessKeyResponse>?
+
+
     //  retailer sessionout api
     @POST("api/V1/AopayFinance/RetailerStatusManage")
     suspend fun sessionOutReq(@Body req : SessionOutReq): Response<SessionOutResponse>?
@@ -581,12 +689,6 @@ interface ApiInterface {
     suspend fun getBankListRequest(@Body req: BankListReq): Response<BankListResponse>?
 
 
-    @POST("api/AOP/Enach/V1/eMandate")
-    suspend fun geteMandateRequest(@Body req: EMandateRequest): Response<EMandateResponse>?
-
-
-    @POST("api/AOP/Enach/V1/eMandate/getStatus")
-    suspend fun geteMandateSatusRequest(@Body req: ENachStatusReq): Response<ENachStatusResp>?
 
     // loan charge for each loan retailer
     @POST("api/Customer/LoanApplyCharges")
@@ -655,6 +757,51 @@ interface ApiInterface {
     @POST("api/V1/AopayFinance/GetRetailerLoanModeDetails")
     suspend fun getRequestKitOption(@Body req : KitOptionRequest) : Response<KitOptionResponse>?
 
+    // online pg for customer ...................................................................................................
+
+    @POST("api/Aopay/Finance/Online/V1/PaymentGateway")
+    suspend fun callPGOnline(@Body req : PGOnlineRequestCall) : Response<PGOnlineResponseCall>?
+
+
+    // getStatus Of PG on callback
+    @POST("api/OQPay/Finance/Online/GetOrderStatus")
+    suspend fun getOrderOnlineStatusPgRequest(@Body req : GetOrderStatusOnlinePGRequest) : Response<GetOrderStatusOnlinePGResponse>?
+
+    // ...............................................................................................................................
+
+    // update customer data if already exist
+
+    @Multipart
+    @POST("api/V1/AopayFinance/UpdateCustomer")
+    suspend fun customerUpdateDataIfAlreadyExistReq(
+        @Part("CustomerCode") customerCode: RequestBody,
+        @Part("UpdatedBy") UpdatedBy: RequestBody,
+        @Part("FirstName") FirstName: RequestBody,
+        @Part("LastName") LastName: RequestBody,
+        @Part("PrimaryMobileNumber") PrimaryMobileNumber: RequestBody,
+        @Part("PrimaryOTP") PrimaryOTP: RequestBody,
+        @Part("PrimaryMobileVerified") PrimaryMobileVerified: RequestBody,
+        @Part("CurrentAddress") CurrentAddress: RequestBody,
+        @Part("PinCode") PinCode: RequestBody,
+        @Part("Country") Country: RequestBody,
+        @Part("StateName") StateName: RequestBody,
+        @Part("CityName") CityName: RequestBody,
+        @Part("AadharNumber") AadharNumber: RequestBody,
+        @Part("AadharNumberVerified") AadharNumberVerified: RequestBody,
+        @Part("PANNumber") PANNumber: RequestBody,
+        @Part("PANNumberVerified") PANNumberVerified: RequestBody,
+        @Part("IsAggrementVerified") IsAggrementVerified: RequestBody,
+        @Part("MemberShipFees") MemberShipFees: RequestBody,
+        @Part("PanApiResponse") PanApiResponse: RequestBody,
+        @Part("AadhaarApiResponse") AadhaarApiResponse: RequestBody,
+        @Part("CibilApiResponse") CibilApiResponse: RequestBody,
+        @Part("CibilScore") CibilScore: RequestBody,
+        @Part("RetailerCode") RetailerCode: RequestBody,
+        @Part("activeStatus") activeStatus: RequestBody,
+        @Part("custPhoto_path") custPhotoPath: RequestBody,
+        @Part custPhoto_File: MultipartBody.Part?
+    ): Response<UpdateCustomerDataIfAlreadyExistResponse>
+
 
 
     // upload invoice file...............
@@ -666,6 +813,70 @@ interface ApiInterface {
         @Query("NewValue") newValue: String,
         @Part invoiceImage: MultipartBody.Part
     ): Response<CustomerMakePaymentResp>?
+
+
+
+    // search customer for shortcut flow ................................................................................................
+
+    @POST("api/V1/AopayFinance/RetailerSearchCustomer")
+    suspend fun getCustomerDataForSearch(@Body req : CustomerSearchForShortCutLoanRequest) : Response<CustomerSearchForShortCutLoanResponse>?
+
+
+
+    @POST("api/V1/AopayFinance/GetCustomerByRetailerSummary")
+    suspend fun getCustomerDataForSummary(@Body req : ShortCutCustomerRequest) : Response<ShortCutCustomerResponse>?
+
+
+
+    // select option for eMandate ............................................................
+
+    @POST("api/V1/AopayFinance/GetRegistrationApis")
+    suspend fun geteMandateSelectOptionRequest(@Body req: EmandateOptionSelectetionReq): Response<EmandateOptionSelectetionResponse>?
+
+
+
+
+    // for Offline eNach Api ..................................................................
+
+    @POST("api/AOP/Enach/V1/eMandate")
+    suspend fun geteMandateRequest(@Body req: EMandateRequest): Response<EMandateResponse>?
+
+
+    @POST("api/AOP/Enach/V1/eMandate/getStatus")
+    suspend fun geteMandateSatusRequest(@Body req: ENachStatusReq): Response<ENachStatusResp>?
+
+
+
+    //for online eNach Api .......................................................................
+
+    @POST("api/EMandate/eManadate")
+    suspend fun geteMandateOnlineRequest(@Body req: EMandateOnlineRequest): Response<EMandateResponse>?
+
+
+    @POST("api/Aopay/Online/Enach/V1/eMandate/getStatus")
+    suspend fun geteMandateOnlineSatusRequest(@Body req: ENachStatusReq): Response<ENachStatusResp>?
+
+
+
+    // for UPI Auto Mandate Api ....................................................................
+    @POST("api/AOPAYFinance/Finance/V1/SetupSubscription/Pennydrop")
+    suspend fun getUpiMandateOnlineRequest(@Body req: UPIMandateRequest): Response<UPIMandateResponse>?
+
+
+    @POST("api/AOPAYFinance/Finance/V1/SetupSubscription/Order/Status")
+    suspend fun getUpiAutoMandateOrderStatusRequest(@Body req: UpiAutoOrderStatusRequest): Response<UpiAutoOrderStatusResponse>?
+
+
+    @POST("api/AOPAYFinance/Finance/V1/SetupSubscription/Transaction")
+    suspend fun getUpiAutoMandateTransactionRequest(@Body req: UpiAutoTransactionRequest): Response<UpiAutoTransactionResponse>?
+
+
+
+    //............................................................................................
+    // device lock check api
+
+    @POST("api/V1/AopayFinance/DeviceActionLog")
+    suspend fun uploadDeviceLockStatusReq(@Body req: CustomerDeviceLockStatusReq): Response<CustomerDeviceLockStatusResp>?
 
 
 }

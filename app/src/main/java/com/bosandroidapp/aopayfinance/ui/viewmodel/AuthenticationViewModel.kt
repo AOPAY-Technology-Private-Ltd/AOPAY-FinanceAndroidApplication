@@ -18,15 +18,18 @@ import com.bosandroidapp.aopayfinance.data.model.GetRetailerLedgerReq
 import com.bosandroidapp.aopayfinance.data.model.HoldAmountWithdrawReq
 import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
+import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseReq
 import com.bosandroidapp.aopayfinance.data.model.RaiseMakePaymentReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletPayoutAtMakePaymentTimeReq
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletReportReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
+import com.bosandroidapp.aopayfinance.data.model.UpdateCustomerUploadDataReq
 import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.VerifyCustomerReq
+import com.bosandroidapp.aopayfinance.data.model.emandate.EmandateOptionSelectetionReq
 import com.bosandroidapp.aopayfinance.data.model.kitoption.KitOptionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerMakePaymentResp
@@ -48,10 +51,13 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.PayoutRepor
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.TransactionHistoryReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AAdhaarDetailesReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AadharVerificationReq
+import com.bosandroidapp.aopayfinance.data.model.staggingdatamodel.ShortCutCustomerRequest
 import com.bosandroidapp.aopayfinance.data.notification.NotificationSendTokenRequest
 import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.utils.ApiResponse
+import com.bosandroidapp.oqmobilefinance.data.model.CustomerSearchForShortCutLoanRequest
+import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyRequest
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MultipartBody
 import retrofit2.HttpException
@@ -442,6 +448,15 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         }
     }
 
+    fun getCustomerValidateKeyReq(req: ValidateCustomerAccessKeyRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.getCustomerValidateKeyReq(req), "Generate Access Key"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
     fun getAccessKeyForValidateAPKReq(req: ValidateAccessKeyReq) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -574,6 +589,37 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
+    fun uploadCustomerListForShortCutLoanCreateProcess(req: ManageCustomerStepWiseReq) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.getCustomShortCutDataRequest(req), "Customer List"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+
+    fun getCustomerDataForSearch(req: CustomerSearchForShortCutLoanRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.getCustomerDataForSearch(req), "Customer List"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+
+
+    fun getCustomerDataSummaryForShortCut(req: ShortCutCustomerRequest) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.getCustomerDataSummaryForShortCut(req), "Customer List"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+
     fun uploadInVoiceRequest(customerCode: String, columnName: String, newValue: String, imagePart: MultipartBody.Part) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
@@ -600,6 +646,36 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
             }
             Log.e("API_ERROR", "$feature - Code: $code | Body: ${response.errorBody()?.string()}")
             ApiResponse.error(data = null, message = message)
+        }
+    }
+
+
+    fun geteMandateSelectOptionRequest(req: EmandateOptionSelectetionReq) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.geteMandateSelectOptionRequest(req), "E-Mandate Update"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+
+    fun UpdateCustomerUploadDataReq(req: UpdateCustomerUploadDataReq) = liveData(Dispatchers.IO) {
+        emit(ApiResponse.loading(data = null))
+        try {
+            emit(handleApiResponse(repository.updateCustomerDataReq(req), "Customer List"))
+        } catch (exception: Exception) {
+            emit(ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+
+    fun uploadDeviceLockStatusReq(req: com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusReq) = liveData(Dispatchers.IO) {
+        emit(com.bosandroidapp.aopayfinance.utils.ApiResponse.loading(data = null))
+        try {
+            emit(com.bosandroidapp.aopayfinance.utils.ApiResponse.success(data = repository.uploadDeviceLockStatusReq(req)))
+        } catch (exception: Exception) {
+            emit(com.bosandroidapp.aopayfinance.utils.ApiResponse.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
 

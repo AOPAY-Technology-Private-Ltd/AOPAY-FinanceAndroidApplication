@@ -58,10 +58,12 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.MinHoldingAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.OTPTYPE
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.createMultipartFromUri
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.dikshifinsureOnlinePGModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimestamp
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.loanmode
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.saveImageToCache
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.validateLoginInput
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
@@ -72,8 +74,10 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.VerifyOTPReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.SendOtpReq
 import com.bosandroidapp.aopayfinance.data.pg.PGRequestCall
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
@@ -82,10 +86,12 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity.Companion.emiList
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.NewCustomerRegistrationPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
+import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
 import com.chaos.view.PinView
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -190,6 +196,10 @@ class EmiLoanDetailPage : BaseActivity() {
 
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
+        dikshifinsureOnlinePGModel = ViewModelProvider(this,
+            DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
+        )[DikshifinsureViewModel::class.java]
+
 
         api = RetrofitClient.apiInterfaceSMS
         preference = SharedPreference(this)
@@ -591,18 +601,33 @@ class EmiLoanDetailPage : BaseActivity() {
                             val emiNumbers=  (1..selectedNoofEmi).joinToString("")
                             PGWebViewActivity.LoanCodePG = loanCode
 
-                            var req = PGRequestCall(
-                                payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                                customerEmailID = email,
-                                registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                                payCartAmount = "1"/*emiamount.toString()*/,
-                                eMINumbers = "EMI${emiNumbers}",
-                                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                                payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                                loanCode = loanCode
-                            )
+                            if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)){
 
-                            hitApiForRequestPG(req)
+                                var req = PGOnlineRequestCall(
+                                    amount = emiamount,
+                                    registrationID =  ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                    eMINumbers = "${emiNumbers}",
+                                    customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                    loanCode = loanCode
+                                )
+
+                                hitApiForRequestPGOnline(req)
+
+                            }
+                            else {
+                                var req = PGRequestCall(
+                                    payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                    customerEmailID = email,
+                                    registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE,
+                                    payCartAmount = emiamount.toString(),
+                                    eMINumbers = "EMI${emiNumbers}",
+                                    customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                    payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                    loanCode = loanCode
+                                )
+
+                                hitApiForRequestPG(req)
+                            }
 
                             // }
                         }
@@ -653,6 +678,55 @@ class EmiLoanDetailPage : BaseActivity() {
 
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog!!.dismiss()
+                    }
+
+                    ApiStatus.LOADING -> {
+                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    fun hitApiForRequestPGOnline(req : PGOnlineRequestCall){
+
+        Log.d("PGRequest", Gson().toJson(req))
+
+        dikshifinsureOnlinePGModel.getPGRequestCallOnline(req).observe(this) { resources ->
+            resources.let {
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data.let { users ->
+                            users!!.body().let { response ->
+                                Log.d("PanVerificationResp", Gson().toJson(response))
+                                if (!response!!.intentUrl.isNullOrEmpty()) {
+                                    // Open WebView with the provided URL
+                                    ConstantClass.dialog!!.dismiss()
+                                    val intent = Intent(this@EmiLoanDetailPage, PGWebViewActivity::class.java)
+                                    intent.putExtra("pgurl", response!!.intentUrl)
+                                    intent.putExtra("mode", ConstantClass.online)
+                                    intent.putExtra("merchantid", response.marchentOrderID)
+                                    startActivity(intent)
+                                }
+                                else {
+                                    ConstantClass.dialog!!.dismiss()
+                                    Toast.makeText(this@EmiLoanDetailPage, response!!.errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    ApiStatus.ERROR -> {
+                        ConstantClass.dialog!!.dismiss()
+                        Toast.makeText(this@EmiLoanDetailPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
                     }
 
                     ApiStatus.LOADING -> {
@@ -732,6 +806,7 @@ class EmiLoanDetailPage : BaseActivity() {
                                     binding.latefineamount.text = latefine
                                     AllgracePeriod = LoanEmiList[0]!!.gracePeriod
                                     CustomergracePeriod = LoanEmiList[0]!!.customerGracePeriod
+                                    loanmode = LoanEmiList[0]!!.loanmode
 
                                     var amount = calculateEMIPaymentStatus(LoanEmiList!![0]!!.paidEMI!!.toInt(),LoanEmiList!![0]!!.emiAmount!!.toDouble(), LoanEmiList!![0]!!.tenure)
 
@@ -998,7 +1073,11 @@ class EmiLoanDetailPage : BaseActivity() {
             customerCommissionGST = 0,
             commissionWithoutGST = 0,
             transferFromMsg = "Your Account is debited by ${amount}Rs.Due to Paid EMI on customer code :${customerCode}",
-            registrationId = ConstantClass.PENNYDROP_REGISTRATION_ID,
+            registrationId = if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)) {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
+            } else {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE
+            },
             tdsAmount = 0,
             serviceschargeGSTAmount = 0,
             transactionStatus = "Approved",

@@ -5,8 +5,5 @@ import com.google.gson.annotations.SerializedName
 data class ValidateAccessKeyReq(
 
 	@field:SerializedName("apiacessKey")
-	val apiacessKey: String? = null,
-
-	@SerializedName("clientcode")
-	var clientCode: String
+	val apiacessKey: String? = null
 )

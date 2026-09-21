@@ -108,6 +108,7 @@ import com.bosandroidapp.aopayfinance.utils.LocationPermissionHelper
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
 import com.bosandroidapp.aopayfinance.workmanager.EmiNotificationWorker
+import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyRequest
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
@@ -118,6 +119,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import kotlin.compareTo
 
 
 class DashBoard : BaseActivity() {
@@ -134,6 +136,8 @@ class DashBoard : BaseActivity() {
     var listOfDueWithGraceDate : ArrayList<MonthsAndPayables> = arrayListOf()
 
     var registrationID : String =""
+
+    private var countDownTimer: android.os.CountDownTimer? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -267,8 +271,10 @@ class DashBoard : BaseActivity() {
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
             }
+
             hitApiForLogin()
-            val request = SendNotificationFeatureNameRequest(
+
+            /*val request = SendNotificationFeatureNameRequest(
                 clientCode = preference.getStringValue(ConstantClass.ClientCode, ""),
                 customerCode =  preference.getStringValue(ConstantClass.CustomerCode,""),
                 retailerCode = preference.getStringValue(ConstantClass.RetailerCode,""),
@@ -277,7 +283,8 @@ class DashBoard : BaseActivity() {
                 notificationCode = "EMI_OVERDUE"
             )
 
-            sendDataOnServerForFeatureActivate(request)
+            sendDataOnServerForFeatureActivate(request)*/
+
         }
 
     }
@@ -358,7 +365,31 @@ class DashBoard : BaseActivity() {
 
 
         binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.setOnClickListener{
-            hitApiForGetAndCheckAccessToken()
+           /* hitApiForGetAndCheckAccessToken()*/
+
+            val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
+
+            if (currentCount >= 3) {
+                binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.VISIBLE
+                binding.appBarDashBoard.deskdesign.tvTimer.text = "Maximum attempts reached"
+                binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.GONE
+                binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.GONE
+                return@setOnClickListener
+            }
+
+            var generateKey = preference.getStringValue(ConstantClass.GENERATEKEY, "")
+
+            if (generateKey.isNotEmpty() && binding.appBarDashBoard.deskdesign.generatedkey.text != "Key Expired") {
+                // showContinueDialog()
+                hitApiForValidateKey()
+            }
+            else {
+
+                if (canGenerateKey()) {
+                    hitApiForGetAndCheckAccessToken()
+                }
+
+            }
         }
 
 
@@ -374,9 +405,14 @@ class DashBoard : BaseActivity() {
                 binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
             }*/
 
-            preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
+            /*preference.setBooleanValue(ConstantClass.CustomerAccessKey,true)
             binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
-            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
+            binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE*/
+
+            var generateKey = preference.getStringValue(ConstantClass.GENERATEKEY, "")
+            if(generateKey.isNotEmpty()){
+                hitApiForValidateKey()
+            }
 
         }
 
@@ -474,6 +510,155 @@ class DashBoard : BaseActivity() {
     }
 
 
+    private fun canGenerateKey(): Boolean {
+        val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
+        val lastTime = preference.getLongValue(ConstantClass.LAST_GENERATE_TIME, 0L)
+        val currentTime = System.currentTimeMillis()
+
+        if (currentCount > 3) {
+            binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.VISIBLE
+            binding.appBarDashBoard.deskdesign.tvTimer.text = "Maximum attempts reached"
+            binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.GONE
+            binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.GONE
+            return false
+        }
+
+        val diff = currentTime - lastTime
+        val waitTime = 2 * 60 * 1000 // 2 minutes
+
+        if (diff < waitTime) {
+            val remainingMillis = waitTime - diff
+            startTimer(remainingMillis)
+            return false
+        }
+
+        return true
+    }
+
+    private fun checkAndStartKeyTimer() {
+        val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
+        val lastTime = preference.getLongValue(ConstantClass.LAST_GENERATE_TIME, 0L)
+        val currentTime = System.currentTimeMillis()
+        val waitTime = 2 * 60 * 1000 // 2 minutes
+        val diff = currentTime - lastTime
+
+        if (currentCount >= 3) {
+            binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.VISIBLE
+            binding.appBarDashBoard.deskdesign.tvTimer.text = "Maximum attempts reached"
+            binding.appBarDashBoard.deskdesign.generatekeyButton.isEnabled = false
+            binding.appBarDashBoard.deskdesign.generatekeyButton.alpha = 0.5f
+            binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.GONE
+            binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.GONE
+            return
+        }
+
+        if (diff < waitTime) {
+            startTimer(waitTime - diff)
+        } else {
+            binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.GONE
+            binding.appBarDashBoard.deskdesign.generatekeyButton.isEnabled = true
+            binding.appBarDashBoard.deskdesign.generatekeyButton.alpha = 1.0f
+            if (currentCount > 0) {
+                binding.appBarDashBoard.deskdesign.tvGenerateKey.text = "Regenerate Key"
+                binding.appBarDashBoard.deskdesign.generatedkey.text = "Key Expired"
+                binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.VISIBLE
+                binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun startTimer(duration: Long) {
+        countDownTimer?.cancel()
+        binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.VISIBLE
+        binding.appBarDashBoard.deskdesign.generatekeyButton.isEnabled = false
+        binding.appBarDashBoard.deskdesign.generatekeyButton.alpha = 0.5f
+
+        countDownTimer = object : android.os.CountDownTimer(duration, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val minutes = (millisUntilFinished / 1000) / 60
+                val seconds = (millisUntilFinished / 1000) % 60
+                binding.appBarDashBoard.deskdesign.tvTimer.text =
+                    String.format("Next attempt in %02d:%02d", minutes, seconds)
+            }
+
+            override fun onFinish() {
+                val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
+                binding.appBarDashBoard.deskdesign.tvTimer.visibility = View.GONE
+                binding.appBarDashBoard.deskdesign.generatekeyButton.isEnabled = true
+                binding.appBarDashBoard.deskdesign.generatekeyButton.alpha = 1.0f
+                if (currentCount > 0) {
+                    binding.appBarDashBoard.deskdesign.tvGenerateKey.text = "Regenerate Key"
+                    binding.appBarDashBoard.deskdesign.generatedkey.text = "Key Expired"
+                    binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.VISIBLE
+                    binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.GONE
+                }
+            }
+        }.start()
+    }
+
+
+    private fun showContinueDialog(isSuccess: Boolean) {
+        AlertDialog.Builder(this)
+            .setTitle(if (isSuccess) "Success" else "Failed")
+            .setMessage(if (isSuccess) "Key validated successfully" else "Key Validation Failed")
+            .setPositiveButton("Ok") { dialog, _ ->
+                if (isSuccess) {
+                    preference.setBooleanValue(ConstantClass.CustomerAccessKey, true)
+                    binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
+                    binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
+                }
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+
+    fun hitApiForValidateKey(){
+        val generateTokenReq = ValidateCustomerAccessKeyRequest(
+            apiacessKey = preference.getStringValue(ConstantClass.GENERATEKEY, "")
+        )
+
+        Log.d("tokenreq", Gson().toJson(generateTokenReq))
+
+        viewModel.getCustomerValidateKeyReq(generateTokenReq).observe(this) { resources ->
+            when (resources.apiStatus) {
+
+                ApiStatus.SUCCESS -> {
+
+                    resources.data?.body()?.let { response ->
+
+                        Log.d("tokenresp", response.message ?: "")
+                        Log.d("tokenmessage", Gson().toJson(response))
+
+                        ConstantClass.dialog!!.dismiss()
+
+                        uploadDataOnFirebaseConsole(Gson().toJson(response), "KeyValidate")
+                        var errorCode = response.statusCode
+
+                        if (response.success == true && errorCode == 200) {
+                            showContinueDialog(true)
+                        }
+                        else{
+                            showContinueDialog(false)
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    Toast.makeText(this@DashBoard, resources.message ?: "Error checking access token", Toast.LENGTH_SHORT).show()
+                }
+
+                ApiStatus.LOADING -> {
+                    ConstantClass.OpenPopUpForVeryfyOTP(this)
+                }
+            }
+        }
+    }
+
+
     fun hitApiForGetAndCheckAccessToken(){
 
         val token = if (preference.getStringValue(ConstantClass.FCMTOKEN, "").isNullOrBlank()) {
@@ -484,7 +669,8 @@ class DashBoard : BaseActivity() {
 
         val generateTokenReq = GenerateAccessTokenRequest(
             fcmToken = token,
-            clientCode = preference.getStringValue(ConstantClass.ClientCode,""))
+            clientCode = preference.getStringValue(ConstantClass.ClientCode,""),
+            customerCode = preference.getStringValue(ConstantClass.CustomerCode,""))
 
         Log.d("tokenreq", Gson().toJson(generateTokenReq))
 
@@ -497,11 +683,25 @@ class DashBoard : BaseActivity() {
                                 Log.d("tokenresp", response.message!!)
                                 Log.d("tokenmessage",Gson().toJson(response))
                                 ConstantClass.dialog?.dismiss()
-                                uploadDataOnFirebaseConsole(Gson().toJson(response),"CurrentLocation")
-                                if(response.success!!){
-                                    binding.appBarDashBoard.deskdesign.generatedkey.visibility= View.VISIBLE
+                                uploadDataOnFirebaseConsole(Gson().toJson(response),"generatetoken")
+
+                                if (response.success == true) {
+                                    val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
+                                    preference.setIntValue(ConstantClass.GENERATE_KEY_COUNT, currentCount + 1)
+                                    preference.setLongValue(ConstantClass.LAST_GENERATE_TIME, System.currentTimeMillis())
+                                    checkAndStartKeyTimer()
+
+                                    binding.appBarDashBoard.deskdesign.generatedkey.visibility = View.VISIBLE
                                     binding.appBarDashBoard.deskdesign.clicktologin.visibility = View.VISIBLE
-                                    binding.appBarDashBoard.deskdesign.generatedkey.text = response.data!!.apiacessKey
+                                    binding.appBarDashBoard.deskdesign.generatedkey.text = response.data?.apiacessKey ?: ""
+                                    preference.setStringValue(ConstantClass.GENERATEKEY,response.data?.apiacessKey ?: "")
+                                }
+                                else{
+                                    // If response is false, maybe it's because of server side limit
+                                    // You can also force count to 3 here if you want to block forever based on server response
+                                    preference.setIntValue(ConstantClass.GENERATE_KEY_COUNT, 3)
+                                    // preference.setBooleanValue(ConstantClass.CustomerAccessKey, true)
+                                    checkAndStartKeyTimer()
                                 }
                             }
                         }
@@ -954,7 +1154,8 @@ class DashBoard : BaseActivity() {
 
         val fused = LocationServices.getFusedLocationProviderClient(this)
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED

@@ -34,28 +34,39 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimest
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPgwebViewBinding
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
+import com.bosandroidapp.aopayfinance.kioskmode.KioskActivity
+import com.bosandroidapp.aopayfinance.kioskmode.isLocked
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.customerCode
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGRequest
 
 import com.google.gson.Gson
+import kotlin.text.toDouble
 
 class PGWebViewActivity : BaseActivity() {
     lateinit var binding : ActivityPgwebViewBinding
     lateinit var dialog: Dialog
     lateinit var preference : SharedPreference
     lateinit var viewModel: AuthenticationViewModel
+    lateinit var dikshifinsureOnlinePGModel: DikshifinsureViewModel
+    lateinit var mode : String
+    lateinit var merchantid : String
 
     companion object{
         var emiList = mutableListOf<EmiLoanDetailPage.EmiData>()
         var EMIamountPG : String =""
         var LoanCodePG : String = ""
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -83,6 +94,11 @@ class PGWebViewActivity : BaseActivity() {
             CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
 
+        dikshifinsureOnlinePGModel = ViewModelProvider(this,
+            DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
+        )[DikshifinsureViewModel::class.java]
+
+
         clearWebViewData(binding.pgwebview)
 
         launchPGOnWebView()
@@ -108,6 +124,14 @@ class PGWebViewActivity : BaseActivity() {
             private var isSuccessPage = false
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+
+                if(mode.equals(ConstantClass.online) && !merchantid.isNullOrEmpty()){
+                    var req = GetOrderStatusOnlinePGRequest(
+                        orderId = merchantid
+                    )
+                    hitApiForPGStatus(req)
+                    return true
+                }
 
                 Log.d("URL", url.orEmpty())
 
@@ -196,6 +220,57 @@ class PGWebViewActivity : BaseActivity() {
         binding.pgwebview.loadDataWithBaseURL("https://secure.payu.in/", finalHtml, "text/html", "UTF-8", null)
 
         binding.pgwebview.loadUrl(pgUrl!!)
+    }
+
+
+    fun hitApiForPGStatus(req : GetOrderStatusOnlinePGRequest){
+
+        dikshifinsureOnlinePGModel.getOrderOnlineStatusPgRequest(req).observe(this) { resources ->
+
+            resources.let {
+                when(it.apiStatus){
+                    ApiStatus.SUCCESS -> {
+                        it.data?.let { users ->
+                            if(users.isSuccessful){
+                                users.body()?.let { response ->
+                                    Log.d("PGStatus", Gson().toJson(response))
+
+                                    var status = response.state
+                                    var orderId = response.orderId
+                                    var merchantOrderId = response.merchantOrderId
+                                    val amount = response.amount?.toDouble()?.toString() ?: "0.0"
+                                    val utrNumber = response.paymentDetails!!.firstOrNull()?.rail?.utr ?: ""
+                                    //COMPLETED
+                                    if(status!!.toLowerCase().equals("completed",ignoreCase = true)){
+                                        showingSuccessPopUp(utrNumber!!)
+                                    }
+                                    else {
+                                        showingRejectionePGPopUp()
+                                    }
+
+                                }
+                            }
+                            else{
+                                var getdata = users.errorBody()?.string()
+                                Log.d("PGStatus", "Error")
+                                showingRejectionePGPopUp()
+                                Toast.makeText(this@PGWebViewActivity,getdata.toString(), Toast.LENGTH_SHORT).show()
+
+                            }
+
+                        }
+                    }
+                    ApiStatus.ERROR -> {
+                        showingRejectionePGPopUp()
+                    }
+
+                    ApiStatus.LOADING ->{
+
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -306,6 +381,11 @@ class PGWebViewActivity : BaseActivity() {
             isPgClosing = true
             dialog!!.dismiss()
             closePg()
+            if (isLocked()) {
+                val intent = Intent(this, KioskActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                startActivity(intent)
+            }
             window.decorView.post {
                 finish()
             }
@@ -363,6 +443,24 @@ class PGWebViewActivity : BaseActivity() {
 
     override fun onBackPressed() {
         showingRejectionePGPopUp()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("PG", "onDestroy")
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("PG", "onPause")
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("PG", "onStop")
     }
 
 

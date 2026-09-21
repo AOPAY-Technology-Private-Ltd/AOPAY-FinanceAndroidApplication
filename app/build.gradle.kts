@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.bosandroidapp.aopayfinance"
     compileSdk = 36
 
@@ -21,6 +22,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 
@@ -57,7 +59,9 @@ android {
 
 }
 
+
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -100,19 +104,23 @@ dependencies {
 
     // firebase ...................................
     implementation(libs.firebase.messaging)
-    // ✅ Firebase BOM MUST be platform()
+    // Firebase BOM MUST be platform()
     implementation(platform(libs.firebase.bom))
-    // ✅ Firestore KTX
+    // Firestore KTX
     implementation(libs.firebase.firestore.ktx)
     // (optional)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.swiperefreshlayout)
+
+    implementation(libs.androidx.webkit)
+
 
     implementation(libs.googleid)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 
 
     implementation(libs.play.services.auth)
@@ -125,5 +133,6 @@ dependencies {
 
     releaseImplementation("$stacker:stacker_inspector_release:$stackerVersion")
     releaseImplementation("$stacker:flutter_release:$stackerVersion")
+
 
 }

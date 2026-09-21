@@ -56,7 +56,6 @@ object RetrofitClient {
             .build()
     }
 
-
     private fun getAllInstancePAN(): Retrofit{
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
@@ -76,10 +75,49 @@ object RetrofitClient {
             .build()
     }
 
+    private fun getInstanceOnlinePG(): Retrofit{
+        val okHttpClient = OkHttpClient.Builder()
+            /*.addInterceptor(StackerOkHttpInterceptor())*/
+            .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
+            .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
+            .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(ConstantClass.ONLINE_PG)
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
+    }
+
+    private fun getInstanceOnlineEnach(): Retrofit{
+        val okHttpClient = OkHttpClient.Builder()
+            .retryOnConnectionFailure(true)
+            /*.addInterceptor(StackerOkHttpInterceptor())*/
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(ConstantClass.ONLINE_ENACH_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
+    }
+
 
     val apiInterface: ApiInterface = getAllInstance().create(ApiInterface::class.java)
+
     val apiInterfaceSMS: ApiInterface = getAllInstanceSMS().create(ApiInterface::class.java)
 
+
     val apiInterfacePAN: ApiInterface = getAllInstancePAN().create(ApiInterface::class.java)
+
+    val apiInterfaceOnlinePG: ApiInterface = getInstanceOnlinePG().create(ApiInterface::class.java)
+
+    val apiInterfaceOnlineEnach: ApiInterface = getInstanceOnlineEnach().create(ApiInterface::class.java)
 
 }
