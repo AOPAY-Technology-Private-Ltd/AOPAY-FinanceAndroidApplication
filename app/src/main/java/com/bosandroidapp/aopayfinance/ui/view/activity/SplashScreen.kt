@@ -62,6 +62,7 @@ class SplashScreen : AppCompatActivity() {
             binding.uattext.visibility = View.GONE
         }
 
+
         Handler(Looper.getMainLooper()).postDelayed({
 
             if (!isInternetAvailable(this)) {
