@@ -1,7 +1,10 @@
-package com.bos.payment.appName.network
+package com.bosandroidapp.aopayfinance.network
 
+import com.bosandroidapp.aopayfinance.BuildConfig
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.google.gson.GsonBuilder
+import okhttp3.Interceptor
+/*import com.stacker.stacker.StackerOkHttpInterceptor*/
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,6 +16,14 @@ object RetrofitClient {
 
     private var retrofit: Retrofit? = null
 
+    private val headerInterceptor = Interceptor { chain ->
+        val originalRequest = chain.request()
+        val requestWithHeaders = originalRequest.newBuilder()
+            .header("X-App-Version", BuildConfig.VERSION_NAME)
+            .build()
+        chain.proceed(requestWithHeaders)
+    }
+
     private fun getAllInstance(): Retrofit {
 
         val logging = HttpLoggingInterceptor()
@@ -21,7 +32,8 @@ object RetrofitClient {
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .addInterceptor(logging)
+            .addInterceptor(headerInterceptor)
+           /* .addInterceptor(StackerOkHttpInterceptor())*/
             .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
             .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout
@@ -40,6 +52,8 @@ object RetrofitClient {
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
+            .addInterceptor(headerInterceptor)
+           /* .addInterceptor(StackerOkHttpInterceptor())*/
             .connectTimeout(120, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(120, TimeUnit.SECONDS)      // server response time
             .writeTimeout(120, TimeUnit.SECONDS)     // request send time
@@ -54,11 +68,12 @@ object RetrofitClient {
             .build()
     }
 
-
     private fun getAllInstancePAN(): Retrofit{
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
+            .addInterceptor(headerInterceptor)
+          /*  .addInterceptor(StackerOkHttpInterceptor())*/
             .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
             .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
             .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout
@@ -73,10 +88,52 @@ object RetrofitClient {
             .build()
     }
 
+    private fun getInstanceOnlinePG(): Retrofit{
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
+           /* .addInterceptor(StackerOkHttpInterceptor())*/
+            .connectTimeout(60, TimeUnit.SECONDS) // Connection timeout
+            .readTimeout(60, TimeUnit.SECONDS)    // Read timeout
+            .writeTimeout(60, TimeUnit.SECONDS)   // Write timeout
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(ConstantClass.ONLINE_PG)
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
+    }
+
+
+   /* private fun getInstanceOnlineEnach(): Retrofit{
+        val okHttpClient = OkHttpClient.Builder()
+            .retryOnConnectionFailure(true)
+            *//*.addInterceptor(StackerOkHttpInterceptor())*//*
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(ConstantClass.ONLINE_ENACH_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .build()
+    }*/
+
 
     val apiInterface: ApiInterface = getAllInstance().create(ApiInterface::class.java)
+
     val apiInterfaceSMS: ApiInterface = getAllInstanceSMS().create(ApiInterface::class.java)
 
+
     val apiInterfacePAN: ApiInterface = getAllInstancePAN().create(ApiInterface::class.java)
+
+    val apiInterfaceOnlinePG: ApiInterface = getInstanceOnlinePG().create(ApiInterface::class.java)
+
+
+   // val apiInterfaceOnlineEnach: ApiInterface = getInstanceOnlineEnach().create(ApiInterface::class.java)
 
 }

@@ -24,7 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.FragmentPayoutPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -788,7 +788,8 @@ class PayoutPage : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = "")
+            emailID = "",
+            clientcode = preference.getStringValue(ConstantClass.ClientCode,""))
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

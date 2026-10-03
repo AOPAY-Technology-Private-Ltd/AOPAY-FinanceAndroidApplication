@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
@@ -20,7 +21,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.BuildConfig
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AppVersion
@@ -147,8 +149,9 @@ class ChooseYourRolePage : BaseActivity() {
         deviceModel= android.os.Build.MODEL
         DeviceBrand = android.os.Build.BRAND
         DeviceOSVersion = android.os.Build.VERSION.RELEASE
-        AppVersion = android.os.Build.VERSION.SDK_INT.toString()
+        AppVersion = BuildConfig.VERSION_NAME
         DeviceName = android.provider.Settings.Global.getString(contentResolver, android.provider.Settings.Global.DEVICE_NAME)
+
 
         Log.d("DeviceName", "$DeviceName")
         Log.d("DeviceInfo", "$deviceManufacturer $deviceModel")
@@ -166,6 +169,7 @@ class ChooseYourRolePage : BaseActivity() {
             deviceName = DeviceName,
             manufacturer = deviceManufacturer
         )
+
         Log.d("DeviceInfoReq", Gson().toJson(request))
 
         viewModel.uploadDeviceInfo(request).observe(this) { it ->
@@ -201,6 +205,7 @@ class ChooseYourRolePage : BaseActivity() {
         }
 
     }
+
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -22,17 +22,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityKioskBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Customer
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.dikshifinsureOnlinePGModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isLockTaskStarted
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.loanmode
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.RetailerProfileReq
@@ -52,10 +54,17 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
+import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
+import com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusReq
+import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import kotlin.toString
+
+import com.google.firebase.installations.BuildConfig
 
 class KioskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityKioskBinding
@@ -88,6 +97,8 @@ class KioskActivity : AppCompatActivity() {
     private var previousCurrentDate: String = ""
     private var LoanEmiList: List<CustomerDataItem?>? = null
 
+    var loanmode : String? = ""
+
     private var isApiRunning = false
 
 
@@ -103,6 +114,10 @@ class KioskActivity : AppCompatActivity() {
         retailerCode = preference.getStringValue(ConstantClass.RetailerCode,"")
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
+        dikshifinsureOnlinePGModel = ViewModelProvider(this,
+            DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
+        )[DikshifinsureViewModel::class.java]
+
 
         hitapiforGetUpdateProfile()
         HitApiForEmiList()
@@ -121,10 +136,11 @@ class KioskActivity : AppCompatActivity() {
             apps.visibility=View.GONE
         }
 
-
         setOnClickListner()
 
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -132,8 +148,9 @@ class KioskActivity : AppCompatActivity() {
         if (!previousLoanData.isNullOrEmpty()) {
             setData(previousLoanData, previousCurrentDate)
 
-        } else if (!isApiRunning) {
+        }
 
+        else if (!isApiRunning) {
             HitApiForEmiList()
         }
 
@@ -153,12 +170,13 @@ class KioskActivity : AppCompatActivity() {
             if (!isLockTaskStarted &&activityManager.lockTaskModeState == ActivityManager.LOCK_TASK_MODE_NONE) {
                 startLockTask()
                 isLockTaskStarted = true
+                hitApiForDeviceLockStatus(true)
             }
         }
 
         isPgClosing = false
-    }
 
+    }
 
 
     fun setOnClickListner(){
@@ -213,17 +231,37 @@ class KioskActivity : AppCompatActivity() {
                                      val emiNumbers=  (1..selectedNoofEmi).joinToString("")
                                      PGWebViewActivity.LoanCodePG = loanCode
 
-                                     var req = PGRequestCall(
-                                         payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                                         customerEmailID = email,
-                                         registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                                         payCartAmount = emiamount.toString(),
-                                         eMINumbers = "EMI${emiNumbers}",
-                                         customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                                         payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                                         loanCode = loanCode
-                                     )
-                                     hitApiForRequestPG(req)
+                                     if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)){
+
+                                         var req = PGOnlineRequestCall(
+                                             amount = emiamount,
+                                             registrationID =  ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                             eMINumbers = "${emiNumbers}",
+                                             customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                             loanCode = loanCode
+                                         )
+
+                                         hitApiForRequestPGOnline(req)
+
+                                     }
+                                     else{
+
+                                         var req = PGRequestCall(
+                                             payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                             customerEmailID = email,
+                                             registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE,
+                                             payCartAmount = emiamount.toString(),
+                                             eMINumbers = "EMI${emiNumbers}",
+                                             customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                             payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                             loanCode = loanCode
+                                         )
+
+                                         hitApiForRequestPG(req)
+
+                                     }
+
+
                                  }
                              }
                          }
@@ -245,24 +283,20 @@ class KioskActivity : AppCompatActivity() {
 
     }
 
-
     override fun onPause() {
         super.onPause()
         if(isLocked()) finish()
     }
-
 
     override fun onStop() {
         super.onStop()
         Log.d("Accessibility","onStop")
     }
 
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) enterImmersiveMode()
     }
-
 
     fun hitapiforGetUpdateProfile(){
 
@@ -319,7 +353,6 @@ class KioskActivity : AppCompatActivity() {
             }
         }
     }
-
 
     fun HitApiForEmiList(){
         if (isApiRunning) {
@@ -390,6 +423,7 @@ class KioskActivity : AppCompatActivity() {
 
         loanCode = LoanEmiList!![0]!!.loanCode.toString()
         emiAmount = LoanEmiList!![0]!!.emiAmount.toString()
+        loanmode = LoanEmiList[0]!!.loanmode
 
         isEmandateVerified = LoanEmiList!![0]!!.isEmandateVerified.toString()
         isPannydropVerified = LoanEmiList!![0]!!.isPannydropVerified.toString()
@@ -402,9 +436,7 @@ class KioskActivity : AppCompatActivity() {
             Log.d("DueList", "Data". plus(listOfDueWithGraceDate))
             setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(),LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0)
         }
-
     }
-
     fun setDataInspinner(tenure:Int,emiAmount:Double?){
         val emiOptions = ConstantClass.generateEMIOptions(tenure)
         val noOfEmiAdapter = ArrayAdapter(this, R.layout.mobilenamelayout, emiOptions )
@@ -417,7 +449,6 @@ class KioskActivity : AppCompatActivity() {
                 val selectedItem = parent.getItemAtPosition(position).toString().toInt()
                 var totalEmiAmount = 0.0   // use Double for calculation
                 Log.d("ListDueGrace",":".plus(listOfDueWithGraceDate))
-
                 if(listOfDueWithGraceDate.isNotEmpty()){
 
                     for (j in 1..selectedItem) {
@@ -449,6 +480,42 @@ class KioskActivity : AppCompatActivity() {
 
         }
 
+    }
+
+
+    fun hitApiForDeviceLockStatus(status: Boolean) {
+
+        val req = CustomerDeviceLockStatusReq(
+            deviceModel = Build.MODEL,
+            status = status,
+            actionType = "DEVICE",
+            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+            deviceId = preference.getStringValue(ConstantClass.DEVICEID, ""),
+            androidVersion = Build.VERSION.RELEASE,
+            retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
+            appVersion = BuildConfig.VERSION_NAME,
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, ""),
+            manufacturer = Build.MANUFACTURER,
+            performedAt = ConstantClass.getCurrentUtcTimestamp(),
+            appPackageName = packageName,
+            actionName =  "PHONE_LOCK"
+        )
+
+        Log.d("DeviceLockStatusReq", Gson().toJson(req))
+
+        viewModel.uploadDeviceLockStatusReq(req).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS -> {
+                    val response = resources.data?.body()
+                    Log.d("DeviceLockStatusRes", Gson().toJson(response))
+                }
+                ApiStatus.ERROR -> {
+                    Log.e("DeviceLockStatusError", resources.message ?: "Unknown error")
+                }
+                ApiStatus.LOADING -> {
+                }
+            }
+        }
     }
 
 
@@ -486,6 +553,55 @@ class KioskActivity : AppCompatActivity() {
 
                     ApiStatus.ERROR -> {
                        ConstantClass.dialog!!.dismiss()
+                    }
+
+                    ApiStatus.LOADING -> {
+                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    fun hitApiForRequestPGOnline(req : PGOnlineRequestCall){
+
+        Log.d("PGRequest", Gson().toJson(req))
+
+        dikshifinsureOnlinePGModel.getPGRequestCallOnline(req).observe(this) { resources ->
+            resources.let {
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data.let { users ->
+                            users!!.body().let { response ->
+                                Log.d("PanVerificationResp", Gson().toJson(response))
+                                if (!response!!.intentUrl.isNullOrEmpty()) {
+                                    // Open WebView with the provided URL
+                                    ConstantClass.dialog!!.dismiss()
+                                    val intent = Intent(this@KioskActivity, PGWebViewActivity::class.java)
+                                    intent.putExtra("pgurl", response!!.intentUrl)
+                                    intent.putExtra("mode", ConstantClass.online)
+                                    intent.putExtra("merchantid", response.marchentOrderID)
+                                    startActivity(intent)
+                                }
+                                else {
+                                    ConstantClass.dialog!!.dismiss()
+                                    Toast.makeText(this@KioskActivity, response!!.errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    ApiStatus.ERROR -> {
+                        ConstantClass.dialog!!.dismiss()
+                        Toast.makeText(this@KioskActivity, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
                     }
 
                     ApiStatus.LOADING -> {

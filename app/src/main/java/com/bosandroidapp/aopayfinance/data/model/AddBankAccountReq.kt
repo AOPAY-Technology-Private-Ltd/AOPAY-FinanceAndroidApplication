@@ -31,5 +31,10 @@ data class AddBankAccountReq(
     var mobilenumber : String ,
 
     @SerializedName("emailID")
-    var emailID : String
+    var emailID : String,
+
+    @SerializedName("clientcode")
+    var clientcode : String
+
+
 )

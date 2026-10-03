@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.databinding.ActivityAadharCardWebViewDigilockerPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.AadhaarResponse
@@ -313,6 +313,7 @@ class AadharCardWebViewDIGILockerPage : BaseActivity() {
                                         ConstantClass.AadharImage = response.model!!.image!!
                                         AadharNumber =  response.model!!.maskedAdharNumber!!
                                         AadhaarResponse = Gson().toJson(response)
+                                        ConstantClass.AadharVerified="yes"
                                         val intent = Intent(this, NewCustomerRegistrationPage::class.java)
                                         startActivity(intent)
                                         finish()

@@ -48,9 +48,15 @@ class CustomerEMIDetailsAdapter( var context:Context,var customerLoanEmiDetailsL
             ConstantClass.LastName,""))
 
        holder.viewdetailscard.setOnClickListener {
-           LoanId= customerLoanEmiDetailsList!![position]!!.loanCode!!
-           customerCode= customerLoanEmiDetailsList!![position]!!.customerCode!!
-           context.startActivity(Intent(context, EmiLoanDetailPage::class.java))
+           val selectedLoanId = customerLoanEmiDetailsList!![position]!!.loanCode ?: ""
+           val selectedCustomerCode = customerLoanEmiDetailsList!![position]!!.customerCode ?: ""
+           LoanId = selectedLoanId
+           customerCode = selectedCustomerCode
+           val intent = Intent(context, EmiLoanDetailPage::class.java).apply {
+               putExtra("LoanId", selectedLoanId)
+               putExtra("customerCode", selectedCustomerCode)
+           }
+           context.startActivity(intent)
 
        }
 

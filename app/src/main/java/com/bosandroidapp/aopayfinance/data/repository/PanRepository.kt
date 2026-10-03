@@ -1,6 +1,6 @@
 package com.bosandroidapp.aopayfinance.data.repository
 
-import com.bos.payment.appName.network.ApiInterface
+import com.bosandroidapp.aopayfinance.network.ApiInterface
 import com.bosandroidapp.aopayfinance.data.enach.EMandateRequest
 import com.bosandroidapp.aopayfinance.data.enach.ENachStatusReq
 import com.bosandroidapp.aopayfinance.data.loancharge.LoanChargeReq
@@ -28,5 +28,12 @@ class PanRepository(private val apiInterface: ApiInterface) {
     suspend fun getAadharVerificationReq(req: AadharVerificationReq) = apiInterface.getAadharVarification(req)
 
     suspend fun getPGRequestCall(req: PGRequestCall) = apiInterface.callPG(req)
+
+
+    suspend fun EMandateOnlineRequest(req: EMandateRequest) = apiInterface.geteMandateOnlineRequest(req)
+
+    suspend fun geteMandateOnlineSatusRequest(req: ENachStatusReq) = apiInterface.geteMandateOnlineSatusRequest(req)
+
+
 
 }

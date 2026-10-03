@@ -35,7 +35,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivitySignupPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -82,6 +82,7 @@ class SignupPage : BaseActivity() {
     var companydocImagePath: String? = ""
     var cancelChequeImagePath: String? = ""
     private var currentCaptureMode: String? = null // "PROFILE", "AADHAAR_FRONT", etc.
+
 
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -217,43 +218,12 @@ class SignupPage : BaseActivity() {
 
             }
 
-        }
-        else {
+        } else {
             // Optional: Handle failure or cancellation
             Log.d("BOS_CAMERA", "Capture failed or cancelled for mode: $currentCaptureMode")
-            when (currentCaptureMode) {
-
-                "PROFILE" -> {
-                    profilePhotoUri = null
-                }
-
-                "AADHAAR_FRONT" -> {
-                    aadhaarFronthotoUri=null
-                }
-
-                "AADHAAR_BACK" -> {
-                    aadhaarBackhotoUri=null
-                }
-
-                "PANCARD" -> {
-                    pancardphotoUri=null
-                }
-
-                "STORE" -> {
-                    storePhotoUri=null
-                }
-
-                "COMPANYDOCUMENT" -> {
-                    companyCodePhotoUri=null
-                }
-
-                "CANCELCHEQUE" -> {
-                    chequePhotoUri = null
-                }
-
-            }
         }
     }
+
 
     private fun compressImageAndGetPath(uri: Uri): String {
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

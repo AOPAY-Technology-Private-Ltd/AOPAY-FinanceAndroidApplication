@@ -52,7 +52,7 @@
     <string name="terms_conditions">Terms &amp; Conditions</string>
     <string name="cust">Customer</string>
     <string name="retailer">Retailer</string>
-    <string name="chooserole">Choose your Role</string>
+    <string name="chooserole">Select Role</string>
     <string name="customerpro">Customer Profile</string>
     <string name="reports">Reports</string>
     <string name="profile">Profile</string>
@@ -173,6 +173,17 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+
+
+
+    <string-array name="customershortcutlist">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Approved</item>
+        <item>Rejected</item>
+    </string-array>
+
+
 
     <string name="sample_terms_text_customer">
 
@@ -322,6 +333,7 @@ CLIENT shall access your Credit Information as your authorized representative an
 ]]>
     </string>
 
+
     <string name="accessibility_service_description">
     This service helps automate actions and improve usability by monitoring user interface events.
     </string>
@@ -354,9 +366,10 @@ CLIENT shall access your Credit Information as your authorized representative an
     <string name="waive_off">Waive Off</string>
     <string name="down_payment">Down Payment</string>
 
+
     <string name="your_payment_was_cancelled">Your payment was cancelled and no amount has been deducted from your account.\n\nIf this was unintentional, please try again to complete your payment.</string>
     <string name="your_payment_has_been_completed">Your payment has been completed successfully.\n The transaction has been processed .</string>
-    <string name="aopay_technology_ltd">AOPAY Technology Pvt. Ltd.</string>
+    <string name="aopay_technology_ltd">Aopay Technology Private Limited</string>
     <string name="customer_app_install">Customer App Install</string>
 
 
@@ -369,4 +382,7 @@ CLIENT shall access your Credit Information as your authorized representative an
     <string name="payment_mode_label">Payment Mode</string>
     <string name="payout_mode_label">Payout Mode</string>
     <string name="remarks">Remarks</string>
+    <string name="loan_create">Loan Create</string>
+
+
 </resources>

@@ -1,6 +1,6 @@
 package com.bosandroidapp.aopayfinance.data.repository
 
-import com.bos.payment.appName.network.ApiInterface
+import com.bosandroidapp.aopayfinance.network.ApiInterface
 import com.bosandroidapp.bosmobilefinance.ui.slideshow.data.model.loginsignup.cibilscore.CibilScoreReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.AAdhaarDetailesReq
 

@@ -21,7 +21,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bos.payment.appName.network.RetrofitClient
+/*import com.beastblocks.provisionerjattsdk.ProvisionerClient
+import com.beastblocks.provisionerjattsdk.ProvisionerJatt*/
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.dialog
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
@@ -40,6 +42,7 @@ class CustomerAppInstall : BaseActivity() {
     lateinit var binding: ActivityCustomerAppInstallBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
+  /*  private lateinit var client: ProvisionerClient*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +62,7 @@ class CustomerAppInstall : BaseActivity() {
 
     }
 
+
     fun setonClickListner(){
         binding.home.setOnClickListener {
             val intent = Intent(this, DashBoard::class.java)
@@ -75,7 +79,30 @@ class CustomerAppInstall : BaseActivity() {
         binding.clicktoopenappqr.setOnClickListener {
             OpenPopUpForQRScanAlert()
         }
+
+       /* binding.startProvisioning.setOnClickListener {
+            startProvisioning()
+        }*/
     }
+
+
+
+/*    fun startProvisioning(){
+        if (::client.isInitialized) client.detach(this)
+        client = ProvisionerJatt.get()
+        client.setAutomation(packageName = packageName, downloadUrl = "https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Uat.1.0.9/AOPAY_Uat.1.0.9.apk")
+        client.scanThenAttach(this, this)
+
+    }
+
+
+
+    override fun onDestroy() {
+        if (::client.isInitialized) client.detach(this)
+        super.onDestroy()
+    }*/
+
+
 
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {
