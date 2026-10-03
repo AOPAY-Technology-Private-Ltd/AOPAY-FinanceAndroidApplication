@@ -9,7 +9,6 @@ data class HoldAmountWithdrawReq(
     @SerializedName("amount")
     var amount: String,
 
-
     @SerializedName("remarks")
     var remarks: String,
 

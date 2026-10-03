@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.FragmentBankListBinding
 import com.bosandroidapp.aopayfinance.databinding.FragmentPayoutReportsBinding
@@ -75,7 +75,9 @@ class BankListPage : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = "")
+            emailID = "",
+            clientcode = preference.getStringValue(ConstantClass.ClientCode,"")
+        )
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

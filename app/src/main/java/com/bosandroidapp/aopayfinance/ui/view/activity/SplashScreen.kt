@@ -56,7 +56,11 @@ class SplashScreen : AppCompatActivity() {
         }
 
 
-        binding.uattext.visibility= View.GONE
+        if (ConstantClass.BASE_URL.contains("uat", ignoreCase = true)) {
+            binding.uattext.visibility = View.VISIBLE
+        } else {
+            binding.uattext.visibility = View.GONE
+        }
 
 
         Handler(Looper.getMainLooper()).postDelayed({

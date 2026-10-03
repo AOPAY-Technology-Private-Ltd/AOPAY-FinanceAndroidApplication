@@ -30,7 +30,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityImeidetailsPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -52,6 +52,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ModelName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.iisAggrementVerified
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.saveImageToCache
+import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
@@ -64,12 +66,14 @@ import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import com.bosandroidapp.bosmobilefinance.ui.slideshow.ui.view.activity.retailer.cibilreportsfragment.BureauScore.Companion.userScore
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.code
 
 class IMEIDetailsPage : BaseActivity() {
     lateinit var binding : ActivityImeidetailsPageBinding
@@ -90,7 +94,6 @@ class IMEIDetailsPage : BaseActivity() {
     companion object{
         lateinit var dialog: Dialog
     }
-
 
 
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -149,9 +152,7 @@ class IMEIDetailsPage : BaseActivity() {
 
 
         }
-
         else{
-
             if(imei1photo){
                 imei1photoUri= null
             }
@@ -164,11 +165,11 @@ class IMEIDetailsPage : BaseActivity() {
                 ImeiPhotoUri= null
             }
 
-            else if(invoicePhoto){
+            /*else if(invoicePhoto){
                 invoicePhotoUri=null
-            }
-
+            }*/
         }
+
 
     }
 
@@ -186,7 +187,7 @@ class IMEIDetailsPage : BaseActivity() {
       
         viewModel = ViewModelProvider(
             this,
-            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN))
+            CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
         preference = SharedPreference(this)
         seonClickListner()
@@ -220,7 +221,7 @@ class IMEIDetailsPage : BaseActivity() {
                 IMEINumber2 = binding.IMEInumber2.text.toString().trim(),
                 imei1photoUri = imei1photoUri,
                 imei2photoUri = imei2photoUri,
-                invoicePhotoUri = invoicePhotoUri,
+                /*invoicePhotoUri = invoicePhotoUri,*/
                 ImeiPhotoUri = ImeiPhotoUri
             )
             if (!isValid) {
@@ -278,7 +279,7 @@ class IMEIDetailsPage : BaseActivity() {
         imei1photo = false
         imei2photo = false
         ImeiPhoto = false
-        invoicePhoto = false
+        /*  invoicePhoto = false*/
     }
 
 
@@ -323,14 +324,7 @@ class IMEIDetailsPage : BaseActivity() {
     }
 
 
-    fun isValidForm(
-        IMEINumber1: String,
-        IMEINumber2: String,
-        imei1photoUri: Uri?,
-        imei2photoUri: Uri?,
-        invoicePhotoUri: Uri?,
-        ImeiPhotoUri: Uri?
-    ): Pair<Boolean, String?> {
+    fun isValidForm(IMEINumber1: String, IMEINumber2: String, imei1photoUri: Uri?, imei2photoUri: Uri?,/* invoicePhotoUri: Uri?,*/ImeiPhotoUri: Uri?): Pair<Boolean, String?> {
 
         if (IMEINumber1.isBlank() || IMEINumber1.length != 15 || !IMEINumber1.all { it.isDigit() }) {
             return Pair(false, "Enter a valid 15-digit IMEI Number 1")
@@ -341,19 +335,19 @@ class IMEIDetailsPage : BaseActivity() {
         }
 
         if (imei1photoUri == null) {
-            return Pair(false, "Upload IMEI 1 seal photo")
+            return Pair(false, "Please upload Seal Phone Photo (Front).")
         }
 
         if (imei2photoUri == null) {
-            return Pair(false, "Upload IMEI 2 seal photo")
+            return Pair(false, "Please upload Seal Phone Photo (Back).")
         }
 
-        if (invoicePhotoUri == null) {
+       /* if (invoicePhotoUri == null) {
             return Pair(false, "Upload invoice photo")
-        }
+        }*/
 
         if (ImeiPhotoUri == null) {
-            return Pair(false, "Upload combined IMEI photo")
+            return Pair(false, "\t\n" + "Please upload IMEI Number Photo.")
         }
 
         return Pair(true, null)
@@ -407,10 +401,35 @@ class IMEIDetailsPage : BaseActivity() {
         termconditiontxt.text = Html.fromHtml(getString(R.string.delivery_terms_condition), Html.FROM_HTML_MODE_LEGACY)
 
         verifyButton.setOnClickListener {
-            iisAggrementVerified = true
+           /* iisAggrementVerified = true
             IsRetailerAggrementVerified = "yes"
-            startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))
+            startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))*/
+
+            val imei1SealPart = saveImageToCache(this, ImeiNumber1SealPhotoPath!!,  "IMEINumber1Image")
+
+            val imei2SealPart = saveImageToCache(this, ImeiNumber2SealPhotoPath!!,  "IMEINumber2Image")
+
+            val imeiPhotoPart = saveImageToCache(this, ImeiNumberPhotoPath!!,  "IMEINumberImage")
+
+
+            var req = ManageCustomerStepWiseReq(
+                mode = "UPDATE",
+                step = "6",
+                rid = "",
+                imeiNumber1 = ImeiNumber1,
+                imeiNumber2 = ImeiNumber2,
+                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                isRetailerAggrementVerified = IsRetailerAggrementVerified,
+                imeiNumber1_SealPhotoPath = imei1SealPart,
+                imeiNumber2_SealPhotoPath = imei2SealPart,
+                imeiNumber_PhotoPath = imeiPhotoPart
+            )
+            Log.d("IMEIDetailsreq", Gson().toJson(req))
+            ConstantClass.OpenPopUpForVeryfyOTP(this)
+            hitApiForUploadCustomerIMEIData(req)
         }
+
+
 
         dialog!!.setOnDismissListener {
             // Called when dialog is dismissed by back press or programmatically
@@ -577,6 +596,55 @@ class IMEIDetailsPage : BaseActivity() {
                 }
             }
         }
+
+    }
+
+
+    fun hitApiForUploadCustomerIMEIData(request : ManageCustomerStepWiseReq){
+
+        viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS ->{
+                    resources.data.let { user->
+                        ConstantClass.dialog!!.dismiss()
+                        if(user!!.isSuccessful){
+                            val responseBody = user.body()
+                            val status = responseBody?.success
+                            val errorCode = responseBody?.code
+                            val customerCode = responseBody?.data?.customerCode
+                            Log.d("IMEIDetailsresponse", Gson().toJson(responseBody))
+                            Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
+
+                            if(status == true ){
+                                startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))
+                            }
+                            else{
+
+                            }
+
+                        }
+                        else {
+                            var errorbody = user.errorBody()
+                            Log.e("API_ERROR", errorbody?.string() ?: "Unknown error")
+                            Toast.makeText(this@IMEIDetailsPage, errorbody?.string(), Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    Toast.makeText(this@IMEIDetailsPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                }
+
+                ApiStatus.LOADING -> {
+
+                }
+
+            }
+        }
+
 
     }
 

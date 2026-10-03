@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityRetailerCustomerReportsPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -133,7 +133,10 @@ class RetailerCustomerReportsPage : BaseActivity() {
                     FilterReportDataList.clear()
                     FilterReportDataList.addAll(result)
                     setDataInView(FilterReportDataList)
-                    reportAdapter.notifyDataSetChanged()
+                    if(::reportAdapter.isInitialized){
+                        reportAdapter.notifyDataSetChanged()
+                    }
+
                 }
 
                 override fun afterTextChanged(p0: Editable?) {

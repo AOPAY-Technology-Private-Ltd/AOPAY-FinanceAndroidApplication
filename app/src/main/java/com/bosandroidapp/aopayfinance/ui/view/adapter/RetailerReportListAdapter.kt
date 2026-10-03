@@ -139,9 +139,15 @@ class RetailerReportListAdapter(private val ReportsDataList: MutableList<com.bos
             if (context is RetailerCustomerReportsPage) {
                 if (status.equals("Disbursed")) {
                     preference.setStringValue(ConstantClass.CustomerCode, ReportsDataList[position].customerCode)
-                    LoanId = ReportsDataList[position].loanCode
-                    customerCode = ReportsDataList[position].customerCode
-                    context.startActivity(Intent(context, EmiLoanDetailPage::class.java))
+                    val selectedLoanId = ReportsDataList[position].loanCode
+                    val selectedCustomerCode = ReportsDataList[position].customerCode
+                    LoanId = selectedLoanId
+                    customerCode = selectedCustomerCode
+                    val intent = Intent(context, EmiLoanDetailPage::class.java).apply {
+                        putExtra("LoanId", selectedLoanId)
+                        putExtra("customerCode", selectedCustomerCode)
+                    }
+                    context.startActivity(intent)
                 }
 
 

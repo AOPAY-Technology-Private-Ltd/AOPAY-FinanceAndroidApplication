@@ -54,11 +54,12 @@ import  com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.internetchecker.NetworkMonitor
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.workmanager.LocationUploadWorker
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.app
-import com.google.firebase.firestore.firestore
+
 import com.google.firebase.storage.FirebaseStorage
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -106,40 +107,101 @@ import javax.crypto.spec.SecretKeySpec
 
 object ConstantClass {
 
-     // Procustion  API
+      // Procustion  API
 
-        /* const val BASE_URL = "https://api.aopay.finance/"
+
+       /* const val BASE_URL = "https://api.aopay.finance/"
           const val BASE_URL_IMAGE = "https://api.aopay.finance"
-          const val BASE_URL_PRODUCT_IMAGE = "https://admin.aopay.finance"
+
+
+       // production merchant id online
           const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"*/
+          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
 
 
-     // UAT API
+         // production merchant id offline
+         const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
+         const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"
+
+          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+
+        */
+
+
+       // for enach option using registration id always use for bot uat and production ......................
+
+
+       // production merchant id online
+        const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
+
+       // production merchant id offline
+        const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
+
+
+
+      // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-       const val BASE_URL_PRODUCT_IMAGE = "https://admin.aopay.co.in"
-       const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
-       const val PENNYDROP_REGISTRATION_ID = "AOP-554"
+       const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+
+/*
+       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Uat.1.0.9/Aopay_Customer_Uat_V.1.0.9.apk"
+*/
+
+
+
+
+    // UAT merchant id online
+     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
+     const val PENNYDROP_REGISTRATION_ID = "AOP-554"
+
+
+
+    //  UAT merchant id offline
+    const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-554"
+    const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"
+
 
 
      const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
      const val PAN_BASE_URL = "https://api.aopay.in/"
+
+
+     const val ONLINE_PG = "https://api.dikshifinsure.com/"
+     //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
+
+
+    // for online emandate auto pay
+    const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"
+    const val RegistrationID_UPIAUTOPAY = "registrationid"
+
+
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
 
 
+    const val LOAN_REJECT = "LOAN_REJECTED"
+    const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
+    const val UNLOCK = "UNLOCK"
+
+
+
      const val OLD_FRP_MAIL_ID = "info@aopay.in"
+
      const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
 
      const val CustomerCode = "customerCode"
+
      const val Admin = "admin"
+
      const val RetailerCode = "retailerCode"
      const val ForgotPasswordType = "Retailer forgot password"
      const val OTPTYPE = "VerifyUser"
      const val EMILIST = "EmiList"
+
      const val FCMTOKEN = "fcmtoken"
+
      const val DEVICEID = "deviceid"
      const val LoanSuccessStatus = "success"
      const val DeviceType = "Android"
@@ -167,14 +229,10 @@ object ConstantClass {
      const val LoginType = "Logintype"
      const val online = "Online"
      const val offline = "Offline"
+     const val UPIAUTOPAY = "UPI Autopay"
 
-    const val LOAN_REJECT = "LOAN_REJECTED"
-    const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
-    const val UNLOCK = "UNLOCK"
-
-
-    var isPgClosing = false
-    var isLockTaskStarted = false
+     var isPgClosing = false
+     var isLockTaskStarted = false
      const val editprofile = "Edit Profile"
      const val cancel = "Cancel"
      const val paymentMode = "Select Payment Mode"
@@ -217,7 +275,6 @@ object ConstantClass {
     var AdminCibilScore : String= ""
     var AdminLoanApprovedStatus : String= ""
     var CustomerLoanStatus : String= ""
-
 
     var AadhaarName : String= ""
     var AadharHouse : String= ""
@@ -327,7 +384,6 @@ object ConstantClass {
      var RefmobileNo : String = ""
      var RefAddress : String = ""
      var DebitOrCreditCard : String = ""
-     var UpiMandate : String = "yes"
      var CreatedBy : String = ""
      var loginType : String = ""
      var iisAggrementVerified : Boolean = false
@@ -351,7 +407,56 @@ object ConstantClass {
     var eMandate = "accepted"
     var eMandatepending = "pending"
     var isMandate = "Yes"
+
+    const val GENERATE_KEY_COUNT = "generate_key_count"
+    const val LAST_GENERATE_TIME = "last_generate_time"
+    const val GENERATEKEY = "GenerateKey"
+
     var internetSettingsOpened = false
+
+    var LoanRID : Int = 0
+
+    var loanmode : String? = ""
+
+    var CreatedByCustomerShortCut : String = ""
+    var UPIMandate : String = ""
+    var isPannydropVerified : String= ""
+    var isEmandateVerified : String= ""
+    var isAccessKeyVerified : String= ""
+
+
+    // already customer exist
+    var AlreadyCustomerCodeHaveEligiblity : String = ""
+    var AlreadyCustomerImage : String = ""
+    var AlreadyCustomerFirstName : String = ""
+    var AlreadyCustomerMiddleName : String = ""
+    var AlreadyCustomerLastName : String = ""
+    var AlreadyCustomerPrimaryMobileNumber : String = ""
+    var AlreadyCustomerAlternateMobileNumber: String = ""
+    var AlreadyCustomerAlternateEmailID: String = ""
+    var AlreadyCustomerFlatNo : String = ""
+    var AlreadyCustomerAearSector : String = ""
+    var AlreadyCustomerCurrentAddress : String = ""
+    var AlreadyCustomerPinCode : String = ""
+    var AlreadyCustomerCountry : String = ""
+    var AlreadyCustomerStateName : String = ""
+    var AlreadyCustomerCityName : String = ""
+    var AlreadyCustomerCustPhotoPath : String = ""
+    var AlreadyCustomerAccountNumber : String = ""
+    var AlreadyCustomerBankIFSCCode : String = ""
+    var AlreadyCustomerBankName : String = ""
+    var AlreadyCustomerAccountType : String = ""
+    var AlreadyCustomerBranchName : String = ""
+    var AlreadyCustomerRefName : String = ""
+    var AlreadyCustomerRefRelationShip : String = ""
+    var AlreadyCustomerRefmobileNo : String = ""
+    var AlreadyCustomerRefAddress : String = ""
+    var DefaultEmidebit : String = ""
+    var LoanStatus ="Pending"
+
+    lateinit var dikshifinsureOnlinePGModel: DikshifinsureViewModel
+
+    var CustAdhaarPhotoUri : Uri? = null
 
     private var noInternetDialog: AlertDialog? = null
 
@@ -374,7 +479,6 @@ object ConstantClass {
 
         noInternetDialog?.show()
     }
-
 
 
     fun isInternetAvailable(context: Context): Boolean {
@@ -493,9 +597,11 @@ object ConstantClass {
         })
     }
 
+
     fun isValidPinCode(pin: String): Boolean {
         return pin.length == 6 && pin.all { it.isDigit() }
     }
+
 
     fun cacheImageAndGetUri(context: Context, imageUrl: String): Uri? {
         return try {
@@ -530,6 +636,7 @@ object ConstantClass {
         }
     }
 
+
     fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
         return try {
             // Create sub-folder inside /cache/shared_images
@@ -557,6 +664,7 @@ object ConstantClass {
         }
     }
 
+
     fun uriToFile(uri: Uri, context: Context): File? {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return null
         val tempFile = File.createTempFile("upload_", ".jpg", context.cacheDir)
@@ -565,6 +673,40 @@ object ConstantClass {
         }
         return tempFile
     }
+
+
+    fun downloadImageToTemp(context: Context, imageUrl: String): File? {
+        return try {
+            val url = URL(imageUrl)
+            val connection = url.openConnection() as HttpURLConnection
+
+            connection.connectTimeout = 15_000
+            connection.readTimeout = 15_000
+            connection.requestMethod = "GET"
+            connection.connect()
+
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                connection.disconnect()
+                return null
+            }
+
+            val file = File(context.cacheDir, "customer_photo_${System.currentTimeMillis()}.jpg")
+
+            connection.inputStream.use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            connection.disconnect()
+
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
 
 
@@ -715,7 +857,6 @@ object ConstantClass {
     }
 
 
-
     fun saveImageToPictures(context: Context, imageFile: File): File? {
         return try {
             val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -769,6 +910,39 @@ object ConstantClass {
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
+
+
+    fun formatToYYYYMMDD(inputDate: String?): String {
+        if (inputDate.isNullOrBlank()) return ""
+        
+        val inputFormats = arrayOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss.SS",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "dd/MM/yyyy",
+            "yyyy-MM-dd",
+            "MM/dd/yyyy",
+            "d/M/yyyy"
+        )
+        
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        
+        for (format in inputFormats) {
+            try {
+                val sdf = SimpleDateFormat(format, Locale.getDefault())
+                if (format.contains("'Z'")) {
+                    sdf.timeZone = TimeZone.getTimeZone("UTC")
+                }
+                val date = sdf.parse(inputDate)
+                if (date != null) {
+                    return outputFormat.format(date)
+                }
+            } catch (e: Exception) {
+                // Try next format
+            }
+        }
+        return inputDate // Return original if all fail
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -1140,7 +1314,7 @@ object ConstantClass {
 
     fun uploadDataOnFirebaseConsole(data:String, collectionPath:String/*,context: Context*/){
      /*   val context = context*/
-        val db = Firebase.firestore
+/*        val db = Firebase.firestore
 
         val sdf = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
         val currentDateTime = sdf.format(Date())
@@ -1162,7 +1336,7 @@ object ConstantClass {
             .addOnFailureListener { e ->
                 Log.d("Error", " $e.message")
                 //Toast.makeText(context, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            }*/
     }
 
 
@@ -1246,6 +1420,9 @@ object ConstantClass {
     // DPCAPPJSON
 
    /* {
+
+
+
         "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
         "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
 
@@ -1253,7 +1430,23 @@ object ConstantClass {
         "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
 
         "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
-        "https://api.pay.in/api/V1/Finance/download-DPC",
+        "https://api.oqpay.in/api/V1/OQFinance/download-DPC",
+
+        "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
+
+        "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
+    }*/
+
+
+/*    {
+        "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
+        "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
+
+        "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":
+        "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
+
+        "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
+        "https://uatapi.aopay.co.in/api/V1/AopayFinance/download-DPC",
 
         "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
 

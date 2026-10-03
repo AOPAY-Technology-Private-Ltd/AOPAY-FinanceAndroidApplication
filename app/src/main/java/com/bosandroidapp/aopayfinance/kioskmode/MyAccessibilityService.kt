@@ -42,7 +42,6 @@ class MyAccessibilityService : AccessibilityService() {
 
         val preference = SharedPreference(this)
 
-
         if (preference.getBoolanValue(ConstantClass.LoggedIn, false) &&
             preference.getStringValue(ConstantClass.CustomerCode, "").isNotEmpty()) {
             CoroutineScope(Dispatchers.IO).launch {

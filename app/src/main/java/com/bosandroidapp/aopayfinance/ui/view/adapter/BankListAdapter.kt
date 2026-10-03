@@ -70,6 +70,7 @@ class BankListAdapter(var context: Context, var bankDataList: List<AdminBankData
         holder.binding.accountNo.text = bankDataList!![position]!!.accountNumber.toString()
         holder.binding.ifscCode.text = bankDataList!![position]!!.ifscCode.toString()
         holder.binding.branchName.text = bankDataList!![position]!!.branchName.toString()
+        holder.binding.upid.text = bankDataList!![position]!!.upiIntend.toString()
 
         /*holder.binding.accountType.text = bankDataList!![position]!!.accountType.toString()
         holder.binding.panNo.text = bankDataList!![position]!!.panNo.toString()

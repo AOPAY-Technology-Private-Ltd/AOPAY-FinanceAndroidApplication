@@ -9,6 +9,9 @@ data class GenerateAccessTokenRequest(
 	val fcmToken: String? = null,
 
 	@SerializedName("clientcode")
-	var clientCode: String
+	var clientCode: String,
+
+	@SerializedName("customerCode")
+	var customerCode: String
 
 )

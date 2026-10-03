@@ -4,16 +4,17 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
-android {
 
+android {
     namespace = "com.bosandroidapp.aopayfinance"
-    compileSdk = 34
+    compileSdk = 36
+
 
 
     defaultConfig {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 10
         versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -22,6 +23,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 
@@ -58,7 +60,9 @@ android {
 
 }
 
+
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -84,10 +88,12 @@ dependencies {
 
     implementation(libs.lottie)
     implementation(libs.glide)
-    implementation(libs.androidx.camera.core)
+    
+   /* implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.view)*/
+
     implementation(libs.play.services.location)
     implementation(libs.colormath)
     implementation(libs.androidx.work.runtime.ktx)
@@ -103,19 +109,38 @@ dependencies {
     implementation(libs.firebase.messaging)
     // Firebase BOM MUST be platform()
     implementation(platform(libs.firebase.bom))
-    //  Firestore KTX
-    implementation(libs.firebase.firestore.ktx)
+    // Firestore KTX
+    /*implementation(libs.firebase.firestore.ktx)*/
+
+
     // (optional)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.webkit)
+
 
     implementation(libs.googleid)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-
     implementation(libs.play.services.auth)
+
+
+   /* val stacker = "com.github.jatinsinghsatija.Stacker"
+    val stackerVersion = "v0.2.0"
+
+    debugImplementation("$stacker:stacker_inspector_debug:$stackerVersion")
+    debugImplementation("$stacker:flutter_debug:$stackerVersion")
+
+    releaseImplementation("$stacker:stacker_inspector_release:$stackerVersion")
+    releaseImplementation("$stacker:flutter_release:$stackerVersion")*/
+
+
+
+    // for Provisioning dependency ......................................
+
+    implementation("com.github.jatinsinghsatija:Provisioner-Jatt-SDK:v1.2.3")
+
 
 }

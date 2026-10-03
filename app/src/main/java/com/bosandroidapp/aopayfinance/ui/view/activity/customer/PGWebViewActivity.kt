@@ -28,34 +28,45 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimestamp
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isPgClosing
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiReceiveReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityPgwebViewBinding
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
+import com.bosandroidapp.aopayfinance.kioskmode.KioskActivity
+import com.bosandroidapp.aopayfinance.kioskmode.isLocked
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.customerCode
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGRequest
 
 import com.google.gson.Gson
+import kotlin.text.toDouble
 
 class PGWebViewActivity : BaseActivity() {
     lateinit var binding : ActivityPgwebViewBinding
     lateinit var dialog: Dialog
     lateinit var preference : SharedPreference
     lateinit var viewModel: AuthenticationViewModel
+    lateinit var dikshifinsureOnlinePGModel: DikshifinsureViewModel
+    var mode : String? = null
+    var merchantid : String? = null
 
     companion object{
         var emiList = mutableListOf<EmiLoanDetailPage.EmiData>()
         var EMIamountPG : String =""
         var LoanCodePG : String = ""
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -83,6 +94,13 @@ class PGWebViewActivity : BaseActivity() {
             CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface))
         )[AuthenticationViewModel::class.java]
 
+        dikshifinsureOnlinePGModel = ViewModelProvider(this,
+            DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
+        )[DikshifinsureViewModel::class.java]
+
+        mode = intent.getStringExtra("mode")
+        merchantid = intent.getStringExtra("merchantid")
+
         clearWebViewData(binding.pgwebview)
 
         launchPGOnWebView()
@@ -90,6 +108,10 @@ class PGWebViewActivity : BaseActivity() {
 
     fun launchPGOnWebView(){
         val pgUrl = intent.getStringExtra("pgurl")
+        if(intent.hasExtra("mode")&& intent.hasExtra("merchantid")){
+            mode = intent.getStringExtra("mode").toString()
+            merchantid = intent.getStringExtra("merchantid").toString()
+        }
         val finalHtml = """
     <html>
     <head>
@@ -108,6 +130,14 @@ class PGWebViewActivity : BaseActivity() {
             private var isSuccessPage = false
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+
+                if(mode == ConstantClass.online && !merchantid.isNullOrEmpty()){
+                    var req = GetOrderStatusOnlinePGRequest(
+                        orderId = merchantid!!
+                    )
+                    hitApiForPGStatus(req)
+                    return true
+                }
 
                 Log.d("URL", url.orEmpty())
 
@@ -199,6 +229,57 @@ class PGWebViewActivity : BaseActivity() {
     }
 
 
+    fun hitApiForPGStatus(req : GetOrderStatusOnlinePGRequest){
+
+        dikshifinsureOnlinePGModel.getOrderOnlineStatusPgRequest(req).observe(this) { resources ->
+
+            resources.let {
+                when(it.apiStatus){
+                    ApiStatus.SUCCESS -> {
+                        it.data?.let { users ->
+                            if(users.isSuccessful){
+                                users.body()?.let { response ->
+                                    Log.d("PGStatus", Gson().toJson(response))
+
+                                    var status = response.state
+                                    var orderId = response.orderId
+                                    var merchantOrderId = response.merchantOrderId
+                                    val amount = response.amount?.toDouble()?.toString() ?: "0.0"
+                                    val utrNumber = response.paymentDetails!!.firstOrNull()?.rail?.utr ?: ""
+                                    //COMPLETED
+                                    if(status!!.toLowerCase().equals("completed",ignoreCase = true)){
+                                        showingSuccessPopUp(utrNumber!!)
+                                    }
+                                    else {
+                                        showingRejectionePGPopUp()
+                                    }
+
+                                }
+                            }
+                            else{
+                                var getdata = users.errorBody()?.string()
+                                Log.d("PGStatus", "Error")
+                                showingRejectionePGPopUp()
+                                Toast.makeText(this@PGWebViewActivity,getdata.toString(), Toast.LENGTH_SHORT).show()
+
+                            }
+
+                        }
+                    }
+                    ApiStatus.ERROR -> {
+                        showingRejectionePGPopUp()
+                    }
+
+                    ApiStatus.LOADING ->{
+
+                    }
+                }
+            }
+        }
+
+    }
+
+
     fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String,dialog: Dialog,utrNumber: String){
 
         var  createdBy = preference.getStringValue(ConstantClass.CustomerCode, "")
@@ -229,37 +310,25 @@ class PGWebViewActivity : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
-                            if(users.isSuccessful){
-                                users.body()?.let {
-                                        response ->
+                            users.body()?.let {
+                                response ->
+                                Log.d("loanEmiReceiveResp", response.toString())
 
-                                    Log.d("loanEmiReceiveResp", response.toString())
-
-                                    if(loopcount==emicount){
-                                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
-                                            ConstantClass.dialog!!.dismiss()
-                                        }
-                                        emiList .clear()
-                                        EMIamountPG  =""
-                                        LoanCodePG  = ""
-                                        Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
-                                        val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
-                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        startActivity(intent)
-
+                                if(loopcount==emicount){
+                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                        ConstantClass.dialog!!.dismiss()
                                     }
+                                     emiList .clear()
+                                     EMIamountPG  =""
+                                     LoanCodePG  = ""
+                                    Toast.makeText(this@PGWebViewActivity,response.message,Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@PGWebViewActivity, DashBoard::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
 
                                 }
-                            }
-                            else{
-                                if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
-                                    ConstantClass.dialog!!.dismiss()
-                                }
-                                var getdata = users.errorBody()?.string()
-                                Toast.makeText(this@PGWebViewActivity,getdata.toString(),Toast.LENGTH_SHORT).show()
 
                             }
-
                         }
 
                     }
@@ -309,12 +378,20 @@ class PGWebViewActivity : BaseActivity() {
 
         var Ok = dialog!!.findViewById<AppCompatButton>(com.bosandroidapp.aopayfinance.R.id.btnOk)
 
-
+        /*Ok.setOnClickListener {
+            finish()
+            dialog!!.dismiss()
+        }*/
 
         Ok.setOnClickListener {
             isPgClosing = true
             dialog!!.dismiss()
             closePg()
+            if (isLocked()) {
+                val intent = Intent(this, KioskActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                startActivity(intent)
+            }
             window.decorView.post {
                 finish()
             }
@@ -372,6 +449,24 @@ class PGWebViewActivity : BaseActivity() {
 
     override fun onBackPressed() {
         showingRejectionePGPopUp()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("PG", "onDestroy")
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("PG", "onPause")
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("PG", "onStop")
     }
 
 

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -21,8 +22,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bos.payment.appName.network.RetrofitClient
+import com.beastblocks.provisionerjattsdk.ProvisionerClient
+import com.beastblocks.provisionerjattsdk.ProvisionerJatt
+import com.beastblocks.provisionerjattsdk.ProvisionerJattFrp
+import com.beastblocks.provisionerjattsdk.ProvisionerJattListener
+import com.beastblocks.provisionerjattsdk.ProvisioningStatus
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
+import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.dialog
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
@@ -40,6 +47,8 @@ class CustomerAppInstall : BaseActivity() {
     lateinit var binding: ActivityCustomerAppInstallBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference
+    private lateinit var client: ProvisionerClient
+    private lateinit var callback : ProvisionerJattListener
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,11 +62,12 @@ class CustomerAppInstall : BaseActivity() {
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
-
+        client = ProvisionerJatt.get()
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN)))[AuthenticationViewModel::class.java]
         setonClickListner()
 
     }
+
 
     fun setonClickListner(){
         binding.home.setOnClickListener {
@@ -75,7 +85,102 @@ class CustomerAppInstall : BaseActivity() {
         binding.clicktoopenappqr.setOnClickListener {
             OpenPopUpForQRScanAlert()
         }
+
+        binding.startProvisioning.setOnClickListener {
+            startProvisioning()
+        }
+
+
+
+        ProvisionerJattFrp.setOrganizationName("Aopay Technology Private Limited",this)
+
+        callback = object : ProvisionerJattListener {
+
+            override fun onProvisioningStatusUpdate(status: ProvisioningStatus) {
+                super.onProvisioningStatusUpdate(status)
+
+                when (status) {
+                    ProvisioningStatus.SUCCEEDED -> {
+                        Log.d("onProvisioningStatusUpdate", "${status}")
+                        runOnUiThread {
+                            showAppInstalledSuccessPopUp()
+                        }
+                    }
+                    else -> {
+                        Log.d("onProvisioningStatusUpdate", "${status}")
+                    }
+                }
+            }
+
+        }
     }
+
+
+    @SuppressLint("SetTextI18n")
+    fun showAppInstalledSuccessPopUp() {
+        if (isFinishing || isDestroyed) return
+
+        val successDialog = Dialog(
+            this,
+            android.R.style.Theme_Translucent_NoTitleBar
+        )
+
+        successDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        successDialog.setContentView(R.layout.success_app_install)
+
+        successDialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setDimAmount(0.5f)
+            addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }
+
+        successDialog.setCanceledOnTouchOutside(false)
+
+        val btnOk = successDialog.findViewById<View>(R.id.btnOk)
+        val tvMessage = successDialog.findViewById<TextView>(R.id.loancodewithamount)
+        val tvTitle = successDialog.findViewById<TextView>(R.id.tvTitle)
+
+        tvTitle.text = "App Installed Successfully"
+        tvMessage.text =
+            "The customer app has been provisioned and installed successfully."
+
+        btnOk.setOnClickListener {
+            successDialog.dismiss()
+
+            /*  val intent = Intent(this, DashBoard::class.java)
+              intent.flags =
+                  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+              startActivity(intent)
+              finish()*/
+        }
+
+        successDialog.show()
+
+        successDialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+    }
+
+
+    fun startProvisioning(){
+        client.detach(this)
+        client.clearAutomationAndSerial()
+        client.scanThenAutomateThenAttach(this, this, packageName, ConstantClass.CUSTOMERPPURLLINK, callback )
+
+    }
+
+
+
+
+    override fun onDestroy() {
+        if (::client.isInitialized) client.detach(this)
+        super.onDestroy()
+    }
+
+
 
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForVAlert() {

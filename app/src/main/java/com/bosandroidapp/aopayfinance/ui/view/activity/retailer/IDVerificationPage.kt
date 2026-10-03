@@ -28,7 +28,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityIdverificationPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -207,11 +207,13 @@ class IDVerificationPage : BaseActivity() {
 
     }
 
+
     fun hitApiForAadharVerification() {
         val firstName = preference.getStringValue(ConstantClass.FirstName, "").orEmpty()
         val lastName = preference.getStringValue(ConstantClass.LastName, "").orEmpty()
         val emailId = preference.getStringValue(ConstantClass.CustomerEmailID, "").orEmpty()
         val mob = preference.getStringValue(ConstantClass.CustomerMobileNumber, "").orEmpty()
+
 
         var aadharverificationreq = AadharVerificationReq(
             firstName = firstName,

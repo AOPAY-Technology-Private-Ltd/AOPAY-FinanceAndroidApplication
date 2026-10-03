@@ -26,6 +26,7 @@
             android:layout_alignBottom="@id/titlelayout"
             android:layout_marginLeft="@dimen/_10sdp"
             android:src="@drawable/back"
+            android:visibility="gone"
             app:tint="@color/darkgrey" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -42,8 +42,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bos.payment.appName.network.ApiInterface
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.ApiInterface
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityEmiLoanDetailPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -58,10 +58,12 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.MinHoldingAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.OTPTYPE
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.createMultipartFromUri
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.dikshifinsureOnlinePGModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentUtcTimestamp
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.loanmode
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.saveImageToCache
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.validateLoginInput
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
@@ -72,8 +74,10 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.VerifyOTPReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.SendOtpReq
 import com.bosandroidapp.aopayfinance.data.pg.PGRequestCall
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
+import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
 import com.bosandroidapp.aopayfinance.data.repository.PanRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
+import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
@@ -82,10 +86,12 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity.Companion.emiList
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.NewCustomerRegistrationPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
+import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
+import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
 import com.chaos.view.PinView
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -153,8 +159,8 @@ class EmiLoanDetailPage : BaseActivity() {
 
 
     companion object{
-        lateinit var LoanId : String
-        lateinit var customerCode : String
+        var LoanId : String = ""
+        var customerCode : String = ""
     }
 
 
@@ -188,8 +194,23 @@ class EmiLoanDetailPage : BaseActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+        if (intent.hasExtra("LoanId")) {
+            LoanId = intent.getStringExtra("LoanId").orEmpty()
+        }
+        if (intent.hasExtra("customerCode")) {
+            customerCode = intent.getStringExtra("customerCode").orEmpty()
+        }
+        if (savedInstanceState != null) {
+            LoanId = savedInstanceState.getString("LoanId", LoanId)
+            customerCode = savedInstanceState.getString("customerCode", customerCode)
+        }
+
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
+        dikshifinsureOnlinePGModel = ViewModelProvider(this,
+            DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
+        )[DikshifinsureViewModel::class.java]
+
 
         api = RetrofitClient.apiInterfaceSMS
         preference = SharedPreference(this)
@@ -198,6 +219,12 @@ class EmiLoanDetailPage : BaseActivity() {
         setOnClickListner()
         setviewCondition()
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("LoanId", LoanId)
+        outState.putString("customerCode", customerCode)
     }
 
 
@@ -437,6 +464,7 @@ class EmiLoanDetailPage : BaseActivity() {
             finish()
         }
 
+
         binding.clicktosealphoto1.setOnClickListener {
             checkCameraPermissionAndOpenCamera()
         }
@@ -474,6 +502,7 @@ class EmiLoanDetailPage : BaseActivity() {
                         Toast.makeText(this,"Please enter valid remarks.",Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
+
 
                     Log.d("emiamount", " $emiamount $WalletBalance")
 
@@ -591,18 +620,33 @@ class EmiLoanDetailPage : BaseActivity() {
                             val emiNumbers=  (1..selectedNoofEmi).joinToString("")
                             PGWebViewActivity.LoanCodePG = loanCode
 
-                            var req = PGRequestCall(
-                                payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
-                                customerEmailID = email,
-                                registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
-                                payCartAmount = emiamount.toString(),
-                                eMINumbers = "EMI${emiNumbers}",
-                                customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
-                                payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
-                                loanCode = loanCode
-                            )
+                            if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)){
 
-                            hitApiForRequestPG(req)
+                                var req = PGOnlineRequestCall(
+                                    amount = emiamount,
+                                    registrationID =  ConstantClass.PAN_VERIFICATION_REGISTRATION_ID,
+                                    eMINumbers = "${emiNumbers}",
+                                    customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                    loanCode = loanCode
+                                )
+
+                                hitApiForRequestPGOnline(req)
+
+                            }
+                            else {
+                                var req = PGRequestCall(
+                                    payCustomerPhoneNo = preference.getStringValue(ConstantClass.CustomerMobileNumber, ""),
+                                    customerEmailID = email,
+                                    registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE,
+                                    payCartAmount = emiamount.toString(),
+                                    eMINumbers = "EMI${emiNumbers}",
+                                    customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+                                    payCustomerName = "${preference.getStringValue(ConstantClass.FirstName, "")} ${preference.getStringValue(ConstantClass.LastName, "")}",
+                                    loanCode = loanCode
+                                )
+
+                                hitApiForRequestPG(req)
+                            }
 
                             // }
                         }
@@ -668,6 +712,55 @@ class EmiLoanDetailPage : BaseActivity() {
     }
 
 
+    fun hitApiForRequestPGOnline(req : PGOnlineRequestCall){
+
+        Log.d("PGRequest", Gson().toJson(req))
+
+        dikshifinsureOnlinePGModel.getPGRequestCallOnline(req).observe(this) { resources ->
+            resources.let {
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data.let { users ->
+                            users!!.body().let { response ->
+                                Log.d("PanVerificationResp", Gson().toJson(response))
+                                if (!response!!.intentUrl.isNullOrEmpty()) {
+                                    // Open WebView with the provided URL
+                                    ConstantClass.dialog!!.dismiss()
+                                    val intent = Intent(this@EmiLoanDetailPage, PGWebViewActivity::class.java)
+                                    intent.putExtra("pgurl", response!!.intentUrl)
+                                    intent.putExtra("mode", ConstantClass.online)
+                                    intent.putExtra("merchantid", response.marchentOrderID)
+                                    startActivity(intent)
+                                }
+                                else {
+                                    ConstantClass.dialog!!.dismiss()
+                                    Toast.makeText(this@EmiLoanDetailPage, response!!.errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    ApiStatus.ERROR -> {
+                        ConstantClass.dialog!!.dismiss()
+                        Toast.makeText(this@EmiLoanDetailPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                    }
+
+                    ApiStatus.LOADING -> {
+                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
     data class EmiData(
         val selectedNoofEmi:Int,
         val emiNo: Int,
@@ -704,6 +797,10 @@ class EmiLoanDetailPage : BaseActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun HitApiForEmiList(){
+        if (LoanId.isEmpty()) {
+            Log.e("EmiLoanDetailPage", "LoanId is empty, skipping HitApiForEmiList")
+            return
+        }
         var loanemireq = GetCustomerLoanDetailsReq(
             loancode = LoanId,
             customercode = "",
@@ -732,6 +829,7 @@ class EmiLoanDetailPage : BaseActivity() {
                                     binding.latefineamount.text = latefine
                                     AllgracePeriod = LoanEmiList[0]!!.gracePeriod
                                     CustomergracePeriod = LoanEmiList[0]!!.customerGracePeriod
+                                    loanmode = LoanEmiList[0]!!.loanmode
 
                                     var amount = calculateEMIPaymentStatus(LoanEmiList!![0]!!.paidEMI!!.toInt(),LoanEmiList!![0]!!.emiAmount!!.toDouble(), LoanEmiList!![0]!!.tenure)
 
@@ -852,28 +950,33 @@ class EmiLoanDetailPage : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
-                            users.body()?.let {
-                                    response ->
-                                Log.d("loanEmiReceiveResp", response.toString())
-                                if(loopcount==emicount){
+                            if(users.isSuccessful){
+                                users.body()?.let {
+                                        response ->
+                                    Log.d("loanEmiReceiveResp", response.toString())
+                                    if(loopcount==emicount){
 
-                                    if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
-                                        ConstantClass.dialog!!.dismiss()
+                                        if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
+                                            ConstantClass.dialog!!.dismiss()
+                                        }
+                                        Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
+                                        finish()
+
+                                        /* if(logintype.equals(Customer)){
+                                             OpenPopUpForVeryfyOTP()
+                                         }
+                                         else{
+                                             startActivity(Intent(this@EmiLoanDetailPage, MakePaymentPage::class.java))
+                                             makepaymentloanid = LoanId
+                                             makepaymentemicount = "$loopcount"
+                                             finish()
+                                         }*/
+
                                     }
-                                    Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                    finish()
-
-                                    /* if(logintype.equals(Customer)){
-                                         OpenPopUpForVeryfyOTP()
-                                     }
-                                     else{
-                                         startActivity(Intent(this@EmiLoanDetailPage, MakePaymentPage::class.java))
-                                         makepaymentloanid = LoanId
-                                         makepaymentemicount = "$loopcount"
-                                         finish()
-                                     }*/
-
                                 }
+                            }
+                            else{
+                                Toast.makeText(this@EmiLoanDetailPage, resources.message, Toast.LENGTH_SHORT).show()
                             }
                         }
 
@@ -998,7 +1101,11 @@ class EmiLoanDetailPage : BaseActivity() {
             customerCommissionGST = 0,
             commissionWithoutGST = 0,
             transferFromMsg = "Your Account is debited by ${amount}Rs.Due to Paid EMI on customer code :${customerCode}",
-            registrationId = ConstantClass.PENNYDROP_REGISTRATION_ID,
+            registrationId = if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)) {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
+            } else {
+                ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE
+            },
             tdsAmount = 0,
             serviceschargeGSTAmount = 0,
             transactionStatus = "Approved",
@@ -1013,50 +1120,54 @@ class EmiLoanDetailPage : BaseActivity() {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
-                            users.body()?.let {
-                                    response ->
-                                Log.d("payoutresponse", response.toString())
+                            if(users.isSuccessful){
+                                users.body()?.let { response ->
+                                    Log.d("payoutresponse", response.toString())
 
-                                if(response.statuss.equals("True")){
-                                    /*var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                    if(response.statuss!!.toLowerCase().equals("true", ignoreCase = true)){
+                                        /*var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
 
-                                    lifecycleScope.launch {
-                                        val imageFile = File(" ")
-                                        var ForServerlatefine:String? = ""
+                                        lifecycleScope.launch {
+                                            val imageFile = File(" ")
+                                            var ForServerlatefine:String? = ""
 
-                                        for (j in 1..selectedNoofEmi) {
+                                            for (j in 1..selectedNoofEmi) {
 
-                                            val emiIndex = j - 1
+                                                val emiIndex = j - 1
 
-                                            val emiAmountWithFine: String
+                                                val emiAmountWithFine: String
 
-                                            if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
-                                                if(isEmandateVerified.equals("Yes")){
-                                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                                if (listOfDueWithGraceDate[emiIndex].lateFeesApplied) {
+                                                    if(isEmandateVerified.equals("Yes")){
+                                                        emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + BounceCharge!!.toDouble() + Othercharges!!.toDouble() + WaiveOff!!.toDouble()).toString()
+                                                    }
+                                                    else{
+                                                        emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                                    }
+                                                    ForServerlatefine = latefine
                                                 }
-                                                else{
-                                                    emiAmountWithFine = (emiAmount.toDouble() + latefine!!.toDouble() + Othercharges!!.toDouble()).toString()
+                                                else {
+                                                    emiAmountWithFine = emiAmount
+                                                    ForServerlatefine = "0"
                                                 }
-                                                ForServerlatefine = latefine
+                                                Log.d("EMIAmount", emiAmountWithFine)
+                                                HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine,imageFile)
+                                                delay(1000) // wait 1 second between calls
                                             }
-                                            else {
-                                                emiAmountWithFine = emiAmount
-                                                ForServerlatefine = "0"
-                                            }
-                                            Log.d("EMIAmount", emiAmountWithFine)
-                                            HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine,imageFile)
-                                            delay(1000) // wait 1 second between calls
-                                        }
-                                    }*/
+                                        }*/
 
-                                    HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
+                                        HitApiForPayEmiAmount(selectedNoofEmi, j, emiAmountWithFine,ForServerlatefine)
+                                    }
+
+                                    else{
+                                        Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
+                                    }
+
                                 }
-
-                                else{
-                                    Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
-                                }
-
+                            }else{
+                                Toast.makeText(this@EmiLoanDetailPage, resources.message, Toast.LENGTH_SHORT).show()
                             }
+
 
                         }
 
@@ -1066,7 +1177,7 @@ class EmiLoanDetailPage : BaseActivity() {
                         if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
                             ConstantClass.dialog!!.dismiss()
                         }
-                        // ✅ Print the full error details
+                        //  Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
                         Log.e("API_ERROR_CODE", resources.data?.code().toString())
                         Log.e("API_ERROR_MSG", resources.message ?: "Unknown Error")

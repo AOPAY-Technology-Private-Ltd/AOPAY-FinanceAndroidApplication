@@ -25,7 +25,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.FragmentAddAccountBinding
 import com.bosandroidapp.aopayfinance.databinding.FragmentPayoutPageBinding
@@ -494,7 +494,8 @@ class AddBank : Fragment() {
        branchName = binding.branchname.text.toString(),
        branchAddress = binding.branchaddress.text.toString(),
        mobilenumber = binding.mobilenumber.text.toString(),
-       emailID = binding.emailid.text.toString())
+       emailID = binding.emailid.text.toString(),
+       clientcode = preference.getStringValue(ConstantClass.ClientCode,""))
 
    Log.d("AddBankAccountReq", Gson().toJson(req))
 
@@ -580,7 +581,8 @@ class AddBank : Fragment() {
             branchName = "",
             branchAddress = "",
             mobilenumber = "",
-            emailID = "")
+            emailID = "",
+            clientcode = preference.getStringValue(ConstantClass.ClientCode,""))
 
         Log.d("GetBankListReq", Gson().toJson(req))
 

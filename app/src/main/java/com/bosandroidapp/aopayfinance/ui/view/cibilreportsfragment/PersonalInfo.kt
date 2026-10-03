@@ -1,4 +1,4 @@
-package com.bos.payment.appName.ui.view.travel.airfragment
+package com.bosandroidapp.aopayfinance.ui.view.travel.airfragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

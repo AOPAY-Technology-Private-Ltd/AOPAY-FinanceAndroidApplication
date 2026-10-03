@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
 
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -35,6 +36,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.e("FCM_TEST", "onMessageReceived called")
 
     }
+
 
     fun passNotificationCode(notificationCode: String){
         val dpm = applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
@@ -100,10 +102,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
     }
-
 
 }

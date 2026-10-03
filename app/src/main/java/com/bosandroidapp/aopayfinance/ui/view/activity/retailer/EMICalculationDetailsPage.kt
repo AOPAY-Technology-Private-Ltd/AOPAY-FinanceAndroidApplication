@@ -30,14 +30,14 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bos.payment.appName.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bumptech.glide.Glide
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityEmicalculationDetailsPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.BASE_URL_PRODUCT_IMAGE
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.BrandName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ClickOnCardDashboard
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.CreatedByCustomerShortCut
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DownPayment
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.EmiAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.InterestAmt
@@ -55,7 +55,8 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.SellingPrice
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Tenure
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.ToBePaidAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
-import com.bosandroidapp.aopayfinance.data.model.ProductDataItem
+import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseReq
+import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.DataItem
@@ -72,7 +73,9 @@ import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.PaymentInformation.Companion.checkKYC
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import com.bosandroidapp.bosmobilefinance.ui.slideshow.ui.view.activity.retailer.cibilreportsfragment.BureauScore.Companion.userScore
 import com.google.gson.Gson
+import kotlin.code
 
 class EMICalculationDetailsPage : BaseActivity() {
     lateinit var binding: ActivityEmicalculationDetailsPageBinding
@@ -98,7 +101,7 @@ class EMICalculationDetailsPage : BaseActivity() {
     companion object {
         var EmiSplitDataModel: MutableList<DataItems> = mutableListOf()
         var FilterDataEmiSplitDataModel: MutableList<DataItems> = mutableListOf()
-        lateinit var MobileData: ProductDataItem
+        lateinit var MobileData: DataItem
     }
 
 
@@ -113,11 +116,11 @@ class EMICalculationDetailsPage : BaseActivity() {
 
             Log.d("ColorList", Gson().toJson(colorList))
 
-            var color = colorList!!.split(",").map { it.trim() }
+            var color = colorList.split(",").map { it.trim() }
         }
 
         if (EmiSplitDataModel.isEmpty()) {
-            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
+            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
         }
 
 
@@ -146,7 +149,7 @@ class EMICalculationDetailsPage : BaseActivity() {
             binding.nextbuttonlayout.visibility = View.GONE
         }
 
-        hitApiForGetEmiPercent(MobileData.brandName!!, MobileData.modelName!!)
+        hitApiForGetEmiPercent(MobileData.brandName, MobileData.modelName)
 
         setonClickListner()
 
@@ -284,7 +287,7 @@ class EMICalculationDetailsPage : BaseActivity() {
 
 
     fun setDataOnUI(SellingPrice: String,mrp:String) {
-        Glide.with(this).load(BASE_URL_PRODUCT_IMAGE+MobileData.imagePath).placeholder(R.drawable.samsung).error(R.drawable.samsung).into(binding.deviceImage)
+        Glide.with(this).load(MobileData.imagePath).placeholder(R.drawable.samsung).error(R.drawable.samsung).into(binding.deviceImage)
         binding.brandname.text = MobileData.brandName
         binding.designtype.text = MobileData.modelName
         binding.editiontxt.text = "Android OS  : ${MobileData.remark}"
@@ -314,14 +317,14 @@ class EMICalculationDetailsPage : BaseActivity() {
             isApiRunning = false
             EmiSplitDataModel.clear()
             FilterDataEmiSplitDataModel.clear()
-            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
+            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
         }
 
         binding.resetdata.setOnClickListener {
             isApiRunning = false
             EmiSplitDataModel.clear()
             FilterDataEmiSplitDataModel.clear()
-            hitApiForGetEmiPercent(MobileData!!.brandName!!, MobileData!!.modelName!!)
+            hitApiForGetEmiPercent(MobileData!!.brandName, MobileData!!.modelName)
         }
 
         binding.stroage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -470,20 +473,142 @@ class EMICalculationDetailsPage : BaseActivity() {
 
         binding.nextbuttonlayout.setOnClickListener {
 
-            val loanAmount = ConstantClass.LoanAmount ?: 0.0
+           /* val loanAmount = ConstantClass.LoanAmount ?: 0.0
             val maxHoldAmount = LoanSecurityHoldAmount.toDoubleOrNull() ?: 0.0
 
             if (loanAmount < maxHoldAmount) {
                 Toast.makeText(this@EMICalculationDetailsPage, "Your loan amount is below to the hold amount. Please contact Admin.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
+            }*/
 
             if (!ToBePaidAmount.isNullOrBlank()&& sellingPriceValidate) {
-                checkKYC = false
-                startActivity(Intent(this@EMICalculationDetailsPage, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.PaymentInformation::class.java))
+                hitApiForRetailerWalletAmount()
+                /*checkKYC = false
+                startActivity(Intent(this@EMICalculationDetailsPage, com.bosandroidapp.aopayfinance.ui.view.activity.retailer.PaymentInformation::class.java))*/
             }
 
         }
+
+    }
+
+    fun hitApiForRetailerWalletAmount() {
+        val retailerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
+        val req = RetailerWalletAmountReq(
+            retailerID = retailerCode,
+            amountType = "CreditBalance",
+            clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
+        )
+
+        viewModel.getRetailerWalletAmountReq(req).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS -> {
+                    val response = resources.data?.body()
+                    if (response?.statuss == "True") {
+                        LoanSecurityHoldAmount = response.loanSecurityHoldAmount ?: "0.00"
+                        proceedWithUpload()
+                    } else {
+                        ConstantClass.dialog!!.dismiss()
+                        binding.nextbuttonlayout.isEnabled = true
+                        Toast.makeText(this, response?.message ?: "Failed to fetch wallet info", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    binding.nextbuttonlayout.isEnabled = true
+                    Toast.makeText(this, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                }
+                ApiStatus.LOADING -> {
+                    ConstantClass.OpenPopUpForVeryfyOTP(this)
+                }
+            }
+        }
+    }
+
+
+    private fun proceedWithUpload() {
+        val loanAmount = ConstantClass.LoanAmount ?: 0.0
+        val maxHoldAmount = LoanSecurityHoldAmount.toDoubleOrNull() ?: 0.0
+
+        if (loanAmount < maxHoldAmount) {
+            ConstantClass.dialog!!.dismiss()
+            binding.nextbuttonlayout.isEnabled = true
+            Toast.makeText(this@EMICalculationDetailsPage, "Your loan amount is below to the hold amount. Please contact Admin.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        checkKYC = false
+
+        val req = ManageCustomerStepWiseReq(
+            mode = "UPDATE",
+            step = "2",
+            rid = "",
+            brandName = BrandName,
+            modelName = ModelName,
+            modelVariant = ModelVarient,
+            color = ModelColor,
+            sellingPrice = SellingPrice,
+            downPayment = DownPayment,
+            tenure = Tenure,
+            emiAmount = EmiAmount,
+            customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
+        )
+
+        Log.d("EMICalculationreq", Gson().toJson(req))
+        binding.nextbuttonlayout.isEnabled = false
+        hitApiForUploadCustomerData(req)
+    }
+
+
+    fun hitApiForUploadCustomerData(request : ManageCustomerStepWiseReq){
+
+        viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+            when (resources.apiStatus) {
+                ApiStatus.SUCCESS ->{
+                    resources.data.let { user->
+                        ConstantClass.dialog!!.dismiss()
+                        if(user!!.isSuccessful){
+
+                            val responseBody = user.body()
+
+                            val errorCode = responseBody?.code
+                            val message = responseBody?.message
+                            val getData = responseBody?.data
+
+                            Log.d("EMICalculationresponse", Gson().toJson(getData))
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+                            if(errorCode==200 ){
+                                startActivity(Intent(this@EMICalculationDetailsPage, PaymentInformation::class.java))
+                            }
+                            else{
+                                binding.nextbuttonlayout.isEnabled = true
+                            }
+
+                        }
+                        else {
+                            var errorbody = user.errorBody()
+                            Log.e("API_ERROR", errorbody?.string() ?: "Unknown error")
+                            Toast.makeText(this@EMICalculationDetailsPage, errorbody?.string(), Toast.LENGTH_SHORT).show()
+                            binding.nextbuttonlayout.isEnabled = true
+                        }
+                    }
+
+                }
+
+                ApiStatus.ERROR -> {
+                    ConstantClass.dialog!!.dismiss()
+                    binding.nextbuttonlayout.isEnabled = true
+                    Toast.makeText(this@EMICalculationDetailsPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+                }
+
+
+                ApiStatus.LOADING -> {
+
+                }
+
+            }
+        }
+
 
     }
 
