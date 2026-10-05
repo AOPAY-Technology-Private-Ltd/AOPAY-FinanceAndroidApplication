@@ -62,6 +62,7 @@ class CustomerAppInstall : BaseActivity() {
             view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
             WindowInsetsCompat.CONSUMED
         }
+
         client = ProvisionerJatt.get()
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN)))[AuthenticationViewModel::class.java]
         setonClickListner()
@@ -76,7 +77,6 @@ class CustomerAppInstall : BaseActivity() {
             startActivity(intent)
             onBackPressed()
         }
-
 
         binding.back.setOnClickListener {
             OpenPopUpForVAlert()
@@ -113,6 +113,7 @@ class CustomerAppInstall : BaseActivity() {
             }
 
         }
+
     }
 
 
@@ -171,7 +172,6 @@ class CustomerAppInstall : BaseActivity() {
         client.scanThenAutomateThenAttach(this, this, packageName, ConstantClass.CUSTOMERPPURLLINK, callback )
 
     }
-
 
 
 
@@ -257,6 +257,7 @@ class CustomerAppInstall : BaseActivity() {
     }
 
 
+
     fun hitApiForDownloadAppUrlLinkQR(qrCodeProvising: ImageView, progressBar: ProgressBar) {
         lifecycleScope.launch {
 
@@ -297,7 +298,6 @@ class CustomerAppInstall : BaseActivity() {
 
 
     }
-
 
 
 }
