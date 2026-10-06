@@ -393,7 +393,6 @@ class EMICalculationDetailsPage : BaseActivity() {
         }
 
 
-
         binding.sellingamount.isCursorVisible = true
         binding.sellingamount.requestFocus()
 
@@ -566,6 +565,7 @@ class EMICalculationDetailsPage : BaseActivity() {
                 ApiStatus.SUCCESS ->{
                     resources.data.let { user->
                         ConstantClass.dialog!!.dismiss()
+
                         if(user!!.isSuccessful){
 
                             val responseBody = user.body()
@@ -579,6 +579,7 @@ class EMICalculationDetailsPage : BaseActivity() {
 
                             if(errorCode==200 ){
                                 startActivity(Intent(this@EMICalculationDetailsPage, PaymentInformation::class.java))
+                                binding.nextbuttonlayout.isEnabled = true
                             }
                             else{
                                 binding.nextbuttonlayout.isEnabled = true

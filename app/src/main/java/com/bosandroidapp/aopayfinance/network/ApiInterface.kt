@@ -810,9 +810,9 @@ interface ApiInterface {
     @Multipart
     @POST("api/V1/AopayFinance/UpdateCustomerPhotoPath")
     suspend fun uploadInVoiceRequest(
-        @Query("CustomerCode") customerCode: String,
-        @Query("ColumnName") columnName: String,
-        @Query("NewValue") newValue: String,
+        @Part("CustomerCode") customerCode: RequestBody,
+        @Part("ColumnName") columnName: RequestBody,
+        @Part("NewValue") newValue: RequestBody,
         @Part invoiceImage: MultipartBody.Part
     ): Response<CustomerMakePaymentResp>?
 
@@ -865,7 +865,6 @@ interface ApiInterface {
     // for UPI Auto Mandate Api ....................................................................
     @POST("api/OQPay/Finance/V1/SetupSubscription/Pennydrop")
     suspend fun getUpiMandateOnlineRequest(@Body req: UPIMandateRequest): Response<UPIMandateResponse>?
-
 
 
 

@@ -133,7 +133,7 @@ class IDVerificationPage : BaseActivity() {
             else {
                 OpenPopUpForValidateDate()
                 }
-        }
+          }
 
 
         binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->

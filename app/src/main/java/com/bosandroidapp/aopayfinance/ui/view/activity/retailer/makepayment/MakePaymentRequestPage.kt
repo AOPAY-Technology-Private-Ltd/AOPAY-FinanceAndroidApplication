@@ -74,6 +74,11 @@ class MakePaymentRequestPage : BaseActivity() {
             }
             else {
                 photoUri = null
+                imagepath = ""
+                Glide.with(this).clear(binding.receiptPhoto)
+                binding.receiptPhoto.visibility = View.GONE
+                binding.cameraicon.visibility = View.VISIBLE
+                binding.clicktosealphoto1.text = "Click to upload"
             }
 
         }

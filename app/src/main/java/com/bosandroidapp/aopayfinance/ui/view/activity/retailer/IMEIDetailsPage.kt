@@ -155,19 +155,33 @@ class IMEIDetailsPage : BaseActivity() {
         else{
             if(imei1photo){
                 imei1photoUri= null
+                Glide.with(this).clear(binding.imei1photo)
+                binding.imei1photo.visibility = View.GONE
+                binding.imei1photoicon.visibility = View.VISIBLE
+                binding.clicktosealphoto1.text = "Click to upload"
             }
-
             else if(imei2photo){
                 imei2photoUri=null
+                Glide.with(this).clear(binding.imei2photo)
+                binding.imei2photo.visibility = View.GONE
+                binding.imei2photoicon.visibility = View.VISIBLE
+                binding.clicktosealphoto2.text = "Click to upload"
             }
-
             else if(ImeiPhoto){
                 ImeiPhotoUri= null
+                Glide.with(this).clear(binding.ImeiPhoto)
+                binding.ImeiPhoto.visibility = View.GONE
+                binding.imeiicon.visibility = View.VISIBLE
+                binding.clicktoimeiphoto.text = "Click to upload"
             }
-
-            /*else if(invoicePhoto){
+            else if(invoicePhoto){
                 invoicePhotoUri=null
-            }*/
+                Glide.with(this).clear(binding.invoicePhoto)
+                binding.invoicePhoto.visibility = View.GONE
+                binding.invoiceicon.visibility = View.VISIBLE
+                binding.clicktoinvoice.text = "Click to upload"
+            }
+            resetFlag()
         }
 
 
@@ -347,7 +361,7 @@ class IMEIDetailsPage : BaseActivity() {
         }*/
 
         if (ImeiPhotoUri == null) {
-            return Pair(false, "\t\n" + "Please upload IMEI Number Photo.")
+            return Pair(false,  "Please upload IMEI Number Photo.")
         }
 
         return Pair(true, null)

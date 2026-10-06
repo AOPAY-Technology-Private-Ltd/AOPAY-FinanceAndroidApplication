@@ -1389,6 +1389,7 @@ class QRCodePage : BaseActivity() {
                                             ""
                                         )
                                     )
+                                    
                                     Log.d("Loanreq", Gson().toJson(req))
 
                                     hitApiForUploadCustomerLoanData(req)
@@ -1396,7 +1397,9 @@ class QRCodePage : BaseActivity() {
                                     val isBankDetailsMissing = BankIFSCCode.trim().isEmpty() || AccountNumber.trim().isEmpty() || AccountType.trim().isEmpty()
 
                                     if (isBankDetailsMissing && LoanMode == ConstantClass.offline) {
-                                        startActivity(Intent(this@QRCodePage, AppScanInstallPage::class.java))
+                                        val intent = Intent(this@QRCodePage, AppScanInstallPage::class.java)
+                                        startActivity(intent)
+                                        finish()
                                     } else {
                                         showEmandateOptionsInPage()
                                     }

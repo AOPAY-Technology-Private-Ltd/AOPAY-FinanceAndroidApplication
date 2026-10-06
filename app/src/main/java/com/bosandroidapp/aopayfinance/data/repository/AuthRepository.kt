@@ -414,17 +414,17 @@ class AuthRepository(private val apiInterface: ApiInterface) {
 
   suspend fun uploadInVoiceRequest(customerCode: String, columnName: String, newValue: String, imagePart: MultipartBody.Part) =
     apiInterface.uploadInVoiceRequest(
-      customerCode,
-      columnName,
-      newValue,
+      customerCode.toRequestBody("text/plain".toMediaTypeOrNull()),
+      columnName.toRequestBody("text/plain".toMediaTypeOrNull()),
+      newValue.toRequestBody("text/plain".toMediaTypeOrNull()),
       imagePart
     )
 
 
-  suspend fun geteMandateSelectOptionRequest(req: EmandateOptionSelectetionReq) = apiInterface.geteMandateSelectOptionRequest(req)
+    suspend fun geteMandateSelectOptionRequest(req: EmandateOptionSelectetionReq) = apiInterface.geteMandateSelectOptionRequest(req)
 
 
-  suspend fun updateCustomerDataReq(req: UpdateCustomerUploadDataReq): Response<UpdateCustomerDataIfAlreadyExistResponse> {
+    suspend fun updateCustomerDataReq(req: UpdateCustomerUploadDataReq): Response<UpdateCustomerDataIfAlreadyExistResponse> {
     val customerCode = req.customerCode.toRequestBody("text/plain".toMediaTypeOrNull())
     val updatedBy = req.updatedBy.toRequestBody("text/plain".toMediaTypeOrNull())
     val firstName = req.firstName.toRequestBody("text/plain".toMediaTypeOrNull())

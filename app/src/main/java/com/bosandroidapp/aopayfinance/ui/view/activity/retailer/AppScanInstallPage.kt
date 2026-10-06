@@ -161,8 +161,11 @@ class AppScanInstallPage : BaseActivity() {
         }
         else{
             invoicePhotoUri = null
+            Invoive_Path = null
+            Glide.with(this).clear(binding.invoiceImage)
             binding.invoiceImage.visibility= View.GONE
             binding.btnUploadToServer.visibility = View.GONE
+            binding.tvUploadText.text = "Click to Upload Invoice"
         }
 
     }
@@ -276,11 +279,9 @@ class AppScanInstallPage : BaseActivity() {
             }
         }
 
-
         binding.startProvisioning.setOnClickListener {
             startProvisioning()
         }
-
 
         ProvisionerJattFrp.setOrganizationName("Aopay Technology Private Limited",this)
 
@@ -294,6 +295,7 @@ class AppScanInstallPage : BaseActivity() {
                         Log.d("onProvisioningStatusUpdate", "${status}")
                         runOnUiThread {
                            // showAppInstalledSuccessPopUp()
+                            onDestroy()
                         }
                     }
                     else -> {
@@ -304,7 +306,10 @@ class AppScanInstallPage : BaseActivity() {
 
         }
 
+
     }
+
+
 
 
     fun startProvisioning(){
@@ -315,10 +320,12 @@ class AppScanInstallPage : BaseActivity() {
     }
 
 
+
     override fun onDestroy() {
         if (::client.isInitialized) client.detach(this)
         super.onDestroy()
     }
+
 
     fun hitApiForUploadInvoice() {
 
@@ -342,8 +349,8 @@ class AppScanInstallPage : BaseActivity() {
 
             viewModel.uploadInVoiceRequest(
                 customerCode = CustomerCodeForEnach,
-                columnName = "Invoive_Path",
-                newValue = "Invoice",
+                columnName = "Invoice_Path", //   Invoive_Path changes done by Naim Sir 05/10/2026
+                newValue = "Invoices", //Invoice
                 imagePart = invoicePart
             ).observe(this) { resources ->
                 when (resources.apiStatus) {

@@ -185,8 +185,6 @@ object ConstantClass {
     const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
     const val UNLOCK = "UNLOCK"
 
-
-
      const val OLD_FRP_MAIL_ID = "info@aopay.in"
 
      const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"

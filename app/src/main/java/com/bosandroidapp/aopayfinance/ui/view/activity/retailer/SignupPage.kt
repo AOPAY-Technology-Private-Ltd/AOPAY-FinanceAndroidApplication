@@ -100,6 +100,7 @@ class SignupPage : BaseActivity() {
     }
 
 
+
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             // We use currentCaptureMode because booleans can reset to false if the OS kills the app in the background
@@ -221,6 +222,67 @@ class SignupPage : BaseActivity() {
         } else {
             // Optional: Handle failure or cancellation
             Log.d("BOS_CAMERA", "Capture failed or cancelled for mode: $currentCaptureMode")
+
+            when (currentCaptureMode) {
+
+                "PROFILE" -> {
+                    profilePhotoUri = null
+                    customerImagePath = ""
+                    Glide.with(this).clear(binding.profileimage)
+                    binding.profileimage.visibility = View.GONE
+                    binding.lockimage.visibility = View.VISIBLE
+                }
+
+                "AADHAAR_FRONT" -> {
+                    aadhaarFronthotoUri = null
+                    aadhaarFrontImagePath = ""
+                    Glide.with(this).clear(binding.aadhaarfront)
+                    binding.aadhaarfront.visibility = View.GONE
+                    binding.aadhaarfronticon.visibility = View.VISIBLE
+                }
+
+                "AADHAAR_BACK" -> {
+                    aadhaarBackhotoUri = null
+                    aadhaarBackImagePath = ""
+                    Glide.with(this).clear(binding.aadhaarback)
+                    binding.aadhaarback.visibility = View.GONE
+                    binding.aadhaarbackicon.visibility = View.VISIBLE
+                }
+
+                "PANCARD" -> {
+                    pancardphotoUri = null
+                    panImagePath = ""
+                    Glide.with(this).clear(binding.pancardPhoto)
+                    binding.pancardPhoto.visibility = View.GONE
+                    binding.pancardicon.visibility = View.VISIBLE
+                }
+
+                "STORE" -> {
+                    storePhotoUri = null
+                    storeImagePath = ""
+                    Glide.with(this).clear(binding.storePhoto)
+                    binding.storePhoto.visibility = View.GONE
+                    binding.storeicon.visibility = View.VISIBLE
+                }
+
+                "COMPANYDOCUMENT" -> {
+                    companyCodePhotoUri = null
+                    companydocImagePath = ""
+                    Glide.with(this).clear(binding.companydocumentPhoto)
+                    binding.companydocumentPhoto.visibility = View.GONE
+                    binding.companydocumenticon.visibility = View.VISIBLE
+                }
+
+                "CANCELCHEQUE" -> {
+                    chequePhotoUri = null
+                    cancelChequeImagePath = ""
+                    Glide.with(this).clear(binding.cancelchequePhoto)
+                    binding.cancelchequePhoto.visibility = View.GONE
+                    binding.cancelchequeicon.visibility = View.VISIBLE
+                }
+
+            }
+
         }
     }
 

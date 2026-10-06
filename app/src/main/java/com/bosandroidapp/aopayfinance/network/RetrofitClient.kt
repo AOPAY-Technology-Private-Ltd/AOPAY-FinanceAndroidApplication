@@ -4,6 +4,7 @@ import com.bosandroidapp.aopayfinance.BuildConfig
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.google.gson.GsonBuilder
 /*import com.stacker.stacker.StackerOkHttpInterceptor*/
+/*import com.stacker.stacker.StackerOkHttpInterceptor*/
 import okhttp3.Interceptor
 /*import com.stacker.stacker.StackerOkHttpInterceptor*/
 import okhttp3.OkHttpClient
@@ -49,6 +50,7 @@ object RetrofitClient {
             .build()
     }
 
+
     private fun getAllInstanceSMS(): Retrofit{
         // Create OkHttpClient with 1-minute timeout settings
         val okHttpClient = OkHttpClient.Builder()
@@ -68,6 +70,7 @@ object RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
     }
+
 
     private fun getAllInstancePAN(): Retrofit{
         // Create OkHttpClient with 1-minute timeout settings
@@ -89,6 +92,7 @@ object RetrofitClient {
             .build()
     }
 
+
     private fun getInstanceOnlinePG(): Retrofit{
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
@@ -108,6 +112,7 @@ object RetrofitClient {
 
 
    /* private fun getInstanceOnlineEnach(): Retrofit{
+
         val okHttpClient = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             *//*.addInterceptor(StackerOkHttpInterceptor())*//*
@@ -122,6 +127,7 @@ object RetrofitClient {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
+
     }*/
 
 

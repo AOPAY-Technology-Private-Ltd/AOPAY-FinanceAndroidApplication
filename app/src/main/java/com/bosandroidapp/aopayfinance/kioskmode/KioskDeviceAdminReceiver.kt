@@ -64,7 +64,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
         }
 
-        // 🚀 Launch your kiosk activity
+        //  Launch your kiosk activity
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
         intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

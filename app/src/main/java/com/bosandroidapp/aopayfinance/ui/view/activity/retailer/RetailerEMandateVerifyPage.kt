@@ -430,6 +430,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
 
     fun hitApiForEMandateStatus(request: ENachStatusReq) {
         Log.d("eManadateStatusReq", Gson().toJson(request))
+
         if(ConstantClass.CheckOnlineOrOffline.equals(ConstantClass.offline)) {
             panViewModel.geteMandateSatusRequest(request).observe(this) { resources ->
                 resources.let {
@@ -450,17 +451,11 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                                         eMandateStatus = response.data.customer!!.accptd!!
                                     }
 
-                                    if (response!!.statusCode.equals("NP000") && eMandateStatus.equals(
-                                            eMandate
-                                        )
-                                    ) {
+                                    if (response!!.statusCode.equals("NP000") && eMandateStatus.equals(eMandate)) {
                                         isEmandateVerified = isMandate
                                         CheckOnlineOrOffline = ""
-                                        Toast.makeText(
-                                            this,
-                                            "ENach Mandate is Active",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(this, "ENach Mandate is Active", Toast.LENGTH_SHORT).show()
+
                                         if (!isEmandateVerified.isNullOrBlank()) {
 
                                             var request = EnachDateUploadReq(
@@ -482,7 +477,8 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                                             )
                                         }
 
-                                    } else {
+                                    }
+                                    else {
                                         if (!eMandateStatus.equals(eMandatepending)) {
                                             isEmandateVerified = "No"
                                             showingRejectioneMandatePopUp(response.data.customer!!.umrn!!)
@@ -611,27 +607,35 @@ class RetailerEMandateVerifyPage : BaseActivity() {
     }
 
 
-    fun  hitApiForUploadEnachMandateDataResponse(request:EnachDateUploadReq,isMandate: String){
+    fun hitApiForUploadEnachMandateDataResponse(request: EnachDateUploadReq, isMandate: String) {
 
         Log.d("EmandateUploadreq", Gson().toJson(request))
 
-        viewModel.UpdateEmandateDetails(request).observe(this){ resources ->
+        viewModel.UpdateEmandateDetails(request).observe(this) { resources ->
             resources.let {
 
-                when(it.apiStatus){
-                    ApiStatus.SUCCESS ->{
-                        it.data.let { users ->
-                            users!!.body().let { response ->
+                when (it.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data?.let { users ->
+                            users.body()?.let { response ->
+                                val statusCode = response.status
+                                val message = response.message ?: "E-Mandate updated successfully"
                                 Log.d("EmandateUploadRes", Gson().toJson(response))
-                                dialog!!.dismiss()
-                                if(isMandate.equals(ConstantClass.isMandate)){
+
+                                if (::dialog.isInitialized && dialog.isShowing) {
+                                    dialog.dismiss()
+                                }
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+                                    ConstantClass.dialog!!.dismiss()
+                                }
+
+                                Toast.makeText(this@RetailerEMandateVerifyPage, message, Toast.LENGTH_SHORT).show()
+
+                                if (isMandate.equals(ConstantClass.isMandate, ignoreCase = true) || statusCode == "200") {
                                     // success response
                                     startActivity(Intent(this@RetailerEMandateVerifyPage, AppScanInstallPage::class.java))
-                                   /* startActivity(Intent(this@RetailerEMandateVerifyPage, CongratulationPage::class.java))
-                                    clearData()
-                                    finish()*/
-                                }
-                                else{
+                                    finish()
+                                } else {
                                     isEnachCancelled = true
                                     startActivity(Intent(this@RetailerEMandateVerifyPage, DashBoard::class.java))
                                     finish()
@@ -641,21 +645,25 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                         }
 
                     }
-                    ApiStatus.ERROR ->{
+                    ApiStatus.ERROR -> {
+                        if (::dialog.isInitialized && dialog.isShowing) {
+                            dialog.dismiss()
+                        }
+                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+                            ConstantClass.dialog!!.dismiss()
+                        }
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
                         Log.e("API_ERROR_CODE", resources.data?.code().toString())
                         Log.e("API_ERROR_MSG", resources.message ?: "Unknown Error")
 
-                        Toast.makeText(this, "Server error occurred (Code: ${resources.data?.code() ?: "Unknown"})", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@RetailerEMandateVerifyPage, resources.message ?: "Server error occurred (Code: ${resources.data?.code() ?: "Unknown"})", Toast.LENGTH_LONG).show()
 
                         // Optional: Handle specific 500 error
                         if (resources.data?.code() == 500) {
                             Log.e("API_ERROR", "Internal Server Error from backend.")
                         }
                     }
-
-
 
                     ApiStatus.LOADING -> {
 

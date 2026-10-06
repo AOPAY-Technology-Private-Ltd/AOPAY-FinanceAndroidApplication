@@ -10,7 +10,6 @@ android {
     compileSdk = 36
 
 
-
     defaultConfig {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
@@ -88,11 +87,13 @@ dependencies {
 
     implementation(libs.lottie)
     implementation(libs.glide)
+
     
    /* implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)*/
+
 
     implementation(libs.play.services.location)
     implementation(libs.colormath)
@@ -113,10 +114,12 @@ dependencies {
     /*implementation(libs.firebase.firestore.ktx)*/
 
 
+
     // (optional)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.webkit)
+
 
 
     implementation(libs.googleid)
@@ -127,11 +130,17 @@ dependencies {
     implementation(libs.play.services.auth)
 
 
-   /* val stacker = "com.github.jatinsinghsatija.Stacker"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+
+
+  /*  val stacker = "com.github.jatinsinghsatija.Stacker"
     val stackerVersion = "v0.2.0"
+
 
     debugImplementation("$stacker:stacker_inspector_debug:$stackerVersion")
     debugImplementation("$stacker:flutter_debug:$stackerVersion")
+
 
     releaseImplementation("$stacker:stacker_inspector_release:$stackerVersion")
     releaseImplementation("$stacker:flutter_release:$stackerVersion")*/

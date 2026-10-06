@@ -176,6 +176,11 @@ class EmiLoanDetailPage : BaseActivity() {
 
         }else{
             photoUri = null
+            imagepath = ""
+            binding.receiptPhoto.setImageDrawable(null)
+            binding.receiptPhoto.visibility = View.GONE
+            binding.cameraicon.visibility = View.VISIBLE
+            binding.clicktosealphoto1.text = "Click to upload"
         }
     }
 
@@ -926,6 +931,7 @@ class EmiLoanDetailPage : BaseActivity() {
         var customercode =  customerCode
         var retailercode =  preference.getStringValue(ConstantClass.RetailerCode, "")
 
+
         val request = CustomerLoanEmiReceiveReq(
             mode = "UPDATE",
             loanCode = loanCode,
@@ -951,14 +957,14 @@ class EmiLoanDetailPage : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             if(users.isSuccessful){
-                                users.body()?.let {
-                                        response ->
+                                users.body()?.let { response ->
                                     Log.d("loanEmiReceiveResp", response.toString())
                                     if(loopcount==emicount){
 
                                         if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
                                             ConstantClass.dialog!!.dismiss()
                                         }
+
                                         Toast.makeText(this@EmiLoanDetailPage,response.message,Toast.LENGTH_SHORT).show()
                                         finish()
 

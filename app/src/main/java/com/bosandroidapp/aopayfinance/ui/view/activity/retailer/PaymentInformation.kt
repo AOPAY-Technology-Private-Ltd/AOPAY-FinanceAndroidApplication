@@ -211,11 +211,11 @@ class PaymentInformation : BaseActivity() {
     }
 
 
-
     companion object{
         var checkKYC : Boolean = false
         var initialStep : Int = 1
     }
+
 
 
     override fun onResume() {
@@ -332,6 +332,7 @@ class PaymentInformation : BaseActivity() {
 
 
     }
+
 
     fun setView(){
 
@@ -468,6 +469,7 @@ class PaymentInformation : BaseActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.acounttype.adapter = adapter
     }
+
 
 
     fun setOnClickListner(){
@@ -771,6 +773,7 @@ class PaymentInformation : BaseActivity() {
 
     }
 
+
     fun hitApiForRequestPennyDrop(){
         binding.nextlayout.isEnabled=false
         var request = PennyDropRequest(
@@ -968,6 +971,7 @@ class PaymentInformation : BaseActivity() {
             }
         }
     }
+
 
     fun hitApiForMobVerify(mobnumber: String, customerName: String, OTP: String) {
         // hint: Dear  Naim Khan, Your OTP for Verification is 1234. Please Do Not Share the OTP With Anyone. Thanks For Using BOSOQ BOS CENTER
@@ -1546,7 +1550,6 @@ class PaymentInformation : BaseActivity() {
         }
 
     }
-
 
 
     fun setselectionForFirstCard(){

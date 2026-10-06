@@ -216,6 +216,13 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 customerImagePath = imageFile!!.absolutePath
                 binding.imagenotuploaded.visibility = View.GONE
             }
+            else {
+                photoUri = null
+                customerImagePath = ""
+                Glide.with(this).clear(binding.userimage)
+                binding.userimage.visibility = View.GONE
+                binding.lockimage.visibility = View.VISIBLE
+            }
 
         }
 
@@ -2657,6 +2664,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
                             if(status==true && customerCode!!.isNotEmpty()){
                                 Log.d("CustomerCode" ,customerCode)
+                                binding.createaccount.isEnabled = true
                                 preference.setStringValue(ConstantClass.CustomerCode, customerCode)
                                 startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
                             }
@@ -2714,6 +2722,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 ConstantClass.dialog!!.dismiss()
 
                                 if(errorCode==200 && getdata!=null && getdata.customerCode!!.isNotEmpty() ){
+                                    binding.createaccount.isEnabled = true
                                     Toast.makeText(this@NewCustomerRegistrationPage, message, Toast.LENGTH_SHORT).show()
                                     preference.setStringValue(ConstantClass.CustomerCode, getdata.customerCode.toString())
                                     startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))

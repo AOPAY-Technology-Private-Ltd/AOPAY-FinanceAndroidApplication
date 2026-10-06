@@ -148,12 +148,12 @@ class CustomerAppInstall : BaseActivity() {
         btnOk.setOnClickListener {
             successDialog.dismiss()
 
-            /*  val intent = Intent(this, DashBoard::class.java)
+              val intent = Intent(this, DashBoard::class.java)
               intent.flags =
                   Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
               startActivity(intent)
-              finish()*/
+              finish()
         }
 
         successDialog.show()
@@ -164,6 +164,7 @@ class CustomerAppInstall : BaseActivity() {
         )
 
     }
+
 
 
     fun startProvisioning(){

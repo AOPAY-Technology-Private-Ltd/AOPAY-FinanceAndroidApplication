@@ -58,6 +58,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanFirstName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanLastName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanMiddleName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanMobileNumber
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanNumber
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanPinCode
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.PanState
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Retailer
@@ -477,6 +478,8 @@ class DashBoard : BaseActivity() {
 
         binding.appBarDashBoard.deskdesign.customer.setOnClickListener {
             ConstantClass.ClickOnCardDashboard = "Customer"
+            ConstantClass.CheckOnlineOrOffline=""
+            PanNumber=""
             startActivity(Intent(this@DashBoard, IDVerificationPage::class.java))
         }
 

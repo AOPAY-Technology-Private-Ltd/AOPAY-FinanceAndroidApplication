@@ -147,20 +147,16 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     private lateinit var viewModel: AuthenticationViewModel
     private lateinit var panViewModel: PanViewModel
     lateinit var dikshifinsureViewModel: DikshifinsureViewModel
-   // lateinit var onlineEnachViewModel: OnlineEnachViewModel
     var bankList = mutableListOf<Pair<String, Int>>()
     private var customerList: MutableList<CustomerStepDataItem> = mutableListOf()
 
     private var FilterReportDataList: MutableList<CustomerStepDataItem> = mutableListOf()
     private lateinit var customerAdapter: CustomerShortcutLoanAdapter
     private lateinit var binding: ActivityCustomerListForCreatingShortCutLoanProcessPageBinding
-
-
     private var selectedAuthType: String = ""
     private var emandateSelectList: MutableList<Pair<String, List<EmandateSelectDataItem>>?> = mutableListOf()
 
     lateinit var dialog: Dialog
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,7 +171,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         panViewModel = ViewModelProvider(this, PanViewModelFactory(PanRepository(RetrofitClient.apiInterfacePAN)))[PanViewModel::class.java]
         dikshifinsureViewModel = ViewModelProvider(this, DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG)))[DikshifinsureViewModel::class.java]
@@ -188,10 +183,15 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
 
         setonclickListner()
+
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
         setupRecyclerView()
         setview()
-
-
     }
 
 
@@ -278,7 +278,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         }
 
     }
-
 
 
     fun setview() {
@@ -483,7 +482,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     }
 
 
-
     private fun showOnlineOfflineDialog(item: CustomerShortCutDataItem,step : String) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -530,7 +528,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     }
 
 
-
     private fun navigateToNextStep(item: CustomerShortCutDataItem, step: String) {
         var customerDetails = item.customerDetails
 
@@ -541,6 +538,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
             }
             // Step 1: Mobile Selection (Brand/EMI)
             "1" -> {
+                ConstantClass.ClickOnCardDashboard = "Customer"
                 startActivity(Intent(this, MobileSelectionActivity::class.java))
             }
 
@@ -588,7 +586,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         }
 
     }
-
 
 
     private fun ShowPopUpForEnachProcess(item: CustomerShortCutDataItem) {
@@ -678,7 +675,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     }
 
 
-
     fun hitApiForBankList(item: CustomerShortCutDataItem) {
         bankList.clear()
 
@@ -746,7 +742,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     }
 
 
-
     private fun proceedWithLoanLogic(item: CustomerShortCutDataItem,step: String) {
         var loanData = item.createLoanDetails
         var invoiceAppVerification = item.invoiceAndAppVerification
@@ -775,7 +770,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         }
 
     }
-
 
 
     private fun showEmandateSelectionDialog(item: CustomerShortCutDataItem) {
@@ -818,7 +812,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
     }
 
 
-
     private fun fetchEmandateOptionsForDialog(dialog: Dialog) {
         val req = EmandateOptionSelectetionReq(
             mode = LoanMode,
@@ -830,8 +823,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         )
         setupEmandateOptionsInDialog(req, dialog)
     }
-
-
 
 
     private fun setupEmandateOptionsInDialog(req: EmandateOptionSelectetionReq, dialog: Dialog) {
@@ -1238,7 +1229,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                     binding.notfoundimage.visibility = View.VISIBLE
                                     Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, response.message, Toast.LENGTH_SHORT).show()
                                 }
-
                             }
                         }
                     }
@@ -1251,9 +1241,10 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                     ApiStatus.LOADING -> {
                         ConstantClass.OpenPopUpForVeryfyOTP(this)
                     }
-
                 }
+
             }
+
     }
 
 
