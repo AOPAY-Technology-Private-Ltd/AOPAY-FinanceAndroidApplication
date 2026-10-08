@@ -20,7 +20,6 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
     var frpAccounts = arrayListOf("112311833109524480913")
 
 
-
     override fun onEnabled(context: Context, intent: Intent) {
 
         super.onEnabled(context, intent)
@@ -34,11 +33,10 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
     }
 
 
-
     override fun onTransferOwnershipComplete(context: Context, bundle: PersistableBundle?) {
         super.onTransferOwnershipComplete(context, bundle)
 
-        // 🔥 This is where you set up kiosk mode
+        //  This is where you set up kiosk mode
         val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(context, com.bosandroidapp.aopayfinance.kioskmode.KioskDeviceAdminReceiver::class.java)
 
@@ -52,7 +50,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
                     .setFactoryResetProtectionEnabled(true)
                     .build()
             )
-
+            dpm.setOrganizationName(admin, ConstantClass.OrganizationName)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
             dpm.setPermittedAccessibilityServices(admin, Arrays.asList(context.packageName))
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_FINE_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)
@@ -64,16 +62,15 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
         }
 
-        // 🚀 Launch your kiosk activity
+        //  Launch your kiosk activity
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
         intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
 
     }
 
-    
     fun performDpcProvision(context: Context){
-        // 🔥 This is where you set up kiosk mode
+        //  This is where you set up kiosk mode
         val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(context, com.bosandroidapp.aopayfinance.kioskmode.KioskDeviceAdminReceiver::class.java)
 
@@ -87,7 +84,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
                     .setFactoryResetProtectionEnabled(true)
                     .build()
             )
-
+            dpm.setOrganizationName(admin, ConstantClass.OrganizationName)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
             dpm.setPermittedAccessibilityServices(admin, Arrays.asList(context.packageName))
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_FINE_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)
@@ -105,7 +102,6 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
         context.startActivity(intent)
 
     }
-
 
 
 }

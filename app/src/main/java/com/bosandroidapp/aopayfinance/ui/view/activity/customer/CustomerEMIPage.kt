@@ -121,8 +121,11 @@ class CustomerEMIPage : BaseActivity() {
 
                                 if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
                                     ConstantClass.dialog!!.dismiss()
-                                    var LoanEmiList = response.data
-                                    customerLoanEmiDetailsList = LoanEmiList as MutableList<CustomerDataItem?>?
+                                    var LoanEmiList = response.data?.filter {
+                                        it?.recordStatus.equals("Disbursed", ignoreCase = true) ||
+                                        it?.recordStatus.equals(ConstantClass.Customer_LoanStatus, ignoreCase = true)
+                                    }
+                                    customerLoanEmiDetailsList = LoanEmiList?.toMutableList()
                                     setDataOnView(customerLoanEmiDetailsList)
                                 }
 

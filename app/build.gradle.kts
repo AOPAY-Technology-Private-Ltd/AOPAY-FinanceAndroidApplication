@@ -15,8 +15,8 @@ android {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
         targetSdk = 36
-        versionCode = 10
-        versionName = "2.0.0"
+        versionCode = 11
+        versionName = "2.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -114,10 +114,12 @@ dependencies {
     /*implementation(libs.firebase.firestore.ktx)*/
 
 
+
     // (optional)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.webkit)
+
 
 
     implementation(libs.googleid)
@@ -126,6 +128,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.play.services.auth)
+
 
 
 }

@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
@@ -222,6 +223,10 @@ object ConstantClass {
      const val online = "Online"
      const val offline = "Offline"
      const val UPIAUTOPAY = "UPI Autopay"
+
+     const val Customer_LoanStatus = "disbursed"
+     const val OrganizationName = "Aopay Technology Private Limited"
+
 
      var isPgClosing = false
      var isLockTaskStarted = false
@@ -1385,6 +1390,24 @@ object ConstantClass {
 
             val y = location[1] - scrollLocation[1]
             scrollView.smoothScrollBy(0, y)
+        }
+    }
+
+
+    fun formatTwoDecimalAmount(amount: Any?): String {
+        if (amount == null) return "₹0.00"
+        val number = when (amount) {
+            is Number -> amount.toDouble()
+            is String -> amount.toDoubleOrNull() ?: 0.0
+            else -> 0.0
+        }
+        return try {
+            val formatter = NumberFormat.getNumberInstance(Locale("en", "IN"))
+            formatter.maximumFractionDigits = 2
+            formatter.minimumFractionDigits = 2
+            "₹${formatter.format(number)}"
+        } catch (e: Exception) {
+            String.format(Locale.ENGLISH, "₹%.2f", number)
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bosandroidapp.aopayfinance.databinding.LoandetailesItemlayoutBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatIndianAmount
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatTwoDecimalAmount
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem
 
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
@@ -28,21 +29,29 @@ class CustomerEMIDetailsAdapter( var context:Context,var customerLoanEmiDetailsL
         var customercode = binding.customercode
         var customername = binding.customername
         var loanstatuscard = binding.loanstatuscard
+        var recordStatus = binding.recordStatus
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = LoandetailesItemlayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
+
+
     override fun getItemCount(): Int = customerLoanEmiDetailsList!!.size
+
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         preference = SharedPreference(context)
-        holder.brandName.text= customerLoanEmiDetailsList!![position]!!.brandName
-        holder.loanid.text= customerLoanEmiDetailsList!![position]!!.loanCode
-        holder.emiamount.text= formatIndianAmount(customerLoanEmiDetailsList!![position]!!.emiAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
+        val currentItem = customerLoanEmiDetailsList!![position]
+        holder.brandName.text= currentItem?.brandName ?: ""
+        holder.loanid.text= currentItem?.loanCode ?: ""
+        holder.recordStatus.text= currentItem?.recordStatus ?: ""
+        holder.emiamount.text= formatTwoDecimalAmount(currentItem?.emiAmount?.toString().takeIf { !it.isNullOrBlank() } ?: "0")
         holder.customercode.text= preference.getStringValue(ConstantClass.CustomerCode,"")
         holder.customername.text= preference.getStringValue(ConstantClass.FirstName,"") .plus(" ") .plus(preference.getStringValue(
             ConstantClass.LastName,""))
@@ -50,13 +59,22 @@ class CustomerEMIDetailsAdapter( var context:Context,var customerLoanEmiDetailsL
        holder.viewdetailscard.setOnClickListener {
            val selectedLoanId = customerLoanEmiDetailsList!![position]!!.loanCode ?: ""
            val selectedCustomerCode = customerLoanEmiDetailsList!![position]!!.customerCode ?: ""
+           val CustomerLoanStatus = customerLoanEmiDetailsList!![position]!!.recordStatus ?: ""
+           val paidEmi = customerLoanEmiDetailsList!![position]!!.paidEMI ?: ""
+           val tenure = customerLoanEmiDetailsList!![position]!!.tenure ?: 0
+
            LoanId = selectedLoanId
            customerCode = selectedCustomerCode
-           val intent = Intent(context, EmiLoanDetailPage::class.java).apply {
-               putExtra("LoanId", selectedLoanId)
-               putExtra("customerCode", selectedCustomerCode)
+
+           if (CustomerLoanStatus.equals(ConstantClass.Customer_LoanStatus, ignoreCase = true) ||
+               paidEmi == tenure.toString()) {
+               val intent = Intent(context, EmiLoanDetailPage::class.java).apply {
+                   putExtra("LoanId", selectedLoanId)
+                   putExtra("customerCode", selectedCustomerCode)
+               }
+               context.startActivity(intent)
            }
-           context.startActivity(intent)
+
 
        }
 
