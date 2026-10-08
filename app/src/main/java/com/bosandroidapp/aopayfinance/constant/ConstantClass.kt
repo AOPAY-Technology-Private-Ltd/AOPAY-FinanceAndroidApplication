@@ -110,8 +110,8 @@ object ConstantClass {
       // Procustion  API
 
 
-       /* const val BASE_URL = "https://api.aopay.finance/"
-          const val BASE_URL_IMAGE = "https://api.aopay.finance"
+/*      const val BASE_URL = "https://api.aopay.finance/"
+        const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
 
        // production merchant id online
@@ -123,12 +123,13 @@ object ConstantClass {
          const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
          const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"
 
-          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
 
-        */
 
 
        // for enach option using registration id always use for bot uat and production ......................
+
+
 
 
        // production merchant id online
@@ -144,18 +145,13 @@ object ConstantClass {
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
        const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
 
-/*
-       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Uat.1.0.9/Aopay_Customer_Uat_V.1.0.9.apk"
-*/
-
+      // const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Uat.1.0.9/Aopay_Customer_Uat_V.1.0.9.apk"
 
 
 
     // UAT merchant id online
      const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
      const val PENNYDROP_REGISTRATION_ID = "AOP-554"
-
-
 
     //  UAT merchant id offline
     const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-554"

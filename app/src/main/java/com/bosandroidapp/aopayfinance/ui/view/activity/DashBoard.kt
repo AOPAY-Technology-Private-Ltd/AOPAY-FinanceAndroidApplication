@@ -1211,7 +1211,8 @@ class DashBoard : BaseActivity() {
     }
 
 
-    fun sendDataOnServerForFeatureActivate(request : SendNotificationFeatureNameRequest){
+
+    /*fun sendDataOnServerForFeatureActivate(request : SendNotificationFeatureNameRequest){
 
         viewModel.sendNotificationFeatureNameReq(request).observe(this) { it ->
 
@@ -1238,7 +1239,7 @@ class DashBoard : BaseActivity() {
         }
 
 
-    }
+    }*/
 
 
 }

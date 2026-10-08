@@ -2262,16 +2262,19 @@ class QRCodePage : BaseActivity() {
         viewModel.UpdateEmandateDetails(request).observe(this){
             resources ->
             resources.let {
-
                 when(it.apiStatus){
                     ApiStatus.SUCCESS ->{
                         it.data.let { users ->
+
                             users!!.body().let { response ->
                                 Log.d("EmandateUploadRes", Gson().toJson(response))
                             }
+
                         }
 
                     }
+
+
                     ApiStatus.ERROR ->{
                         // ✅ Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
@@ -2287,10 +2290,10 @@ class QRCodePage : BaseActivity() {
                     }
 
 
-
                     ApiStatus.LOADING -> {
 
                     }
+
                 }
             }
         }

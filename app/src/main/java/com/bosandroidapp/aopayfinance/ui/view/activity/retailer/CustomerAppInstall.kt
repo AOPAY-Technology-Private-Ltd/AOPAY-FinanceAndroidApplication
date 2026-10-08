@@ -22,6 +22,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.beastblocks.provisionerjattsdk.PairStatus
+import com.beastblocks.provisionerjattsdk.PairingModeSwitch
 import com.beastblocks.provisionerjattsdk.ProvisionerClient
 import com.beastblocks.provisionerjattsdk.ProvisionerJatt
 import com.beastblocks.provisionerjattsdk.ProvisionerJattFrp
@@ -49,6 +51,12 @@ class CustomerAppInstall : BaseActivity() {
     lateinit var preference: SharedPreference
     private lateinit var client: ProvisionerClient
     private lateinit var callback : ProvisionerJattListener
+    private var pairStatus: PairStatus? = null
+    private var isDialogClosed: Boolean = false
+    private var isModeSwitching: Boolean = false
+
+    private val isPairConnected: Boolean
+        get() = pairStatus != null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +79,7 @@ class CustomerAppInstall : BaseActivity() {
 
 
     fun setonClickListner(){
+
         binding.home.setOnClickListener {
             val intent = Intent(this, DashBoard::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -78,13 +87,16 @@ class CustomerAppInstall : BaseActivity() {
             onBackPressed()
         }
 
+
         binding.back.setOnClickListener {
             OpenPopUpForVAlert()
         }
 
+
         binding.clicktoopenappqr.setOnClickListener {
             OpenPopUpForQRScanAlert()
         }
+
 
         binding.startProvisioning.setOnClickListener {
             startProvisioning()
@@ -92,9 +104,8 @@ class CustomerAppInstall : BaseActivity() {
 
 
 
-        ProvisionerJattFrp.setOrganizationName("Aopay Technology Private Limited",this)
-
         callback = object : ProvisionerJattListener {
+
 
             override fun onProvisioningStatusUpdate(status: ProvisioningStatus) {
                 super.onProvisioningStatusUpdate(status)
@@ -109,8 +120,94 @@ class CustomerAppInstall : BaseActivity() {
                     else -> {
                         Log.d("onProvisioningStatusUpdate", "${status}")
                     }
+
+                }
+
+            }
+
+
+            override fun onQRDialogClosed() {
+                super.onQRDialogClosed()
+                Log.d("Dialog", "QR Closed")
+                if (isModeSwitching) {
+                    Log.d("Dialog", "QR Closed during mode switch: Not detaching")
+                    isModeSwitching = false
+                    return
+                }
+                isDialogClosed = true
+                if (!isPairConnected) {
+                    if (::client.isInitialized) client.detach(this@CustomerAppInstall)
+                    pairStatus = null
+                } else {
+                    Log.d("Dialog", "QR Closed: Not detaching because pairStatus is $pairStatus")
                 }
             }
+
+
+            override fun onPairingDialogClosed() {
+                super.onPairingDialogClosed()
+                Log.d("Dialog", "Pair Closed")
+                if (isModeSwitching) {
+                    Log.d("Dialog", "Pair Closed during mode switch: Not detaching")
+                    isModeSwitching = false
+                    return
+                }
+                isDialogClosed = true
+                if (!isPairConnected) {
+                    if (::client.isInitialized) client.detach(this@CustomerAppInstall)
+                    pairStatus = null
+                } else {
+                    Log.d("Dialog", "Pair Closed: Not detaching because pairStatus is $pairStatus")
+                }
+            }
+
+
+            override fun onProvisioningDialogClosed() {
+                super.onProvisioningDialogClosed()
+                Log.d("Dialog", "Provisioning Closed")
+            }
+
+
+            override fun onQRDialogInvoked() {
+                super.onQRDialogInvoked()
+                Log.d("Dialog", "QRDialogInvoked")
+                isDialogClosed = false
+            }
+
+
+            override fun onPairingDialogInvoked() {
+                super.onPairingDialogInvoked()
+                Log.d("Dialog", "PairingDialogInvoked")
+                isDialogClosed = false
+            }
+
+
+            override fun onProvisioningDialogInvoked() {
+                super.onProvisioningDialogInvoked()
+                Log.d("Dialog", "ProvisioningDialogInvoked")
+            }
+
+
+            override fun onPairingModeSwitch(change: PairingModeSwitch) {
+                super.onPairingModeSwitch(change)
+                Log.d("Dialog", "PairingModeSwitch: $change")
+                isModeSwitching = true
+            }
+
+
+            override fun onPairStatusUpdate(status: PairStatus) {
+                super.onPairStatusUpdate(status)
+                pairStatus = status
+                Log.d("Dialog", "PairStatusUpdate: $status")
+            }
+
+
+            override fun onQRPairCodeStatusUpdate(status: PairStatus) {
+                super.onQRPairCodeStatusUpdate(status)
+                pairStatus = status
+                Log.d("Dialog", "QRPairCodeStatusUpdate: $status")
+            }
+
 
         }
 
@@ -147,13 +244,12 @@ class CustomerAppInstall : BaseActivity() {
 
         btnOk.setOnClickListener {
             successDialog.dismiss()
-
-              val intent = Intent(this, DashBoard::class.java)
-              intent.flags =
-                  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-              startActivity(intent)
-              finish()
+            pairStatus = null
+            if (::client.isInitialized) client.detach(this)
+            val intent = Intent(this, DashBoard::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
 
         successDialog.show()
@@ -168,7 +264,11 @@ class CustomerAppInstall : BaseActivity() {
 
 
     fun startProvisioning(){
-        client.detach(this)
+        isDialogClosed = false
+        isModeSwitching = false
+        pairStatus = null
+        ProvisionerJatt.resetSession()
+        if (::client.isInitialized) client.detach(this)
         client.clearAutomationAndSerial()
         client.scanThenAutomateThenAttach(this, this, packageName, ConstantClass.CUSTOMERPPURLLINK, callback )
 
@@ -176,7 +276,18 @@ class CustomerAppInstall : BaseActivity() {
 
 
 
+    override fun onPause() {
+        super.onPause()
+        if (!isModeSwitching && (isDialogClosed || !isPairConnected)) {
+            if (::client.isInitialized) client.detach(this)
+            pairStatus = null
+        }
+    }
+
+
+
     override fun onDestroy() {
+        pairStatus = null
         if (::client.isInitialized) client.detach(this)
         super.onDestroy()
     }

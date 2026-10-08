@@ -245,7 +245,7 @@ class AuthRepository(private val apiInterface: ApiInterface) {
   suspend fun UpdateEmandateDetails(req: EnachDateUploadReq) = apiInterface.UpdateEmandateDetails(req)
   suspend fun sendTokenViaNotificationReq(req: NotificationSendTokenRequest) = apiInterface.sendTokenViaNotificationReq(req)
 
-  suspend fun sendNotificationFeatureNameReq(req: SendNotificationFeatureNameRequest) = apiInterface.sendNotificationFeatureNameReq(req)
+ // suspend fun sendNotificationFeatureNameReq(req: SendNotificationFeatureNameRequest) = apiInterface.sendNotificationFeatureNameReq(req)
 
   suspend fun LoanEmIScheduleWithStatusReq(req: CustomerEmiStatusReq) = apiInterface.LoanEmIScheduleWithStatusReq(req)
 

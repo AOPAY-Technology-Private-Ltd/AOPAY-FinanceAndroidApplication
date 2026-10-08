@@ -221,7 +221,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_2sdp"
-                            android:text="info@aopay.in"
+                            android:text="harvirji9368@gmail.com "
                             android:textColor="#0073C2"
                             android:textSize="@dimen/_14ssp"
                             android:fontFamily="@font/inter_bold" />

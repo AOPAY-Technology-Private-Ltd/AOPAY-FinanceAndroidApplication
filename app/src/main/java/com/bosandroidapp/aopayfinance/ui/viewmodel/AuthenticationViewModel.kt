@@ -523,7 +523,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
     }
 
 
-    fun sendNotificationFeatureNameReq(req: SendNotificationFeatureNameRequest) = liveData(Dispatchers.IO) {
+   /* fun sendNotificationFeatureNameReq(req: SendNotificationFeatureNameRequest) = liveData(Dispatchers.IO) {
         emit(ApiResponse.loading(data = null))
         try {
             emit(ApiResponse.success(data = repository.sendNotificationFeatureNameReq(req)))
@@ -531,7 +531,7 @@ class AuthenticationViewModel (private val repository: AuthRepository):ViewModel
         catch (exception: Exception) {
             emit(ApiResponse.error(data = null, message = exception.message?: "Error Occurred!"))
         }
-    }
+    }*/
 
 
     fun LoanEmIScheduleWithStatusReq(req: CustomerEmiStatusReq) = liveData(Dispatchers.IO) {

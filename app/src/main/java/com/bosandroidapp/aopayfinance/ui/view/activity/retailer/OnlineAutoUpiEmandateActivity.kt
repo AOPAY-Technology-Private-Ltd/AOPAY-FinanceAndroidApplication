@@ -42,7 +42,9 @@ import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFacto
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityOnlineAutoUpiEmandateBinding
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
+import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CongratulationPage.Companion.loaneCode
+import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.QRCodePage.Companion.isEnachCancelled
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
@@ -273,6 +275,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
                     if (ConstantClass.dialog?.isShowing == true) {
                         ConstantClass.dialog!!.dismiss()
                     }
+
                     val response = resources.data?.body()
                     Log.d("UpiAutoTransRes", Gson().toJson(response))
 
@@ -282,55 +285,82 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
                     } else {
                         Toast.makeText(this, response?.errorMessage ?: "Transaction trigger failed", Toast.LENGTH_SHORT).show()
                     }
+
                 }
                 ApiStatus.ERROR -> {
                     isStatusCheckInProgress = false
+
                     if (ConstantClass.dialog?.isShowing == true) {
                         ConstantClass.dialog!!.dismiss()
                     }
+
                     Toast.makeText(this, resources.message ?: "Transaction Failed", Toast.LENGTH_SHORT).show()
+
                 }
+
                 ApiStatus.LOADING -> {
                     if (ConstantClass.dialog?.isShowing != true) {
                         ConstantClass.OpenPopUpForVeryfyOTP(this)
                     }
                 }
+
             }
         }
+
     }
+
+
 
 
     fun hitApiForUploadEnachMandateDataResponse(request: EnachDateUploadReq, isMandate: String) {
 
         viewModel.UpdateEmandateDetails(request).observe(this) { resources ->
-            when (resources.apiStatus) {
-                ApiStatus.SUCCESS -> {
-                    if (ConstantClass.dialog?.isShowing == true) {
-                        ConstantClass.dialog!!.dismiss()
+            resources.let {
+                when (resources.apiStatus) {
+                    ApiStatus.SUCCESS -> {
+                        it.data?.let { users ->
+                            users.body()?.let { response ->
+                                val statusCode = response.status
+                                val message = response.message ?: "E-Mandate updated successfully"
+                                Log.d("EmandateUploadRes", Gson().toJson(response))
+
+                                if (::dialog.isInitialized && dialog.isShowing) {
+                                    dialog.dismiss()
+                                }
+                                if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing == true) {
+                                    ConstantClass.dialog!!.dismiss()
+                                }
+
+                                Toast.makeText(this@OnlineAutoUpiEmandateActivity, message, Toast.LENGTH_SHORT).show()
+
+                                if (isMandate.equals(ConstantClass.isMandate, ignoreCase = true) && statusCode == "200") {
+                                    // success response
+                                    startActivity(Intent(this@OnlineAutoUpiEmandateActivity, AppScanInstallPage::class.java))
+                                    finish()
+                                }
+                                else {
+                                    isEnachCancelled = true
+                                    startActivity(Intent(this@OnlineAutoUpiEmandateActivity, DashBoard::class.java))
+                                    finish()
+                                }
+
+                            }
+                        }
                     }
-                    if (::dialog.isInitialized && dialog.isShowing) {
-                        dialog.dismiss()
+                    ApiStatus.ERROR -> {
+                        if (ConstantClass.dialog?.isShowing == true) {
+                            ConstantClass.dialog!!.dismiss()
+                        }
+                        Toast.makeText(this, "Upload failed: ${resources.message}", Toast.LENGTH_SHORT).show()
                     }
-                    if (isMandate == ConstantClass.isMandate) {
-                        startActivity(Intent(this, AppScanInstallPage::class.java))
-                        finish()
-                    } else {
-                        QRCodePage.isEnachCancelled = true
-                        finish()
-                    }
-                }
-                ApiStatus.ERROR -> {
-                    if (ConstantClass.dialog?.isShowing == true) {
-                        ConstantClass.dialog!!.dismiss()
-                    }
-                    Toast.makeText(this, "Upload failed: ${resources.message}", Toast.LENGTH_SHORT).show()
-                }
-                ApiStatus.LOADING -> {
-                    if (ConstantClass.dialog?.isShowing != true) {
-                        ConstantClass.OpenPopUpForVeryfyOTP(this)
+                    ApiStatus.LOADING -> {
+                        if (ConstantClass.dialog?.isShowing != true) {
+                            ConstantClass.OpenPopUpForVeryfyOTP(this)
+                        }
                     }
                 }
             }
+
         }
 
     }
@@ -369,7 +399,6 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
         isEmandateVerified= "No"
         showingRejectioneMandatePopUp("")
     }
-
 
 
     fun showingRejectioneMandatePopUp(emumrn: String){

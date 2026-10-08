@@ -261,6 +261,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
     }
 
 
+
     fun injectJs(webView: WebView?) {
         webView?.evaluateJavascript("""
         (function() {
@@ -613,7 +614,6 @@ class RetailerEMandateVerifyPage : BaseActivity() {
 
         viewModel.UpdateEmandateDetails(request).observe(this) { resources ->
             resources.let {
-
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
@@ -631,11 +631,12 @@ class RetailerEMandateVerifyPage : BaseActivity() {
 
                                 Toast.makeText(this@RetailerEMandateVerifyPage, message, Toast.LENGTH_SHORT).show()
 
-                                if (isMandate.equals(ConstantClass.isMandate, ignoreCase = true) || statusCode == "200") {
+                                if (isMandate.equals(ConstantClass.isMandate, ignoreCase = true) && statusCode == "200") {
                                     // success response
                                     startActivity(Intent(this@RetailerEMandateVerifyPage, AppScanInstallPage::class.java))
                                     finish()
-                                } else {
+                                }
+                                else {
                                     isEnachCancelled = true
                                     startActivity(Intent(this@RetailerEMandateVerifyPage, DashBoard::class.java))
                                     finish()
@@ -753,7 +754,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
         }
 
         var Ok = dialog!!.findViewById<Button>(R.id.btnOk)
-
+        isEmandateVerified="No"
 
         Ok.setOnClickListener {
 

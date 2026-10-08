@@ -83,6 +83,7 @@ class AddBank : Fragment() {
     lateinit var panViewModel: PanViewModel
     val bankList = mutableListOf<String>()
 
+    
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -146,6 +147,7 @@ class AddBank : Fragment() {
 
     }
 
+    
 
     fun setview(){
 
@@ -262,10 +264,32 @@ class AddBank : Fragment() {
 
         })
 
+        val inputViews = listOf(
+            binding.accountnumber,
+            binding.accountholdername,
+            binding.bankname,
+            binding.ifsccode,
+            binding.branchname,
+            binding.branchaddress,
+            binding.mobilenumber,
+            binding.emailid
+        )
+
+        inputViews.forEach { inputView ->
+            inputView.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    binding.nestedScrollView.postDelayed({
+                        binding.nestedScrollView.smoothScrollTo(0, view.bottom + 100)
+                    }, 150)
+                }
+            }
+        }
+
 
     }
 
 
+    
     fun setclickListner(){
 
         binding.verifybuttonlayout.setOnClickListener {
@@ -299,6 +323,7 @@ class AddBank : Fragment() {
 
     }
 
+    
     fun isValidForm(
         accountNumber: String,
         holdername:String,
@@ -386,8 +411,8 @@ class AddBank : Fragment() {
         dialog!!.show()
 
     }
-
-
+    
+    
     fun hitApiForRequestPennyDrop(){
         var request = PennyDropRequest(
             bankName =binding.bankname.text.toString().trim(),
@@ -482,6 +507,7 @@ class AddBank : Fragment() {
 
     }
 
+    
     fun hitApiFoAddAccount() {
 
    var req = com.bosandroidapp.aopayfinance.data.model.AddBankAccountReq(
@@ -545,7 +571,8 @@ class AddBank : Fragment() {
    }
 
 }
-
+    
+    
     fun clearEditPage(){
         binding.accountnumber.text.clear()
         binding.accountholdername.text.clear()
@@ -558,6 +585,7 @@ class AddBank : Fragment() {
     }
 
 
+    
     fun containsEmoji(text: String): Boolean {
         for (char in text) {
             val type = Character.getType(char)
@@ -567,8 +595,8 @@ class AddBank : Fragment() {
         }
         return false
     }
-
-
+    
+    
     fun hitApiForReports(){
 
         var req = com.bosandroidapp.aopayfinance.data.model.AddBankAccountReq(

@@ -708,12 +708,15 @@ interface ApiInterface {
     suspend fun UpdateEmandateDetails(@Body req : EnachDateUploadReq): Response<EnachDateUploadResp>?
 
 
+
     @POST("api/notification/save-token")
     suspend fun sendTokenViaNotificationReq(@Body req : NotificationSendTokenRequest): Response<NotificationSendTokenResponse>?
 
 
-    @POST("api/notification/send")
+
+  /*  @POST("api/notification/send")
     suspend fun sendNotificationFeatureNameReq(@Body req : SendNotificationFeatureNameRequest): Response<SendNotificationFeatureNameResp>?
+*/
 
 
     @POST("api/V1/AopayFinance/GetLoanEmIScheduleWithStatus")

@@ -31,6 +31,7 @@ import com.bosandroidapp.aopayfinance.ui.view.adapter.BankPagerAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.WalletPagerAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
+import android.view.WindowManager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
@@ -46,12 +47,16 @@ class BankDetailsPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         binding = ActivityBankDetailsPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
-            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, systemBarsInsets.bottom)
-            WindowInsetsCompat.CONSUMED
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottomPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding)
+            insets
         }
 
         preference = SharedPreference(this)
