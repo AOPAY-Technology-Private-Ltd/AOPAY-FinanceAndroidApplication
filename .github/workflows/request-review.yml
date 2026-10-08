@@ -1,0 +1,47 @@
+name: Auto Request Code Review
+
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  contents: read
+
+jobs:
+  send-review-email:
+    runs-on: windows-latest
+
+    steps:
+      - name: Send Review Email
+        uses: dawidd6/action-send-mail@v6
+        with:
+          server_address: smtp.office365.com
+          server_port: 587
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Code Review Required - PR #${{ github.event.pull_request.number }}"
+          to: mohit@aopay.in
+          from: ${{ secrets.MAIL_USERNAME }}
+          secure: true
+          body: |
+            Hello,
+
+            A new Pull Request has been raised and requires code review.
+
+            Repository:
+            ${{ github.repository }}
+
+            Pull Request:
+            ${{ github.event.pull_request.title }}
+
+            Raised By:
+            ${{ github.event.pull_request.user.login }}
+
+            PR Link:
+            ${{ github.event.pull_request.html_url }}
+
+            Please review the changes.
+
+            Regards,
+            DevOps 
