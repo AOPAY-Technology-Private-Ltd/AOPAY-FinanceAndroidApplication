@@ -57,7 +57,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     private lateinit var binding: ActivityOnlineAutoUpiEmandateBinding
     private lateinit var viewModel: AuthenticationViewModel
     private lateinit var dikshifinsureViewModel: DikshifinsureViewModel
-    
+
     private var merchandId: String = ""
     private var registrationId: String = ""
     private var isStatusCheckInProgress = false
@@ -80,7 +80,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
         }
 
         val webUrl = RetailerEMandateVerifyPage.webUrl ?: ""
-        
+
         val checkoutUrl = if (webUrl.isNotEmpty()) {
             if (webUrl.contains("?")) {
                 "$webUrl&isChromeWV=true"
@@ -123,7 +123,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
         }, "Android")
 
         binding.webview.webViewClient = MerchantWebViewClient(this)
-        
+
         if (checkoutUrl.isNotEmpty()) {
             Log.d("AUTOUPI_FLOW", "Loading URL: $checkoutUrl")
             binding.webview.loadUrl(checkoutUrl)
@@ -311,7 +311,6 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
 
 
 
-
     fun hitApiForUploadEnachMandateDataResponse(request: EnachDateUploadReq, isMandate: String) {
 
         viewModel.UpdateEmandateDetails(request).observe(this) { resources ->
@@ -368,15 +367,35 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
 
     class MerchantWebViewClient(private val activity: OnlineAutoUpiEmandateActivity) : WebViewClient() {
 
+        override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            Log.d("AUTOUPI_WEBVIEW", "Page Started: $url")
+
+            // Check if this URL is your success/return callback URL from PhonePe or your server
+            if (url != null && (url.contains("success") || url.contains("return") || url.contains("callback"))) {
+                activity.doUpdateUpiAutoMandateStatus()
+            }
+        }
+
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             Log.d("AUTOUPI_WEBVIEW", "Page Finished: $url")
             activity.injectJs(view)
+            // Double-check status update on page completion just in case
+            if (url != null && url.contains("phonepe.com")) {
+                activity.doUpdateUpiAutoMandateStatus()
+            }
         }
 
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val url = request.url.toString()
             Log.d("AUTOUPI", "URL Loading: $url")
+
+            // Catch return/success URLs here as well
+            if (url.contains("success") || url.contains("return") || url.contains("callback")) {
+                activity.doUpdateUpiAutoMandateStatus()
+                return true // Prevent loading if it's a backend callback URL
+            }
 
             if (!url.startsWith("https") && !url.startsWith("http")) {
                 try {
@@ -398,6 +417,16 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     override fun onBackPressed() {
         isEmandateVerified= "No"
         showingRejectioneMandatePopUp("")
+    }
+
+    private var hasCheckedOnResume = false
+
+    override fun onResume() {
+        super.onResume()
+        if (hasCheckedOnResume) {
+            doUpdateUpiAutoMandateStatus()
+        }
+        hasCheckedOnResume = true
     }
 
 

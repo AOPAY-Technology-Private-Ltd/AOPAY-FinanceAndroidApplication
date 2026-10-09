@@ -577,7 +577,7 @@ class EMICalculationDetailsPage : BaseActivity() {
                             Log.d("EMICalculationresponse", Gson().toJson(getData))
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-                            if(errorCode==200 ){
+                            if(errorCode==200 || errorCode==400){
                                 startActivity(Intent(this@EMICalculationDetailsPage, PaymentInformation::class.java))
                                 binding.nextbuttonlayout.isEnabled = true
                             }

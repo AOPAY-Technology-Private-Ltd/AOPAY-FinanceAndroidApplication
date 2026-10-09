@@ -832,10 +832,9 @@ class DashBoard : BaseActivity() {
                                     MinHoldingAmount = String.format("%.2f", minholdAmount)
                                     LoanSecurityHoldAmount = String.format("%.2f", loanSecurityHoldAmount)
 
-                                    binding.appBarDashBoard.deskdesign.walletamount.text =  formatIndianAmount(myWalletAmountStr)
+                                    binding.appBarDashBoard.deskdesign.walletamount.text =  myWalletAmountStr
 
                                     Log.d("AdminLoanApprovedStatus", "${response.loanApprovalStatus!!} ${response.cibilScore!!}")
-
 
                                 }
                             }

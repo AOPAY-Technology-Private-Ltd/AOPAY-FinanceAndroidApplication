@@ -1501,6 +1501,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
     }
 
 
+
     fun OpenPopUpForTermCondition() {
         dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
         dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -1541,6 +1542,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
     }
 
 
+
     fun hitApiForMobVerify(mobnumber: String, customerName: String, OTP: String) {
         // hint: Dear  Naim Khan, Your OTP for Verification is 1234. Please Do Not Share the OTP With Anyone. Thanks For Using BOS BOS CENTER
         var message = "Dear $customerName, Your OTP for Verification is $OTP. Please Do Not Share the OTP With Anyone. Thanks For Using BOSOQ BOS CENTER"
@@ -1577,6 +1579,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
     }
 
 
+
     fun hitApiForResendMobVerify(mobnumber: String, customerName: String, OTP: String) {
         // hint: Dear  Naim Khan, Your OTP for Verification is 1234. Please Do Not Share the OTP With Anyone. Thanks For Using BOS BOS CENTER
         var message = "Dear $customerName, Your OTP for Verification is $OTP. Please Do Not Share the OTP With Anyone. Thanks For Using BOSOQ BOS CENTER "
@@ -1611,6 +1614,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
 
+
     override fun onBackPressed() {
         PanNumber=""
         PanFrontImageUri= null
@@ -1621,6 +1625,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         isAggrementVerified = ""
         super.onBackPressed()
     }
+
 
 
 
@@ -1666,6 +1671,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
 
+
     fun containsEmoji(text: String): Boolean {
         for (char in text) {
             val type = Character.getType(char)
@@ -1675,6 +1681,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         }
         return false
     }
+
 
 
     fun setDataIfGeetingPanVerification(){
@@ -1815,6 +1822,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
     }
+
 
 
     fun setDataIfCustomerAlreadyExist(){
@@ -2662,8 +2670,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                             Log.d("CustomerListResp", Gson().toJson(responseBody))
                             Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
 
-                            if(status==true && customerCode!!.isNotEmpty()){
-                                Log.d("CustomerCode" ,customerCode)
+                            if(status==true && customerCode!!.isNotEmpty()|| errorCode==400){
+                                Log.d("CustomerCode" ,customerCode!!)
                                 binding.createaccount.isEnabled = true
                                 preference.setStringValue(ConstantClass.CustomerCode, customerCode)
                                 startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
@@ -2721,12 +2729,13 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
                                 ConstantClass.dialog!!.dismiss()
 
-                                if(errorCode==200 && getdata!=null && getdata.customerCode!!.isNotEmpty() ){
+                                if(errorCode==200 && getdata!=null && getdata.customerCode!!.isNotEmpty() || errorCode==400){
                                     binding.createaccount.isEnabled = true
                                     Toast.makeText(this@NewCustomerRegistrationPage, message, Toast.LENGTH_SHORT).show()
-                                    preference.setStringValue(ConstantClass.CustomerCode, getdata.customerCode.toString())
+                                    preference.setStringValue(ConstantClass.CustomerCode, getdata!!.customerCode.toString())
                                     startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
                                 }
+
                                 else {
                                     Toast.makeText(this@NewCustomerRegistrationPage, message, Toast.LENGTH_SHORT).show()
                                 }

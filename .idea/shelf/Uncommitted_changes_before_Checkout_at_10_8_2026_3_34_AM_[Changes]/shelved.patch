@@ -1,0 +1,21 @@
+Index: app/release/output-metadata.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"version\": 3,\r\n  \"artifactType\": {\r\n    \"type\": \"APK\",\r\n    \"kind\": \"Directory\"\r\n  },\r\n  \"applicationId\": \"com.bosandroidapp.aopayfinance\",\r\n  \"variantName\": \"release\",\r\n  \"elements\": [\r\n    {\r\n      \"type\": \"SINGLE\",\r\n      \"filters\": [],\r\n      \"attributes\": [],\r\n      \"versionCode\": 9,\r\n      \"versionName\": \"1.0.9\",\r\n      \"outputFile\": \"app-release.apk\"\r\n    }\r\n  ],\r\n  \"elementType\": \"File\",\r\n  \"baselineProfiles\": [\r\n    {\r\n      \"minApi\": 28,\r\n      \"maxApi\": 30,\r\n      \"baselineProfiles\": [\r\n        \"baselineProfiles/1/app-release.dm\"\r\n      ]\r\n    },\r\n    {\r\n      \"minApi\": 31,\r\n      \"maxApi\": 2147483647,\r\n      \"baselineProfiles\": [\r\n        \"baselineProfiles/0/app-release.dm\"\r\n      ]\r\n    }\r\n  ],\r\n  \"minSdkVersionForDexing\": 28\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/release/output-metadata.json b/app/release/output-metadata.json
+--- a/app/release/output-metadata.json	(revision 510e052e16a9062ea81e7bc5f612a3b0de475fec)
++++ b/app/release/output-metadata.json	(date 1791455084739)
+@@ -11,8 +11,8 @@
+       "type": "SINGLE",
+       "filters": [],
+       "attributes": [],
+-      "versionCode": 9,
+-      "versionName": "1.0.9",
++      "versionCode": 11,
++      "versionName": "2.0.1",
+       "outputFile": "app-release.apk"
+     }
+   ],
