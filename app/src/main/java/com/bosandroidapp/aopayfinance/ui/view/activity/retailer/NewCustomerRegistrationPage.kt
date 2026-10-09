@@ -269,7 +269,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 Log.d("API_TIME", "Response Time: ${System.currentTimeMillis() - startTime} ms")
                                 val response = users?.body()
                                 if (response != null) {
-                                    Log.d("PanVerificationResp", Gson().toJson(response))
+                                    Log.d("membershipDataResponse", Gson().toJson(response))
                                     if (response!!.statuss.equals("True")) {
                                         val membership = response.membershipFee?.toDouble() ?: 0.0
                                         membershipAmt = "$membership"

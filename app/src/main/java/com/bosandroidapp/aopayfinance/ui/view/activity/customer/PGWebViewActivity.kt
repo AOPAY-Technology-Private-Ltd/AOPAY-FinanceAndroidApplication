@@ -311,7 +311,7 @@ class PGWebViewActivity : BaseActivity() {
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let {
-                                    response ->
+                                response ->
                                 Log.d("loanEmiReceiveResp", response.toString())
 
                                 if(loopcount==emicount){

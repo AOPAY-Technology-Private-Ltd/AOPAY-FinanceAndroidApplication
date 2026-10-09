@@ -99,7 +99,6 @@ class RetailerCustomerReportsPage : BaseActivity() {
 
                 hitApiForGetReports(selectedItem)
 
-
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
