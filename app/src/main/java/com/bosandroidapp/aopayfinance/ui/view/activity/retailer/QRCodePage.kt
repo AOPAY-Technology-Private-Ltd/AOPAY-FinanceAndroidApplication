@@ -1481,6 +1481,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
+
     fun String.toRequestBody(): RequestBody = this.toRequestBody("text/plain".toMediaTypeOrNull())
     
 
@@ -1550,6 +1551,7 @@ class QRCodePage : BaseActivity() {
     }
 
 
+
     fun hitApiForMemberShipFee() {
 
         val startTime = System.currentTimeMillis()
@@ -1611,6 +1613,7 @@ class QRCodePage : BaseActivity() {
 
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog!!.dismiss()
+                        Toast.makeText(this@QRCodePage, resources.message ?: "Error getting membership fee", Toast.LENGTH_SHORT).show()
                         Log.d("API_TIME", "Failed after: ${System.currentTimeMillis() - startTime} ms")
                     }
 

@@ -15,4 +15,5 @@ data class MembershipFeeResp(
 
 	@field:SerializedName("value")
 	val value: String? = null
+
 )
