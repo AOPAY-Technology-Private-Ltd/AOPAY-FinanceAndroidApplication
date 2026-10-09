@@ -757,7 +757,12 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                 startActivity(Intent(this, AppScanInstallPage::class.java))
             } else {
                 // Step 7: E-Mandate Process (After Loan Created)
-                showEmandateSelectionDialog(item)
+                if(isBankDetailsMissing && LoanMode== ConstantClass.online){
+                    startActivity(Intent(this, AppScanInstallPage::class.java))
+                }else{
+                    showEmandateSelectionDialog(item)
+
+                }
             }
 
         } else

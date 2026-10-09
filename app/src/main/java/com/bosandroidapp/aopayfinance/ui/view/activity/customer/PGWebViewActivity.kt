@@ -61,6 +61,7 @@ class PGWebViewActivity : BaseActivity() {
     var mode : String? = null
     var merchantid : String? = null
 
+
     companion object{
         var emiList = mutableListOf<EmiLoanDetailPage.EmiData>()
         var EMIamountPG : String =""
@@ -105,6 +106,7 @@ class PGWebViewActivity : BaseActivity() {
 
         launchPGOnWebView()
     }
+
 
     fun launchPGOnWebView(){
         val pgUrl = intent.getStringExtra("pgurl")
@@ -224,8 +226,8 @@ class PGWebViewActivity : BaseActivity() {
         }
 
         binding.pgwebview.loadDataWithBaseURL("https://secure.payu.in/", finalHtml, "text/html", "UTF-8", null)
-
         binding.pgwebview.loadUrl(pgUrl!!)
+
     }
 
 
@@ -403,6 +405,7 @@ class PGWebViewActivity : BaseActivity() {
 
     }
 
+
     private fun closePg() {
         binding.pgwebview.stopLoading()
         binding.pgwebview.loadUrl("about:blank")
@@ -410,6 +413,7 @@ class PGWebViewActivity : BaseActivity() {
         binding.pgwebview.removeAllViews()
         binding.pgwebview.destroy()
     }
+
 
     fun showingSuccessPopUp(utrNumber: String){
         dialog = Dialog(this, R.style.Theme_Black_NoTitleBar_Fullscreen)
@@ -446,7 +450,6 @@ class PGWebViewActivity : BaseActivity() {
     }
 
 
-
     override fun onBackPressed() {
         showingRejectionePGPopUp()
     }
@@ -468,8 +471,5 @@ class PGWebViewActivity : BaseActivity() {
         super.onStop()
         Log.d("PG", "onStop")
     }
-
-
-
 
 }

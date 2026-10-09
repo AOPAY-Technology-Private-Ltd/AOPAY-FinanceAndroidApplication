@@ -23,6 +23,8 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
@@ -99,14 +101,30 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
         binding.webview.settings.databaseEnabled = true
         binding.webview.settings.loadsImagesAutomatically = true
         binding.webview.settings.javaScriptCanOpenWindowsAutomatically = true
+        binding.webview.settings.setSupportMultipleWindows(true)
         binding.webview.settings.allowFileAccess = true
         binding.webview.settings.allowContentAccess = true
         binding.webview.settings.cacheMode = WebSettings.LOAD_DEFAULT
+        binding.webview.settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
         binding.webview.settings.userAgentString = WebSettings.getDefaultUserAgent(this)
 
+
+        // Important for payment-related WebView flows
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)) {
+            WebSettingsCompat.setPaymentRequestEnabled(binding.webview.settings, true)
+            WebSettingsCompat.setHasEnrolledInstrumentEnabled(binding.webview.settings, true)
+        }
+
+
+
+        binding.webview.settings.cacheMode = WebSettings.LOAD_DEFAULT
+
+        binding.webview.settings.userAgentString = WebSettings.getDefaultUserAgent(this)
         val cookieManager = CookieManager.getInstance()
+
         cookieManager.setAcceptCookie(true)
         cookieManager.setAcceptThirdPartyCookies(binding.webview, true)
+
 
         binding.webview.addJavascriptInterface(object {
             @JavascriptInterface
@@ -116,6 +134,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
                     if (merchandId.isNotEmpty() && registrationId.isNotEmpty()) {
                         doUpdateUpiAutoMandateStatus()
                     }
+
                 } catch (e: Exception) {
                     Log.e("AUTOUPI_JS_ERROR", "Error handling URL change", e)
                 }
@@ -147,6 +166,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     }
 
 
+
     fun injectJs(webView: WebView?) {
         webView?.evaluateJavascript("""
         (function() {
@@ -170,6 +190,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     }
 
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -179,6 +200,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
         }
 
     }
+
 
 
     fun doUpdateUpiAutoMandateStatus() {
@@ -310,7 +332,6 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     }
 
 
-
     fun hitApiForUploadEnachMandateDataResponse(request: EnachDateUploadReq, isMandate: String) {
 
         viewModel.UpdateEmandateDetails(request).observe(this) { resources ->
@@ -369,6 +390,7 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
             super.onPageStarted(view, url, favicon)
+
             Log.d("AUTOUPI_WEBVIEW", "Page Started: $url")
 
             // Check if this URL is your success/return callback URL from PhonePe or your server
@@ -413,13 +435,13 @@ class OnlineAutoUpiEmandateActivity : BaseActivity() {
     }
 
 
-
     override fun onBackPressed() {
         isEmandateVerified= "No"
         showingRejectioneMandatePopUp("")
     }
 
     private var hasCheckedOnResume = false
+
 
     override fun onResume() {
         super.onResume()

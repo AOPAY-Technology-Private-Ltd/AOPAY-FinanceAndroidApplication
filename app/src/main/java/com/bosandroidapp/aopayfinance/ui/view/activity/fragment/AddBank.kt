@@ -275,17 +275,54 @@ class AddBank : Fragment() {
             binding.emailid
         )
 
-        inputViews.forEach { inputView ->
+        inputViews.forEachIndexed { index, inputView ->
             inputView.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
-                    binding.nestedScrollView.postDelayed({
-                        binding.nestedScrollView.smoothScrollTo(0, view.bottom + 100)
-                    }, 150)
+                    scrollToView(view)
+                }
+            }
+
+            if (index < inputViews.size - 1) {
+                val nextView = inputViews[index + 1]
+                inputView.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_NEXT) {
+                        nextView.requestFocus()
+                        scrollToView(nextView)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            } else {
+                inputView.setOnEditorActionListener { view, actionId, _ ->
+                    if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                        scrollToView(binding.verifybuttonlayout)
+                        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+                        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                        true
+                    } else {
+                        false
+                    }
                 }
             }
         }
 
 
+    }
+
+
+    fun scrollToView(view: View) {
+        binding.nestedScrollView.postDelayed({
+            try {
+                val rect = android.graphics.Rect()
+                view.getDrawingRect(rect)
+                binding.nestedScrollView.offsetDescendantRectToMyCoords(view, rect)
+                val scrollY = rect.top - 120
+                binding.nestedScrollView.smoothScrollTo(0, if (scrollY < 0) 0 else scrollY)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }, 100)
     }
 
 

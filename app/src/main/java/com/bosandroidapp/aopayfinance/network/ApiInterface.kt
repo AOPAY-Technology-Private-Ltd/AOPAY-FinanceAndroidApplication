@@ -663,6 +663,7 @@ interface ApiInterface {
     suspend fun getAccessKeyForValidateAPKReq(@Body req : GenerateAccessTokenRequest): Response<GenerateAccessTokenResponse>?
 
 
+
     //  key validate retailer end
     @POST("api/V1/AopayFinance/validatekey")
     suspend fun validateTokenFromRetailerReq(@Body req : ValidateAccessKeyReq): Response<ValidateAccessKeyResp>?

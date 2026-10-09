@@ -105,7 +105,6 @@ import kotlin.math.roundToInt
 import kotlin.text.equals
 
 class RetailerEMandateVerifyPage : BaseActivity() {
-
     lateinit var binding : ActivityRetailerEmandateVerifyPageBinding
     var isEmandateVerified : String= ""
     lateinit var viewModel: AuthenticationViewModel
@@ -123,6 +122,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
     companion object{
         var webUrl: String? = ""
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,11 +146,11 @@ class RetailerEMandateVerifyPage : BaseActivity() {
        // onlineEnachViewModel = ViewModelProvider(this, OnlineEnachViewModelFactory(OnlineEnachRepository(RetrofitClient.apiInterfaceOnlineEnach)))[OnlineEnachViewModel::class.java]
 
 
-        if(intent.hasExtra(ConstantClass.MarchentOrderID_UPIAUTOPAY)&& intent.hasExtra(ConstantClass.RegistrationID_UPIAUTOPAY))
+    /*    if(intent.hasExtra(ConstantClass.MarchentOrderID_UPIAUTOPAY)&& intent.hasExtra(ConstantClass.RegistrationID_UPIAUTOPAY))
         {
             merchandId = intent.getStringExtra(ConstantClass.MarchentOrderID_UPIAUTOPAY).toString()
             registrationId = intent.getStringExtra(ConstantClass.RegistrationID_UPIAUTOPAY).toString()
-        }
+        }*/
 
 
         setDataInWebView()
@@ -171,18 +171,16 @@ class RetailerEMandateVerifyPage : BaseActivity() {
         binding.eMandatewebview.settings.allowFileAccess = true
         binding.eMandatewebview.settings.allowContentAccess = true
         binding.eMandatewebview.settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+
+
         // Important for payment-related WebView flows
         if (WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)) {
-
             WebSettingsCompat.setPaymentRequestEnabled(binding.eMandatewebview.settings, true)
             WebSettingsCompat.setHasEnrolledInstrumentEnabled(binding.eMandatewebview.settings, true)
         }
 
-        Log.d("PHONEPE_WEBVIEW", "Payment Request supported = ${
-            WebViewFeature.isFeatureSupported(
-                WebViewFeature.PAYMENT_REQUEST
-            )
-        }")
+
+        Log.d("PHONEPE_WEBVIEW", "Payment Request supported = ${WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)}")
 
         Log.d("PHONEPE_WEBVIEW", "WebView version = ${WebView.getCurrentWebViewPackage()?.versionName}")
 
@@ -202,11 +200,11 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                 try {
                     val uri = Uri.parse(url)
 
-                    if (!merchandId.isNullOrEmpty() && !registrationId.isNullOrEmpty()) {
+                    /*if (!merchandId.isNullOrEmpty() && !registrationId.isNullOrEmpty()) {
                         doUpdateUpiAutoMandateStatus()
                     }
 
-                    else{
+                    else{*/
                         // Get query parameter
                         val transactionId = uri.getQueryParameter("c")
 
@@ -216,7 +214,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                             // Call verify API here
                             doUpdateEMandateStatus(transactionId)
                         }
-                    }
+                   /* }*/
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -265,7 +263,6 @@ class RetailerEMandateVerifyPage : BaseActivity() {
     fun injectJs(webView: WebView?) {
         webView?.evaluateJavascript("""
         (function() {
-
             function notify() {
                 Android.onUrlChange(window.location.href);
             }
@@ -292,7 +289,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
 
     // hit api for  online emandate auto pay
 
-    fun doUpdateUpiAutoMandateStatus() {
+/*    fun doUpdateUpiAutoMandateStatus() {
         if (isStatusCheckInProgress) return
         isStatusCheckInProgress = true
         (this@RetailerEMandateVerifyPage).runOnUiThread {
@@ -409,7 +406,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
             }
         }
 
-    }
+    }*/
 
 
     fun doUpdateEMandateStatus(eMandateID : String){
@@ -664,6 +661,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                         if (resources.data?.code() == 500) {
                             Log.e("API_ERROR", "Internal Server Error from backend.")
                         }
+
                     }
 
                     ApiStatus.LOADING -> {
