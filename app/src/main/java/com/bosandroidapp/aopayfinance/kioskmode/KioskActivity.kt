@@ -118,7 +118,6 @@ class KioskActivity : AppCompatActivity() {
             DikshifinsureOnlinePGModelFactory(DikshifinsureRepository(RetrofitClient.apiInterfaceOnlinePG))
         )[DikshifinsureViewModel::class.java]
 
-
         hitapiforGetUpdateProfile()
         HitApiForEmiList()
 
@@ -139,7 +138,6 @@ class KioskActivity : AppCompatActivity() {
         setOnClickListner()
 
     }
-
 
 
     override fun onResume() {
@@ -172,6 +170,7 @@ class KioskActivity : AppCompatActivity() {
                 isLockTaskStarted = true
                 hitApiForDeviceLockStatus(true)
             }
+
         }
 
         isPgClosing = false
@@ -282,6 +281,7 @@ class KioskActivity : AppCompatActivity() {
         }
 
     }
+
 
     override fun onPause() {
         super.onPause()

@@ -177,14 +177,15 @@ object ConstantClass {
     const val LOAN_REJECT = "LOAN_REJECTED"
     const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
     const val UNLOCK = "UNLOCK"
+    const val LOCK = "LOCK"
+    const val UNINSTALLED = "UNINSTALLED"
+    const val LOANCLOSE = "Close"
 
+    const val OLD_FRP_MAIL_ID = "info@aopay.in"
 
+    const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
 
-     const val OLD_FRP_MAIL_ID = "info@aopay.in"
-
-     const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
-
-     const val CustomerCode = "customerCode"
+    const val CustomerCode = "customerCode"
 
      const val Admin = "admin"
 

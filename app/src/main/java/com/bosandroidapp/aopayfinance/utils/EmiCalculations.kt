@@ -176,13 +176,14 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
                 loan.let {
                     val leftMonths = it.duesEmi.toLong()
                     val paidMonths = it.paidEmi.toLong()
+                    val loanStatus = it.loanStatus.toString()
                     val allGrossPeriod = if (it.grossPeriod.isEmpty()) 0 else it.grossPeriod.toInt()
                     val customerGrossPeriod = if (it.customergrossPeriod.isEmpty()) 0 else it.customergrossPeriod.toInt()
                     val grossPeriod = allGrossPeriod + customerGrossPeriod
 
                     Log.d(ACCESSIBILITYTAG, "Loan Details: ${it.startDate.toFormattedDate()}-->$leftMonths == $paidMonths")
 
-                    if (leftMonths != (0.toLong())) {
+                    if (leftMonths != (0.toLong()) || !loanStatus.equals(ConstantClass.LOANCLOSE) ) {
 
                         CheckCompleteEmiStatus = true
 
@@ -213,7 +214,6 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
         }
 
         Logger.d(ACCESSIBILITYTAG,"EMIDUES: $emiDues")
-
 
 
         if (emiDues != null) {
@@ -551,6 +551,7 @@ fun List<com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem?
                 this.put("dueEMIs", it.duesEMI)
                 this.put("grossPeriod", it.gracePeriod)
                 this.put("customergrossPeriod", it.customerGracePeriod)
+                this.put("recordStatus", it.recordStatus)
             })
 
         }
@@ -565,7 +566,8 @@ data class LocalLoanData(
     val paidEmi: String,
     val duesEmi: String,
     val grossPeriod: String,
-    val customergrossPeriod: String
+    val customergrossPeriod: String,
+    val loanStatus : String
 )
 
 
@@ -581,6 +583,7 @@ fun String.toFormattedList(): List<LocalLoanData>? {
                         array.getJSONObject(i).getString("dueEMIs"),
                         array.getJSONObject(i).getString("grossPeriod"),
                         array.getJSONObject(i).getString("customergrossPeriod"),
+                        array.getJSONObject(i).getString("recordStatus"),
                     )
                 )
             }
