@@ -167,19 +167,20 @@ object ConstantClass {
      //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
 
 
-    // for online emandate auto pay
-    const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"
-    const val RegistrationID_UPIAUTOPAY = "registrationid"
-
+     // for online emandate auto pay
+     const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"
+     const val RegistrationID_UPIAUTOPAY = "registrationid"
 
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
 
-
-    const val LOAN_REJECT = "LOAN_REJECTED"
-    const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
-    const val UNLOCK = "UNLOCK"
+     const val LOAN_REJECT = "LOAN_REJECTED"
+     const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
+     const val UNLOCK = "UNLOCK"
+     const val LOCK = "LOCK"
+     const val UNINSTALL = "UNINSTALL"
+     const val LOANCLOSE = "Close"
 
      const val OLD_FRP_MAIL_ID = "info@aopay.in"
 

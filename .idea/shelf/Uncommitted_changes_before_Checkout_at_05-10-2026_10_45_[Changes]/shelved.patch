@@ -1,0 +1,30 @@
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetSelector\">\r\n    <selectionStates>\r\n      <SelectionState runConfigName=\"app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DropdownSelection timestamp=\"2026-09-22T07:32:50.342826500Z\">\r\n          <Target type=\"DEFAULT_BOOT\">\r\n            <handle>\r\n              <DeviceId pluginId=\"PhysicalDevice\" identifier=\"serial=ZD4DQCEYGIZ95TS4\" />\r\n            </handle>\r\n          </Target>\r\n        </DropdownSelection>\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"androidTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"unitTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"main\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n    </selectionStates>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision a0493eef846b9cf0d2c87c615882b6d3e24fa716)
++++ b/.idea/deploymentTargetSelector.xml	(date 1791177052900)
+@@ -13,18 +13,6 @@
+         </DropdownSelection>
+         <DialogSelection />
+       </SelectionState>
+-      <SelectionState runConfigName="androidTest">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+-      <SelectionState runConfigName="unitTest">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+-      <SelectionState runConfigName="main">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+     </selectionStates>
+   </component>
+ </project>
+\ No newline at end of file

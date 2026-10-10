@@ -37,14 +37,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-
     fun passNotificationCode(notificationCode: String){
         val dpm = applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(applicationContext, KioskDeviceAdminReceiver::class.java)
 
+
         when(notificationCode){
 
-            ConstantClass.LOAN_REJECT ->{
+            ConstantClass.LOAN_REJECT , ConstantClass.DISBURSMENT_REJECT , ConstantClass.UNINSTALL->{
 
                 if (dpm.isDeviceOwnerApp(packageName)) {
 
@@ -61,28 +61,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
-
-            ConstantClass.DISBURSMENT_REJECT-> {
-
-                if (dpm.isDeviceOwnerApp(packageName)) {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        val policy = FactoryResetProtectionPolicy.Builder()
-                            .setFactoryResetProtectionAccounts(emptyList())
-                            .build()
-                        dpm.setFactoryResetProtectionPolicy(admin, policy)
-                    }
-
-                    dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
-                    dpm.clearDeviceOwnerApp(getPackageName())
-                    dpm.removeActiveAdmin(admin)
-
-                }
-
-            }
-
-
-            ConstantClass.UNLOCK -> {
+            ConstantClass.UNLOCK , ConstantClass.LOCK-> {
                 Log.d("FCM_UNLOCK", "Unlock notification received")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -97,10 +76,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
-
         }
 
     }
+
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
