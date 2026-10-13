@@ -110,7 +110,7 @@ object ConstantClass {
       // Procustion  API
 
 
-/*      const val BASE_URL = "https://api.aopay.finance/"
+        /*      const val BASE_URL = "https://api.aopay.finance/"
         const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
 
@@ -125,12 +125,7 @@ object ConstantClass {
 
           const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
 
-
-
        // for enach option using registration id always use for bot uat and production ......................
-
-
-
 
        // production merchant id online
         const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
@@ -139,12 +134,12 @@ object ConstantClass {
         const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
 
 
-
-      // UAT API
+       // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
       // const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
-       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
+      //  const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
+       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
 
 
 
