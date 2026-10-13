@@ -183,7 +183,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
 
                     Log.d(ACCESSIBILITYTAG, "Loan Details: ${it.startDate.toFormattedDate()}-->$leftMonths == $paidMonths")
 
-                    if (leftMonths != (0.toLong())||loanStatus== ConstantClass.LOANCLOSE) {
+                    if (leftMonths != (0.toLong())|| loanStatus != ConstantClass.LOANCLOSE) {
 
                         CheckCompleteEmiStatus = true
 
@@ -191,14 +191,18 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
                         uploadDataOnFirebaseConsole("$currentDate", "currentDate")
                         val grossDue = it.startDate.toFormattedDate().getGrossDate(grossPeriod)
                         Log.d("grossDueDate", grossDue)
+
                         if (grossDue.isLateFeesApplicable(currentDate)) {
                             lateEMIs++
                         }
+
                         Log.d("printlateemiGrossDue", "$lateEMIs $grossDue")
                         uploadDataOnFirebaseConsole("$lateEMIs $grossDue", "LateEmi'sGrossDue")
+
                         if (emiDues == null) {
                             emiDues = 0
                         }
+
                         emiDues=emiDues!! + 1
 
                     }

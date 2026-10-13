@@ -143,9 +143,8 @@ object ConstantClass {
       // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-       const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
-
-      // const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Uat.1.0.9/Aopay_Customer_Uat_V.1.0.9.apk"
+      // const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
 
 
 
@@ -170,11 +169,9 @@ object ConstantClass {
      // for online emandate auto pay
      const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"
      const val RegistrationID_UPIAUTOPAY = "registrationid"
-
      const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
      const val SMS_SENDER_ID = "BOSCNT"
      const val SMS_TEMPLATE_ID = "1207175396979758678"
-
      const val LOAN_REJECT = "LOAN_REJECTED"
      const val DISBURSMENT_REJECT = "DISBURSMENT_REJECTED"
      const val UNLOCK = "UNLOCK"
@@ -187,7 +184,6 @@ object ConstantClass {
      const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
 
      const val CustomerCode = "customerCode"
-
      const val Admin = "admin"
 
      const val RetailerCode = "retailerCode"
