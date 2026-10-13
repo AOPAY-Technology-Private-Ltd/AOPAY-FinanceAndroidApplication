@@ -17,9 +17,9 @@ import kotlin.jvm.java
 
 class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
-   /* var frpAccounts = arrayListOf("112311833109524480913")*/ /*harvirji9368@gmail.com*/
+    var frpAccounts = arrayListOf("112311833109524480913") /*harvirji9368@gmail.com*/
 
-    var frpAccounts = arrayListOf("116164541526712076874") // info@aopay.in
+  /*  var frpAccounts = arrayListOf("116164541526712076874") // info@aopay.in*/
 
 
 

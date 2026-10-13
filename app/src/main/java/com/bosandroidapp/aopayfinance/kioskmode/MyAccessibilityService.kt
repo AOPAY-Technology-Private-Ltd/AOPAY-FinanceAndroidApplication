@@ -34,6 +34,20 @@ import java.util.Locale
 
 class MyAccessibilityService : AccessibilityService() {
 
+    companion object {
+        var instance: MyAccessibilityService? = null
+
+        fun stopService() {
+            instance?.disableSelf()
+            instance = null
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -41,6 +55,7 @@ class MyAccessibilityService : AccessibilityService() {
         val currentPkg = event?.packageName?.toString() ?: ""
 
         val preference = SharedPreference(this)
+
 
         if (preference.getBoolanValue(ConstantClass.LoggedIn, false) &&
             preference.getStringValue(ConstantClass.CustomerCode, "").isNotEmpty()) {
@@ -159,6 +174,7 @@ class MyAccessibilityService : AccessibilityService() {
         Log.d("Accessibility", "Service interrupted")
     }
 
+
     private fun isFactoryResetting(t: String): Boolean {
         val text = t.toLowerCase()
         return if (text.contains("reset phone", false) || text.contains(
@@ -205,6 +221,7 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        instance = this
         val info = getServiceInfo()
 
         // Fetch all installed packages on the device
@@ -396,6 +413,13 @@ class MyAccessibilityService : AccessibilityService() {
 
                 packageName.equals("com.bosandroidapp.aopayfinance", true)
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (instance == this) {
+            instance = null
+        }
     }
 
 

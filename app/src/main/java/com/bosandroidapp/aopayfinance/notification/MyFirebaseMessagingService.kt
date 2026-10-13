@@ -5,15 +5,19 @@ import android.app.admin.FactoryResetProtectionPolicy
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.UserManager
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.kioskmode.KioskDeviceAdminReceiver
 import com.bosandroidapp.aopayfinance.kioskmode.KioskPolicyService
+import com.bosandroidapp.aopayfinance.kioskmode.MyAccessibilityService
 import com.bosandroidapp.aopayfinance.kioskmode.isAdmin
+import com.bosandroidapp.aopayfinance.kioskmode.setEMICompleted
 import com.bosandroidapp.aopayfinance.kioskmode.startLockSituation
 import com.bosandroidapp.aopayfinance.kioskmode.stopLockSituation
 import com.bosandroidapp.aopayfinance.utils.forceSyncEmis
@@ -37,6 +41,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.e("FCM_TEST", "onMessageReceived called")
 
+
     }
 
 
@@ -46,10 +51,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         when(notificationCode){
 
-
             ConstantClass.LOAN_REJECT , ConstantClass.DISBURSMENT_REJECT , ConstantClass.UNINSTALLED->{
 
+                // 1. Mark EMIs completed and stop lock situation to remove restrictions
+                setEMICompleted()
+                stopLockSituation()
+
+                // 2. Turn off Accessibility Service
+                MyAccessibilityService.stopService()
+
+                // 3. Clear Device Owner & Admin if active
                 if (dpm.isDeviceOwnerApp(packageName)) {
+                    try {
+                        dpm.setLockTaskPackages(admin, arrayOf())
+                    } catch (e: Exception) {
+                        Log.e("FCM_NOTIFICATION", "Error clearing lock task packages", e)
+                    }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         val policy = FactoryResetProtectionPolicy.Builder()
@@ -60,6 +77,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
                     dpm.clearDeviceOwnerApp(getPackageName())
                     dpm.removeActiveAdmin(admin)
+                }
+
+                // 4. Open App Info settings screen easily
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.parse("package:$packageName")
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    applicationContext.startActivity(intent)
+                }
+                catch (e: Exception) {
+                    Log.e("FCM_NOTIFICATION", "Error opening App Info screen", e)
                 }
 
             }

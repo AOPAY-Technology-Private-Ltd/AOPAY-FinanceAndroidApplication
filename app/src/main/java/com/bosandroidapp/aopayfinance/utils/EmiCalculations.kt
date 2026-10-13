@@ -161,8 +161,7 @@ private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
 
 @RequiresApi(Build.VERSION_CODES.R)
 private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContext(Dispatchers.IO) {
-    var malfunctionedDates = 0
-    var emiDues: Int? = null
+    var emiDues = 0
     var lateEMIs = 0
 
     try {
@@ -171,69 +170,64 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
 
         uploadDataOnFirebaseConsole(Gson().toJson(list), "LoanList")
 
+        if (currentDate.isNullOrEmpty()) {
+            currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
+        }
+
         list?.let { loans ->
             loans.forEach { loan ->
-                loan.let {
-                    val leftMonths = it.duesEmi.toLong()
-                    val paidMonths = it.paidEmi.toLong()
-                    val loanStatus = it.loanStatus.toString()
-                    val allGrossPeriod = if (it.grossPeriod.isEmpty()) 0 else it.grossPeriod.toInt()
-                    val customerGrossPeriod = if (it.customergrossPeriod.isEmpty()) 0 else it.customergrossPeriod.toInt()
-                    val grossPeriod = allGrossPeriod + customerGrossPeriod
+                val leftMonths = loan.duesEmi.toLongOrNull() ?: 0L
+                val paidMonths = loan.paidEmi.toLongOrNull() ?: 0L
+                val loanStatus = loan.loanStatus.toString()
+                val allGrossPeriod = if (loan.grossPeriod.isEmpty()) 0 else loan.grossPeriod.toIntOrNull() ?: 0
+                val customerGrossPeriod = if (loan.customergrossPeriod.isEmpty()) 0 else loan.customergrossPeriod.toIntOrNull() ?: 0
+                val grossPeriod = allGrossPeriod + customerGrossPeriod
 
-                    Log.d(ACCESSIBILITYTAG, "Loan Details: ${it.startDate.toFormattedDate()}-->$leftMonths == $paidMonths")
+                Log.d(ACCESSIBILITYTAG, "Loan Details: ${loan.startDate.toFormattedDate()}-->$leftMonths == $paidMonths")
 
-                    if (leftMonths != (0.toLong()) || !loanStatus.equals(ConstantClass.LOANCLOSE) ) {
+                if (leftMonths > 0L || !loanStatus.equals(ConstantClass.LOANCLOSE, ignoreCase = true)) {
+                    CheckCompleteEmiStatus = true
+                    emiDues++
 
-                        CheckCompleteEmiStatus = true
+                    Log.d("currentDate", currentDate ?: "")
+                    uploadDataOnFirebaseConsole("$currentDate", "currentDate")
 
-                        Log.d("currentDate", currentDate!!)
-                        uploadDataOnFirebaseConsole("$currentDate", "currentDate")
-                        val grossDue = it.startDate.toFormattedDate().getGrossDate(grossPeriod)
-                        Log.d("grossDueDate", grossDue)
-                        if (grossDue.isLateFeesApplicable(currentDate)) {
-                            lateEMIs++
-                        }
-                        Log.d("printlateemiGrossDue", "$lateEMIs $grossDue")
-                        uploadDataOnFirebaseConsole("$lateEMIs $grossDue", "LateEmi'sGrossDue")
-                        if (emiDues == null) {
-                            emiDues = 0
-                        }
-                        emiDues=emiDues!! + 1
+                    val grossDue = loan.startDate.toFormattedDate()
+                        .getJumpedDate(paidMonths)
+                        .getGrossDate(grossPeriod)
 
+                    Log.d("grossDueDate", grossDue)
+
+                    if (grossDue.isLateFeesApplicable(currentDate)) {
+                        lateEMIs++
                     }
 
-                    else{
-                        emiDues = 0
-                        lateEMIs = 0
-                        CheckCompleteEmiStatus = false
-                    }
-
+                    Log.d("printlateemiGrossDue", "$lateEMIs $grossDue")
+                    uploadDataOnFirebaseConsole("$lateEMIs $grossDue", "LateEmi'sGrossDue")
                 }
             }
         }
 
-        Logger.d(ACCESSIBILITYTAG,"EMIDUES: $emiDues")
+        if (emiDues == 0) {
+            CheckCompleteEmiStatus = false
+        }
 
+        Logger.d(ACCESSIBILITYTAG, "EMIDUES: $emiDues, LATE_EMIS: $lateEMIs")
 
-        if (emiDues != null) {
-            if (emiDues!! > 0) {
-                this@isEMIDue.setEMINotCompleted()
-                this@isEMIDue.startInternetAlertSituation()
-            } else {
-                this@isEMIDue.setEMICompleted()
-                this@isEMIDue.stopInternetAlertSituation()
-            }
+        if (emiDues > 0) {
+            this@isEMIDue.setEMINotCompleted()
+            this@isEMIDue.startInternetAlertSituation()
+        } else {
+            this@isEMIDue.setEMICompleted()
+            this@isEMIDue.stopInternetAlertSituation()
         }
 
         if (lateEMIs > 0) {
             Logger.d(ACCESSIBILITYTAG, "Late EMIs Count: $lateEMIs")
             this@isEMIDue.startLockSituation()
+        } else {
+            this@isEMIDue.stopLockSituation()
         }
-        else {
-             this@isEMIDue.stopLockSituation()
-        }
-
 
     } catch (e: Exception) {
         Logger.d(ACCESSIBILITYTAG, e.localizedMessage ?: "")
@@ -292,14 +286,16 @@ fun String.toFormattedDate(): String {
 
 private fun String.getJumpedDate(paidMonths: Long): String {
     val splitDate = this.trim().split("/")
-    val monthIncreased = splitDate[1].toLong() + paidMonths
-    if (monthIncreased > 12) {
-        val years = monthIncreased / 12
-        val month = monthIncreased % 12
-        return "${splitDate[0]}/$month/${splitDate[2].toLong() + years}"
-    } else {
-        return "${splitDate[0]}/${splitDate[1].toLong() + paidMonths}/${splitDate[2]}"
-    }
+    if (splitDate.size < 3) return this
+    val day = splitDate[0]
+    val startMonth = splitDate[1].toLongOrNull() ?: return this
+    val startYear = splitDate[2].toLongOrNull() ?: return this
+
+    val zeroBasedMonth = (startMonth - 1) + paidMonths
+    val addedYears = zeroBasedMonth / 12
+    val month = (zeroBasedMonth % 12) + 1
+
+    return "$day/$month/${startYear + addedYears}"
 }
 
 
@@ -547,10 +543,10 @@ fun List<com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem?
         it?.let {
             arr.put(JSONObject().apply {
                 this.put("startDate", it.startDate)
-                this.put("paidEMIs", it.paidEMI)
-                this.put("dueEMIs", it.duesEMI)
-                this.put("grossPeriod", it.gracePeriod)
-                this.put("customergrossPeriod", it.customerGracePeriod)
+                this.put("paidEMI", it.paidEMI)
+                this.put("duesEMI", it.duesEMI)
+                this.put("gracePeriod", it.gracePeriod)
+                this.put("customerGracePeriod", it.customerGracePeriod)
                 this.put("recordStatus", it.recordStatus)
             })
 
@@ -579,10 +575,10 @@ fun String.toFormattedList(): List<LocalLoanData>? {
                 this.add(
                     LocalLoanData(
                         array.getJSONObject(i).getString("startDate"),
-                        array.getJSONObject(i).getString("paidEMIs"),
-                        array.getJSONObject(i).getString("dueEMIs"),
-                        array.getJSONObject(i).getString("grossPeriod"),
-                        array.getJSONObject(i).getString("customergrossPeriod"),
+                        array.getJSONObject(i).getString("paidEMI"),
+                        array.getJSONObject(i).getString("duesEMI"),
+                        array.getJSONObject(i).getString("gracePeriod"),
+                        array.getJSONObject(i).getString("customerGracePeriod"),
                         array.getJSONObject(i).getString("recordStatus"),
                     )
                 )

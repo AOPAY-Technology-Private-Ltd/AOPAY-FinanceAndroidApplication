@@ -27,9 +27,9 @@ class CustomerReportsPage : BaseActivity() {
     lateinit var binding: ActivityCustomerReportsPageBinding
     lateinit var preference: SharedPreference
     lateinit var viewModel: AuthenticationViewModel
-    var ReportDataList: MutableList<com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.ReportsDataItem> =
-        mutableListOf()
+    var ReportDataList: MutableList<com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.ReportsDataItem> = mutableListOf()
     lateinit var reportAdapter: RetailerReportListAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +54,7 @@ class CustomerReportsPage : BaseActivity() {
         setclicklistner()
 
     }
+
 
     override fun onResume() {
         super.onResume()

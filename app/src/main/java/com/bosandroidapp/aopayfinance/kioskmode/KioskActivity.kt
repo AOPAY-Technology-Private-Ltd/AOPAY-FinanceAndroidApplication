@@ -505,15 +505,19 @@ class KioskActivity : AppCompatActivity() {
 
         viewModel.uploadDeviceLockStatusReq(req).observe(this) { resources ->
             when (resources.apiStatus) {
+
                 ApiStatus.SUCCESS -> {
                     val response = resources.data?.body()
                     Log.d("DeviceLockStatusRes", Gson().toJson(response))
                 }
+
                 ApiStatus.ERROR -> {
                     Log.e("DeviceLockStatusError", resources.message ?: "Unknown error")
                 }
+
                 ApiStatus.LOADING -> {
                 }
+
             }
         }
     }

@@ -568,7 +568,6 @@ interface ApiInterface {
     suspend fun getCustomerLoanDetailsList(@Body req : GetCustomerLoanDetailsReq): Response<com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerLoanEmiResp>?
 
 
-
     // retailer trasaction history...................................................
     @POST("api/V1/AopayFinance/GetWalletCreditDebitHistory")
     suspend fun getTransactionHistoryList(@Body req : TransactionHistoryReq): Response<TransactionHistoryResp>?

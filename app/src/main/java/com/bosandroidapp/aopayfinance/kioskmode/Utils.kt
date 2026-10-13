@@ -10,6 +10,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.UserManager
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
@@ -66,13 +67,23 @@ fun Context.isInternetAlertSituationCompleted(): Boolean {
     return sharedPref.getBoolean("isInternet", true)
 }
 
-@RequiresApi(Build.VERSION_CODES.R)
 fun Context.setEMICompleted() {
-    removeRestrictions()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        removeRestrictions()
+    } else {
+        val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        val admin = ComponentName(this, KioskDeviceAdminReceiver::class.java)
+        if (dpm.isDeviceOwnerApp(packageName)) {
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
+            dpm.clearDeviceOwnerApp(packageName)
+            dpm.removeActiveAdmin(admin)
+        }
+    }
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     val editor = sharedPref.edit()
     editor.putBoolean("isEMIsCompleted", true) // key: isLoggedIn, value: true
     editor.apply()
+    stopLockSituation()
 }
 
 fun Context.setEMINotCompleted() {
