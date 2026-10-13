@@ -41,7 +41,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val dpm = applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(applicationContext, KioskDeviceAdminReceiver::class.java)
 
-
         when(notificationCode){
 
             ConstantClass.LOAN_REJECT , ConstantClass.DISBURSMENT_REJECT , ConstantClass.UNINSTALL->{
@@ -77,7 +76,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
 
         }
-
 
     }
 
