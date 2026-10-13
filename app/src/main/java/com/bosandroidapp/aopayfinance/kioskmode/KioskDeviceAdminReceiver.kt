@@ -17,7 +17,10 @@ import kotlin.jvm.java
 
 class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
-    var frpAccounts = arrayListOf("112311833109524480913")
+   /* var frpAccounts = arrayListOf("112311833109524480913")*/ /*harvirji9368@gmail.com*/
+
+    var frpAccounts = arrayListOf("116164541526712076874") // info@aopay.in
+
 
 
     override fun onEnabled(context: Context, intent: Intent) {
@@ -84,6 +87,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
                     .setFactoryResetProtectionEnabled(true)
                     .build()
             )
+
             dpm.setOrganizationName(admin, ConstantClass.OrganizationName)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
             dpm.setPermittedAccessibilityServices(admin, Arrays.asList(context.packageName))

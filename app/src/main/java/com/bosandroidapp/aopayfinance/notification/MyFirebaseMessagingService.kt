@@ -33,15 +33,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         passNotificationCode(notificationCode)
 
+        Log.d("notificationcode", notificationCode)
+
         Log.e("FCM_TEST", "onMessageReceived called")
 
     }
+
 
     fun passNotificationCode(notificationCode: String){
         val dpm = applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(applicationContext, KioskDeviceAdminReceiver::class.java)
 
         when(notificationCode){
+
 
             ConstantClass.LOAN_REJECT , ConstantClass.DISBURSMENT_REJECT , ConstantClass.UNINSTALLED->{
 
@@ -60,6 +64,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
+
             ConstantClass.UNLOCK , ConstantClass.LOCK-> {
                 Log.d("FCM_UNLOCK", "Unlock notification received")
 
@@ -74,6 +79,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
             }
+
 
         }
 
