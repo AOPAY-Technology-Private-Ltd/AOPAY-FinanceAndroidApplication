@@ -75,6 +75,13 @@ class CustomerAppInstall : BaseActivity() {
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterfacePAN)))[AuthenticationViewModel::class.java]
         setonClickListner()
 
+
+        if (ConstantClass.BASE_URL.contains("uat", ignoreCase = true)) {
+            binding.frpmailid.text = ConstantClass.FRP_MAIL_ID_UAT
+        } else {
+            binding.frpmailid.text = ConstantClass.FRP_MAIL_ID_PROD
+        }
+
     }
 
 

@@ -110,7 +110,7 @@ object ConstantClass {
       // Procustion  API
 
 
-        const val BASE_URL = "https://api.aopay.finance/"
+/*        const val BASE_URL = "https://api.aopay.finance/"
         const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
 
@@ -123,7 +123,7 @@ object ConstantClass {
          const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
          const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"
 
-          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
 
        // for enach option using registration id always use for bot uat and production ......................
 
@@ -134,13 +134,13 @@ object ConstantClass {
         const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
 
 
-/*       // UAT API
+       // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-      // const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
-      //  const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
+       const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
+     /* //  const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
        const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
-
+*/
 
 
     // UAT merchant id online
@@ -149,7 +149,7 @@ object ConstantClass {
 
     //  UAT merchant id offline
     const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-554"
-    const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"*/
+    const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"
 
 
 
@@ -174,9 +174,9 @@ object ConstantClass {
      const val UNINSTALL = "UNINSTALL"
      const val LOANCLOSE = "Close"
 
-     const val OLD_FRP_MAIL_ID = "info@aopay.in"
+     const val FRP_MAIL_ID_UAT = "banarji.gupta1988@gmail.com"
 
-     const val CURRENT_FRP_MAIL_ID = "harvirji9368@gmail.com"
+     const val FRP_MAIL_ID_PROD = "harvirji9368@gmail.com"
 
      const val CustomerCode = "customerCode"
      const val Admin = "admin"
