@@ -44,8 +44,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CustomerAppInstall : BaseActivity() {
 
+class CustomerAppInstall : BaseActivity() {
     lateinit var binding: ActivityCustomerAppInstallBinding
     lateinit var viewModel: AuthenticationViewModel
     lateinit var preference: SharedPreference

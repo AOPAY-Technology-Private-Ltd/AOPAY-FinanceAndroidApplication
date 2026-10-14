@@ -137,10 +137,9 @@ object ConstantClass {
        // UAT API
        const val BASE_URL = "https://uatapi.aopay.co.in/"
        const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-       const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"
-     /* //  const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
-       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_Customer_Uat(2.0.2)/Aopay_Customer_Uat.2.0.2.apk"
-*/
+      /* const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
+       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_CUSTOMER_UAT.2.0.3/AOPAY_CUSTOMER_UAT.2.0.3.apk"
+
 
 
     // UAT merchant id online
