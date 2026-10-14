@@ -15,8 +15,8 @@ android {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
         targetSdk = 36
-        versionCode = 10
-        versionName = "2.0.1" // prod version 2.0.1 current        // 2.0.2 UAT   12
+        versionCode = 13
+        versionName = "2.0.3" // prod version 2.0.1 current        // 2.0.3 UAT   13
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

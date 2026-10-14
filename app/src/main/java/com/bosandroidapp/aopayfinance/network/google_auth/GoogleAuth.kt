@@ -33,9 +33,9 @@ class GoogleAuth {
                     details.append("ID: ${account?.id}\n")
                     details.append("Email: ${account?.email}\n")
                     Log.d("GoogleAuth", details.toString())
-                    googleSignInClient.signOut().addOnCompleteListener {
+                    /*googleSignInClient.signOut().addOnCompleteListener {
                         googleSignInClient.revokeAccess()
-                    }
+                    }*/
                     return details.toString()
                 } catch (e: ApiException) {
                     return "Sign-in failed: ${e.localizedMessage}"

@@ -861,6 +861,7 @@ interface ApiInterface {
 
 
 
+
     // for UPI Auto Mandate Api ....................................................................
     @POST("api/OQPay/Finance/V1/SetupSubscription/Pennydrop")
     suspend fun getUpiMandateOnlineRequest(@Body req: UPIMandateRequest): Response<UPIMandateResponse>?
@@ -875,8 +876,6 @@ interface ApiInterface {
 
     @POST("api/OQPay/Finance/V1/SetupSubscription/Transaction")
     suspend fun getUpiAutoMandateTransactionRequest(@Body req: UpiAutoTransactionRequest): Response<UpiAutoTransactionResponse>?
-
-
 
 
 

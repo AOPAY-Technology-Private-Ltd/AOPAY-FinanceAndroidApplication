@@ -70,7 +70,6 @@ class ChooseYourRolePage : BaseActivity() {
 
         GoogleAuth.initialize(this)
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
-
         setOnClickListner()
 
     }
@@ -80,12 +79,13 @@ class ChooseYourRolePage : BaseActivity() {
     fun setOnClickListner(){
 
         binding.retailerid.setOnClickListener{
-           // this.startActivityForAuth()
+           /*
+            this.startActivityForAuth()
             loginType = Retailer
             binding.retailerid.strokeColor = resources.getColor(R.color.darkpurple)
             binding.customerid.strokeColor = resources.getColor(R.color.white)
             val mainIntent = Intent(this@ChooseYourRolePage, LoginPage::class.java)
-            startActivity(mainIntent)
+            startActivity(mainIntent)*/
         }
 
         binding.customerid.setOnClickListener{

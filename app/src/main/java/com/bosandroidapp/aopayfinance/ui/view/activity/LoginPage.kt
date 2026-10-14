@@ -712,6 +712,7 @@ class LoginPage : BaseActivity() {
        }
 
 
+
     // for tsting ........................
     fun sendDataToEmail(data: String) {
 
