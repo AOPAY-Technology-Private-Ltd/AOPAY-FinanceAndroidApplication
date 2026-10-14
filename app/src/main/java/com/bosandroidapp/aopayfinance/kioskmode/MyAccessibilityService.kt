@@ -43,13 +43,28 @@ class MyAccessibilityService : AccessibilityService() {
         }
     }
 
+    private val syncHandler = Handler(Looper.getMainLooper())
+    private val syncRunnable = object : Runnable {
+        override fun run() {
+            val preference = SharedPreference(this@MyAccessibilityService)
+            if (preference.getBoolanValue(ConstantClass.LoggedIn, false) &&
+                preference.getStringValue(ConstantClass.CustomerCode, "").isNotEmpty()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (isInternetAvailable(this@MyAccessibilityService)) {
+                        syncEmis()
+                    }
+                }
+            }
+            syncHandler.postDelayed(this, 15 * 60 * 1000L)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 
         val currentPkg = event?.packageName?.toString() ?: ""
@@ -234,6 +249,10 @@ class MyAccessibilityService : AccessibilityService() {
         // Explicitly map them to the service info
         info.packageNames = packageNames
         setServiceInfo(info)
+
+        // Start periodic sync check
+        syncHandler.removeCallbacks(syncRunnable)
+        syncHandler.post(syncRunnable)
     }
 
     fun refreshService() {
@@ -417,6 +436,7 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        syncHandler.removeCallbacks(syncRunnable)
         if (instance == this) {
             instance = null
         }

@@ -70,29 +70,26 @@ suspend fun String.getCurrentLastPaidDueDate(context: Context?, paidMonths: Long
 }
 
 
-
 private suspend fun getCustomerLoanEmiDetailsReq(req: GetCustomerLoanDetailsReq) =
     RetrofitClient.apiInterface.getCustomerLoanDetailsList(req)
 
 
-
-@RequiresApi(Build.VERSION_CODES.R)
 suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
 
     if (hasDateChanged()) {
-        Logger.d(ACCESSIBILITYTAG, "Date Changed")
+        Logger.d(ACCESSIBILITYTAG, "Date Changed or 24 hours passed, syncing EMIs...")
         val preference = SharedPreference(this@syncEmis)
 
-        var loanemireq = GetCustomerLoanDetailsReq(
+        val loanemireq = GetCustomerLoanDetailsReq(
             loancode = "",
             customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
             clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
         )
         try {
             Logger.d(ACCESSIBILITYTAG, "Syncing EMIs")
-            Log.d("Loanreq",Gson().toJson(loanemireq))
+            Log.d("Loanreq", Gson().toJson(loanemireq))
             val loanDetails = getCustomerLoanEmiDetailsReq(loanemireq)
             if (loanDetails != null && loanDetails.isSuccessful) {
                 currentDate = loanDetails.body()?.indiaTimeIST?.convertDate() ?: currentDate
@@ -101,7 +98,11 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
                 list?.let { loans ->
                     val obj = loans.getLoansStringObject()
                     Logger.d(ACCESSIBILITYTAG, obj)
-                    sharedPref.edit().putString("LoanData", obj).apply()
+                    sharedPref.edit()
+                        .putString("LoanData", obj)
+                        .putString("LoanSyncDate", currentDate)
+                        .putLong("LoanSyncTimestamp", System.currentTimeMillis())
+                        .apply()
                 }
 
                 Logger.d(ACCESSIBILITYTAG, "Loan data synced for date: $currentDate")
@@ -115,51 +116,55 @@ suspend fun Context.syncEmis() = withContext(Dispatchers.IO) {
 
     isEMIDue(sharedPref)
 
-   /* if(latitude > 0.0 && longitude > 0.0){
-        scheduleLocationWorker(latitude, longitude)
-    }*/
-
 }
 
 
 
-@RequiresApi(Build.VERSION_CODES.R)
 suspend fun Context.forceSyncEmis() = withContext(Dispatchers.IO) {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     currentDate = SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(Date())
-
     fetchAndStoreEmis(sharedPref)
-    isEMIDue(sharedPref)
 
 }
-
 
 
 private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
     val preference = SharedPreference(this)
-    var loanemireq = GetCustomerLoanDetailsReq(
+    val loanemireq = GetCustomerLoanDetailsReq(
         loancode = "",
         customercode = preference.getStringValue(ConstantClass.CustomerCode, ""),
         clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
     )
     try {
+        Logger.d(ACCESSIBILITYTAG, "Force Syncing EMIs...")
         Log.d("Loanreq", Gson().toJson(loanemireq))
         val loanDetails = getCustomerLoanEmiDetailsReq(loanemireq)
-        currentDate = loanDetails?.body()?.indiaTimeIST!!.convertDate()
-        val list = loanDetails?.body()?.data?.toList()
+        if (loanDetails != null && loanDetails.isSuccessful) {
+            currentDate = loanDetails.body()?.indiaTimeIST?.convertDate() ?: currentDate
+            val list = loanDetails.body()?.data?.toList()
 
-        list?.let { loans ->
-            val obj = loans.getLoansStringObject()
-            sharedPref.edit().putString("LoanData", obj).apply()
+            list?.let { loans ->
+                val obj = loans.getLoansStringObject()
+                Logger.d(ACCESSIBILITYTAG, obj)
+                sharedPref.edit()
+                    .putString("LoanData", obj)
+                    .putString("LoanSyncDate", currentDate)
+                    .putLong("LoanSyncTimestamp", System.currentTimeMillis())
+                    .apply()
+            }
+
+            Logger.d(ACCESSIBILITYTAG, "Loan data force synced for date: $currentDate")
         }
     } catch (e: Exception) {
-        Log.e(ACCESSIBILITYTAG, "Error fetching EMIs: ${e.localizedMessage}")
+        Log.e(ACCESSIBILITYTAG, "Error force fetching EMIs: ${e.localizedMessage}")
     }
+
+    isEMIDue(sharedPref)
 }
 
 
 
-@RequiresApi(Build.VERSION_CODES.R)
+
 private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContext(Dispatchers.IO) {
     var emiDues = 0
     var lateEMIs = 0
@@ -527,13 +532,12 @@ private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {
 
 fun Context.hasDateChanged(): Boolean {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
-    val lastSync = sharedPref.getString("LoanSyncDate", "")
-    if (lastSync != currentDate) {
-        sharedPref.edit().putString("LoanSyncDate", currentDate).apply()
-        // Logger.d(ACCESSIBILITYTAG, currentDate.toString())
-        return true
-    }
-    return false
+    val lastSyncDate = sharedPref.getString("LoanSyncDate", "")
+    val lastSyncTime = sharedPref.getLong("LoanSyncTimestamp", 0L)
+    val currentTime = System.currentTimeMillis()
+    val twentyFourHoursInMillis = 24 * 60 * 60 * 1000L
+
+    return (lastSyncDate != currentDate) || (currentTime - lastSyncTime >= twentyFourHoursInMillis)
 }
 
 

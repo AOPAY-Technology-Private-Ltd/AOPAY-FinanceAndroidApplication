@@ -131,7 +131,6 @@ class ChooseYourRolePage : BaseActivity() {
         binding.retailerid.strokeColor = resources.getColor(R.color.white)
         val mainIntent = Intent(this@ChooseYourRolePage, LoginPage::class.java)
         startActivity(mainIntent)
-
     }
 
     fun hitApiForUploadCustomerDeviceInfo(){

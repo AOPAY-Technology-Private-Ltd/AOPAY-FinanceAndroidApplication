@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bosandroidapp.aopayfinance.BuildConfig
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityKioskBinding
@@ -64,7 +65,6 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import kotlin.toString
 
-import com.google.firebase.installations.BuildConfig
 
 class KioskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityKioskBinding
@@ -437,6 +437,7 @@ class KioskActivity : AppCompatActivity() {
             setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(),LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0)
         }
     }
+
     fun setDataInspinner(tenure:Int,emiAmount:Double?){
         val emiOptions = ConstantClass.generateEMIOptions(tenure)
         val noOfEmiAdapter = ArrayAdapter(this, R.layout.mobilenamelayout, emiOptions )
