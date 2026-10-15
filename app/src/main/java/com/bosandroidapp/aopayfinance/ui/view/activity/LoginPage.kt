@@ -190,6 +190,7 @@ class LoginPage : BaseActivity() {
         })
 
 
+
         binding.loginlayout.setOnClickListener {
             var emailOfMobile = binding.emailormobilenumber.text.toString().trim()
             var password = binding.password.text.toString().trim()

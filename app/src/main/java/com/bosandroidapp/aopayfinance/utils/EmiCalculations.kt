@@ -160,6 +160,7 @@ private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
     }
 
     isEMIDue(sharedPref)
+
 }
 
 
@@ -559,6 +560,7 @@ fun List<com.bosandroidapp.aopayfinance.data.model.loginsignup.CustomerDataItem?
     Log.d("Loans Array", arr.toString())
     return arr.toString()
 }
+
 
 
 data class LocalLoanData(

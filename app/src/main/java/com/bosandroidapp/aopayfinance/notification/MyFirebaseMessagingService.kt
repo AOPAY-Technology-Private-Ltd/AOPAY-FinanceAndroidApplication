@@ -52,7 +52,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-
     fun passNotificationCode(notificationCode: String){
         val dpm = applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val admin = ComponentName(applicationContext, KioskDeviceAdminReceiver::class.java)
@@ -102,14 +101,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
-
             ConstantClass.UNLOCK , ConstantClass.LOCK-> {
                 Log.d("FCM_UNLOCK", "Unlock/Lock notification received")
                 runBlocking {
                     applicationContext.forceSyncEmis()
                 }
             }
-
 
         }
 

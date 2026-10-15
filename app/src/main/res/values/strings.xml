@@ -94,6 +94,7 @@
         <item>Settled</item>
     </string-array>
 
+
     <string-array name="cibilreporttype">
         <item>All</item>
         <item>Pending</item>

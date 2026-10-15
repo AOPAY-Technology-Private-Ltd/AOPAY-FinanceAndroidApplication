@@ -35,7 +35,8 @@ fun Context.stopLockSituation() {
     editor.apply()
     try {
         (this as KioskActivity).finish()
-    }catch (e:Exception){
+    }
+    catch (e:Exception){
     }
 }
 

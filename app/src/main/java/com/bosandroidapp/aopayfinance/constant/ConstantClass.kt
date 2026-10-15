@@ -108,45 +108,42 @@ import javax.crypto.spec.SecretKeySpec
 
 object ConstantClass {
 
-      // Procustion  API
+    // Procustion  API
 
 
-/*        const val BASE_URL = "https://api.aopay.finance/"
-        const val BASE_URL_IMAGE = "https://api.aopay.finance"
+    /*   const val BASE_URL = "https://api.aopay.finance/"
+         const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
 
-       // production merchant id online
+      // production merchant id online
           const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
           const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
 
 
-         // production merchant id offline
-         const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
-         const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"*/
-
-
-
-       // for enach option using registration id always use for bot uat and production ......................
-
-
-       // production merchant id online
-        const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
-
        // production merchant id offline
-        const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
+          const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
+          const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"*/
+
+
+/*    // UAT API
+    const val BASE_URL = "https://uatapi.aopay.co.in/"
+    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
+
+
+   /* // UAT API
+    const val BASE_URL = "https://uatapi.aopay.co.in/"
+    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
 
 
 
-      // UAT API
-       const val BASE_URL = "https://uatapi.aopay.co.in/"
-       const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+    // UAT API
+    const val BASE_URL = "https://uatapi.aopay.co.in/"
+    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
 
 
-
-     // UAT merchant id online
-     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-554"
-
+    // UAT merchant id online
+    const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
+    const val PENNYDROP_REGISTRATION_ID = "AOP-554"
 
 
     //  UAT merchant id offline
@@ -154,13 +151,24 @@ object ConstantClass {
     const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"
 
 
-
-     const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
-     const val PAN_BASE_URL = "https://api.aopay.in/"
+    // for enach option using registration id always use for bot uat and production ......................
 
 
-     const val ONLINE_PG = "https://api.dikshifinsure.com/"
-     //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
+    // production merchant id online
+    const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
+
+    // production merchant id offline
+    const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
+
+    //..............................................................................................................
+
+
+    const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
+    const val PAN_BASE_URL = "https://api.aopay.in/"
+
+
+    const val ONLINE_PG = "https://api.dikshifinsure.com/"
+    //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
 
 
     // for online emandate auto pay
@@ -168,9 +176,9 @@ object ConstantClass {
     const val RegistrationID_UPIAUTOPAY = "registrationid"
 
 
-     const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
-     const val SMS_SENDER_ID = "BOSCNT"
-     const val SMS_TEMPLATE_ID = "1207175396979758678"
+    const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
+    const val SMS_SENDER_ID = "BOSCNT"
+    const val SMS_TEMPLATE_ID = "1207175396979758678"
 
 
     const val LOAN_REJECT = "LOAN_REJECTED"
@@ -186,220 +194,221 @@ object ConstantClass {
 
     const val CustomerCode = "customerCode"
 
-     const val Admin = "admin"
+    const val Admin = "admin"
 
-     const val RetailerCode = "retailerCode"
-     const val ForgotPasswordType = "Retailer forgot password"
-     const val OTPTYPE = "VerifyUser"
-     const val EMILIST = "EmiList"
+    const val RetailerCode = "retailerCode"
+    const val ForgotPasswordType = "Retailer forgot password"
+    const val OTPTYPE = "VerifyUser"
+    const val EMILIST = "EmiList"
 
-     const val FCMTOKEN = "fcmtoken"
+    const val FCMTOKEN = "fcmtoken"
 
-     const val DEVICEID = "deviceid"
-     const val LoanSuccessStatus = "success"
-     const val DeviceType = "Android"
-     //const val ClientCode = "CMP0005"
-     const val ClientCode = "clientcode"
-     const val DefaulterEmiDebitAutoApproved ="admin"
-     const val DefaulterEmiDebitPending ="retailer"
-     const val SessionOutStatus = "Inactive"
+    const val DEVICEID = "deviceid"
+    const val LoanSuccessStatus = "success"
+    const val DeviceType = "Android"
 
-     const val LoginMobileorMailid = "loginMobileorMail"
+    //const val ClientCode = "CMP0005"
+    const val ClientCode = "clientcode"
+    const val DefaulterEmiDebitAutoApproved = "admin"
+    const val DefaulterEmiDebitPending = "retailer"
+    const val SessionOutStatus = "Inactive"
 
-     const val Loginpassword = "loginPassword"
-     var gpsSettingsOpened = false
-     var CheckCompleteEmiStatus = false
-     const val SETTINGS_PKG = "com.android.settings"
-     const val CustomerMobileNumber = "mobileNumber"
-     const val CustomerEmailID = "emailID"
-     const val ServiceCharge = "serviceCharge"
-     const val ServiceType = "serviceType"
-     const val FirstName = "firstName"
-     const val LastName = "lastName"
-     const val LoggedIn = "logged"
-     const val Retailer = "Retailer"
-     const val Customer = "Customer"
-     const val LoginType = "Logintype"
-     const val online = "Online"
-     const val offline = "Offline"
-     const val UPIAUTOPAY = "UPI Autopay"
+    const val LoginMobileorMailid = "loginMobileorMail"
 
-     const val Customer_LoanStatus = "disbursed"
-     const val OrganizationName = "Aopay Technology Private Limited"
+    const val Loginpassword = "loginPassword"
+    var gpsSettingsOpened = false
+    var CheckCompleteEmiStatus = false
+    const val SETTINGS_PKG = "com.android.settings"
+    const val CustomerMobileNumber = "mobileNumber"
+    const val CustomerEmailID = "emailID"
+    const val ServiceCharge = "serviceCharge"
+    const val ServiceType = "serviceType"
+    const val FirstName = "firstName"
+    const val LastName = "lastName"
+    const val LoggedIn = "logged"
+    const val Retailer = "Retailer"
+    const val Customer = "Customer"
+    const val LoginType = "Logintype"
+    const val online = "Online"
+    const val offline = "Offline"
+    const val UPIAUTOPAY = "UPI Autopay"
+
+    const val Customer_LoanStatus = "disbursed"
+    const val OrganizationName = "Aopay Technology Private Limited"
 
 
-     var isPgClosing = false
-     var isLockTaskStarted = false
-     const val editprofile = "Edit Profile"
-     const val cancel = "Cancel"
-     const val paymentMode = "Select Payment Mode"
-     const val accountType = "Select Account Type"
-     const val CibilReports = "Low Cibil Customer"
-     const val CardType = "Low Cibil"
-     const val CustomerAccessKey = "customeraccesskey"
-     const val CustomerLoanStatusApproved = "Approved"
-     const val CustomerLoanStatusPending = "Pending"
-     const val Exit = "Exit"
+    var isPgClosing = false
+    var isLockTaskStarted = false
+    const val editprofile = "Edit Profile"
+    const val cancel = "Cancel"
+    const val paymentMode = "Select Payment Mode"
+    const val accountType = "Select Account Type"
+    const val CibilReports = "Low Cibil Customer"
+    const val CardType = "Low Cibil"
+    const val CustomerAccessKey = "customeraccesskey"
+    const val CustomerLoanStatusApproved = "Approved"
+    const val CustomerLoanStatusPending = "Pending"
+    const val Exit = "Exit"
 
-     const val Due = "TodayDue"
-     const val Overdue = "OverDue"
-     const val TODAYDUE = "Today Dues"
+    const val Due = "TodayDue"
+    const val Overdue = "OverDue"
+    const val TODAYDUE = "Today Dues"
 
-     const val OVERDUE = "Over Dues"
-     const val CUREENTLAT = "CurrentLat"
-     const val CUREENTLONGG = "CurrentLongg"
+    const val OVERDUE = "Over Dues"
+    const val CUREENTLAT = "CurrentLat"
+    const val CUREENTLONGG = "CurrentLongg"
 
-     const val SelectBank = "Select Bank"
-     const val ModeOfPayment = "IMPS"
+    const val SelectBank = "Select Bank"
+    const val ModeOfPayment = "IMPS"
 
-     const val SUCCESS = "SUCCESS"
+    const val SUCCESS = "SUCCESS"
 
-    var CashDeposit =  "Cash Deposit"
+    var CashDeposit = "Cash Deposit"
 
-     var PanFirstName : String= ""
-     var PanMiddleName : String= ""
-     var PanLastName : String= ""
-     var PanMobileNumber : String= ""
-     var PanEmailId : String= ""
-     var PanPinCode : String= ""
-     var PanState : String= ""
-     var PanCity : String= ""
-     var PanCountry : String= ""
-     var PanBuilding : String= ""
-     var PanAddress : String= ""
-     var PanDOB : String= ""
+    var PanFirstName: String = ""
+    var PanMiddleName: String = ""
+    var PanLastName: String = ""
+    var PanMobileNumber: String = ""
+    var PanEmailId: String = ""
+    var PanPinCode: String = ""
+    var PanState: String = ""
+    var PanCity: String = ""
+    var PanCountry: String = ""
+    var PanBuilding: String = ""
+    var PanAddress: String = ""
+    var PanDOB: String = ""
 
-    var AdminCibilScore : String= ""
-    var AdminLoanApprovedStatus : String= ""
-    var CustomerLoanStatus : String= ""
+    var AdminCibilScore: String = ""
+    var AdminLoanApprovedStatus: String = ""
+    var CustomerLoanStatus: String = ""
 
-    var AadhaarName : String= ""
-    var AadharHouse : String= ""
-    var AadharStreet : String= ""
-    var AadharLoc : String= ""
-    var Aadhardist : String= ""
-    var AadharPin : String= ""
-    var AadharState : String= ""
-    var AadharCountry : String= ""
-    var AadharImage : String= ""
-    var AadharDOB : String= ""
+    var AadhaarName: String = ""
+    var AadharHouse: String = ""
+    var AadharStreet: String = ""
+    var AadharLoc: String = ""
+    var Aadhardist: String = ""
+    var AadharPin: String = ""
+    var AadharState: String = ""
+    var AadharCountry: String = ""
+    var AadharImage: String = ""
+    var AadharDOB: String = ""
 
-    var PanResponse : String = ""
-    var AadhaarResponse : String = ""
-    var CibilResponse : String = ""
+    var PanResponse: String = ""
+    var AadhaarResponse: String = ""
+    var CibilResponse: String = ""
 
-     var ENTEREDCUSTOMERDOB : String = ""
-     var WalletBalance : String = ""
-     var HoldAmount : String = ""
-     var MaxHoldingAmount : String = ""
-     var MinHoldingAmount : String = ""
+    var ENTEREDCUSTOMERDOB: String = ""
+    var WalletBalance: String = ""
+    var HoldAmount: String = ""
+    var MaxHoldingAmount: String = ""
+    var MinHoldingAmount: String = ""
 
-     var LoanSecurityHoldAmount : String = ""
+    var LoanSecurityHoldAmount: String = ""
 
-     var dialog : Dialog? = null
+    var dialog: Dialog? = null
 
-     var PanNumber : String = ""
-     var CheckOnlineOrOffline : String = ""
-     var PanNumberVerified : String = "no"
-     var BrandName : String = ""
-     var ModelName : String = ""
-     var ModelVarient : String = ""
-     var ModelColor : String = ""
-     var SellingPrice : String = ""
-     var MRPPrice : String = ""
-     var DownPayment : String = ""
-     var Tenure : String = ""
-     var LoanAmount : Double = 0.0
-     var EmiAmount : String = ""
-     var LoanStartDate = ""
-     var LoanEndDate = ""
-     var InterestRate : String = ""
-     var ProcessingFees : String = ""
-     var InterestAmt : String = ""
-     var ToBePaidAmount : String = ""
-     var CountryName : String ? = ""
-     var ClickOnCardDashboard : String ? = ""
-     var ClickOnCardLowCibilScore : String ? = ""
+    var PanNumber: String = ""
+    var CheckOnlineOrOffline: String = ""
+    var PanNumberVerified: String = "no"
+    var BrandName: String = ""
+    var ModelName: String = ""
+    var ModelVarient: String = ""
+    var ModelColor: String = ""
+    var SellingPrice: String = ""
+    var MRPPrice: String = ""
+    var DownPayment: String = ""
+    var Tenure: String = ""
+    var LoanAmount: Double = 0.0
+    var EmiAmount: String = ""
+    var LoanStartDate = ""
+    var LoanEndDate = ""
+    var InterestRate: String = ""
+    var ProcessingFees: String = ""
+    var InterestAmt: String = ""
+    var ToBePaidAmount: String = ""
+    var CountryName: String? = ""
+    var ClickOnCardDashboard: String? = ""
+    var ClickOnCardLowCibilScore: String? = ""
 
-     var AadharNumber : String = ""
-     var ReferenceAadharNumber : String = ""
-     var ReferenceAddress : String = ""
-    var ReferenceAadhaarName : String= ""
-    var ReferenceAadharHouse : String= ""
-    var ReferenceAadharStreet : String= ""
-    var ReferenceAadharLoc : String= ""
-    var ReferenceAadhardist : String= ""
-    var ReferenceAadharPin : String= ""
-    var ReferenceAadharState : String= ""
-    var ReferenceAadharCountry : String= ""
-    var ReferenceAadharVerified : String= ""
+    var AadharNumber: String = ""
+    var ReferenceAadharNumber: String = ""
+    var ReferenceAddress: String = ""
+    var ReferenceAadhaarName: String = ""
+    var ReferenceAadharHouse: String = ""
+    var ReferenceAadharStreet: String = ""
+    var ReferenceAadharLoc: String = ""
+    var ReferenceAadhardist: String = ""
+    var ReferenceAadharPin: String = ""
+    var ReferenceAadharState: String = ""
+    var ReferenceAadharCountry: String = ""
+    var ReferenceAadharVerified: String = ""
 
-     var AadharFrontImageUri: Uri? = null
-     var AadharBackImageUri: Uri? = null
-     var PanFrontImageUri: Uri? = null
-     var AadharVerified : String = ""
-     var CustPhotoPath : Uri? = null
-     var CustFirstName : String = ""
-     var CustMiddleName : String = ""
-     var CustLastName : String = ""
-     var CustPrimaryMobileNumber : String = ""
-     var CustPrimaryOTP : String = ""
-     var CustPrimaryMobileVerified : String = "no"
-     var CustAlternateMobileNumber : String = ""
-     var CustAlternateMobileOTP : String = ""
-     var CustAlternateMobileVerified : String = "no"
-     var isAggrementVerified : String = ""
-     var IsRetailerAggrementVerified : String = ""
-     var CusteMailID : String = ""
-     var CustFlatNo : String = ""
-     var CustAreaSector : String = ""
-     var CustCurrentAddress : String = ""
-     var CustPinCode : String = ""
-     var CustCountry : String ? = "India"
-     var CustStateName : String = ""
-     var CustCityName : String = ""
-     var CustCode : String = ""
-     var ImeiNumber1 : String = ""
-     var ImeiNumber1SealPhotoPath : Uri? = null
-     var ImeiNumber2 : String = ""
-     var ImeiNumber2SealPhotoPath : Uri? = null
-     var Invoive_Path : Uri? = null
-     var ImeiNumberPhotoPath : Uri? = null
-     var AccountNumber : String = ""
-     var BankIFSCCode : String = ""
-     var BankName : String = ""
-     var AccountType : String = ""
-     var CustomerCodeForEnach : String = ""
-     var RetailerCodeForEnach : String = ""
-     var LoanCodeForEnach : String = ""
-     var AccountHolderName = ""
-     var BranchAddress = ""
-     var BankID : Int =0
-     var BranchName : String = ""
-     var RefName : String = ""
-     var RefRelationShip : String = ""
-     var RefmobileNo : String = ""
-     var RefAddress : String = ""
-     var DebitOrCreditCard : String = ""
-     var CreatedBy : String = ""
-     var loginType : String = ""
-     var iisAggrementVerified : Boolean = false
-     var isCibilAggrementVerified : Boolean = false
-     var AadharTransactionIdNo : String = ""
-     var RefAadharTransactionIdNo : String = ""
-     var clickMakePaymentPage: Boolean = true
+    var AadharFrontImageUri: Uri? = null
+    var AadharBackImageUri: Uri? = null
+    var PanFrontImageUri: Uri? = null
+    var AadharVerified: String = ""
+    var CustPhotoPath: Uri? = null
+    var CustFirstName: String = ""
+    var CustMiddleName: String = ""
+    var CustLastName: String = ""
+    var CustPrimaryMobileNumber: String = ""
+    var CustPrimaryOTP: String = ""
+    var CustPrimaryMobileVerified: String = "no"
+    var CustAlternateMobileNumber: String = ""
+    var CustAlternateMobileOTP: String = ""
+    var CustAlternateMobileVerified: String = "no"
+    var isAggrementVerified: String = ""
+    var IsRetailerAggrementVerified: String = ""
+    var CusteMailID: String = ""
+    var CustFlatNo: String = ""
+    var CustAreaSector: String = ""
+    var CustCurrentAddress: String = ""
+    var CustPinCode: String = ""
+    var CustCountry: String? = "India"
+    var CustStateName: String = ""
+    var CustCityName: String = ""
+    var CustCode: String = ""
+    var ImeiNumber1: String = ""
+    var ImeiNumber1SealPhotoPath: Uri? = null
+    var ImeiNumber2: String = ""
+    var ImeiNumber2SealPhotoPath: Uri? = null
+    var Invoive_Path: Uri? = null
+    var ImeiNumberPhotoPath: Uri? = null
+    var AccountNumber: String = ""
+    var BankIFSCCode: String = ""
+    var BankName: String = ""
+    var AccountType: String = ""
+    var CustomerCodeForEnach: String = ""
+    var RetailerCodeForEnach: String = ""
+    var LoanCodeForEnach: String = ""
+    var AccountHolderName = ""
+    var BranchAddress = ""
+    var BankID: Int = 0
+    var BranchName: String = ""
+    var RefName: String = ""
+    var RefRelationShip: String = ""
+    var RefmobileNo: String = ""
+    var RefAddress: String = ""
+    var DebitOrCreditCard: String = ""
+    var CreatedBy: String = ""
+    var loginType: String = ""
+    var iisAggrementVerified: Boolean = false
+    var isCibilAggrementVerified: Boolean = false
+    var AadharTransactionIdNo: String = ""
+    var RefAadharTransactionIdNo: String = ""
+    var clickMakePaymentPage: Boolean = true
 
     // customer device configuration details
-     var deviceManufacturer : String = ""
-     var deviceModel : String = ""
-     var DeviceBrand : String = ""
-     var DeviceOSVersion : String = ""
-     var AppVersion : String = ""
-     var IMEI : String = ""
-     var DeviceName : String = ""
+    var deviceManufacturer: String = ""
+    var deviceModel: String = ""
+    var DeviceBrand: String = ""
+    var DeviceOSVersion: String = ""
+    var AppVersion: String = ""
+    var IMEI: String = ""
+    var DeviceName: String = ""
 
-    var latitude : Double = 0.0
-    var longitude : Double = 0.0
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 
     var eMandate = "accepted"
     var eMandatepending = "pending"
@@ -411,49 +420,49 @@ object ConstantClass {
 
     var internetSettingsOpened = false
 
-    var LoanRID : Int = 0
+    var LoanRID: Int = 0
 
-    var loanmode : String? = ""
+    var loanmode: String? = ""
 
-    var CreatedByCustomerShortCut : String = ""
-    var UPIMandate : String = ""
-    var isPannydropVerified : String= ""
-    var isEmandateVerified : String= ""
-    var isAccessKeyVerified : String= ""
+    var CreatedByCustomerShortCut: String = ""
+    var UPIMandate: String = ""
+    var isPannydropVerified: String = ""
+    var isEmandateVerified: String = ""
+    var isAccessKeyVerified: String = ""
 
 
     // already customer exist
-    var AlreadyCustomerCodeHaveEligiblity : String = ""
-    var AlreadyCustomerImage : String = ""
-    var AlreadyCustomerFirstName : String = ""
-    var AlreadyCustomerMiddleName : String = ""
-    var AlreadyCustomerLastName : String = ""
-    var AlreadyCustomerPrimaryMobileNumber : String = ""
+    var AlreadyCustomerCodeHaveEligiblity: String = ""
+    var AlreadyCustomerImage: String = ""
+    var AlreadyCustomerFirstName: String = ""
+    var AlreadyCustomerMiddleName: String = ""
+    var AlreadyCustomerLastName: String = ""
+    var AlreadyCustomerPrimaryMobileNumber: String = ""
     var AlreadyCustomerAlternateMobileNumber: String = ""
     var AlreadyCustomerAlternateEmailID: String = ""
-    var AlreadyCustomerFlatNo : String = ""
-    var AlreadyCustomerAearSector : String = ""
-    var AlreadyCustomerCurrentAddress : String = ""
-    var AlreadyCustomerPinCode : String = ""
-    var AlreadyCustomerCountry : String = ""
-    var AlreadyCustomerStateName : String = ""
-    var AlreadyCustomerCityName : String = ""
-    var AlreadyCustomerCustPhotoPath : String = ""
-    var AlreadyCustomerAccountNumber : String = ""
-    var AlreadyCustomerBankIFSCCode : String = ""
-    var AlreadyCustomerBankName : String = ""
-    var AlreadyCustomerAccountType : String = ""
-    var AlreadyCustomerBranchName : String = ""
-    var AlreadyCustomerRefName : String = ""
-    var AlreadyCustomerRefRelationShip : String = ""
-    var AlreadyCustomerRefmobileNo : String = ""
-    var AlreadyCustomerRefAddress : String = ""
-    var DefaultEmidebit : String = ""
-    var LoanStatus ="Pending"
+    var AlreadyCustomerFlatNo: String = ""
+    var AlreadyCustomerAearSector: String = ""
+    var AlreadyCustomerCurrentAddress: String = ""
+    var AlreadyCustomerPinCode: String = ""
+    var AlreadyCustomerCountry: String = ""
+    var AlreadyCustomerStateName: String = ""
+    var AlreadyCustomerCityName: String = ""
+    var AlreadyCustomerCustPhotoPath: String = ""
+    var AlreadyCustomerAccountNumber: String = ""
+    var AlreadyCustomerBankIFSCCode: String = ""
+    var AlreadyCustomerBankName: String = ""
+    var AlreadyCustomerAccountType: String = ""
+    var AlreadyCustomerBranchName: String = ""
+    var AlreadyCustomerRefName: String = ""
+    var AlreadyCustomerRefRelationShip: String = ""
+    var AlreadyCustomerRefmobileNo: String = ""
+    var AlreadyCustomerRefAddress: String = ""
+    var DefaultEmidebit: String = ""
+    var LoanStatus = "Pending"
 
     lateinit var dikshifinsureOnlinePGModel: DikshifinsureViewModel
 
-    var CustAdhaarPhotoUri : Uri? = null
+    var CustAdhaarPhotoUri: Uri? = null
 
     private var noInternetDialog: AlertDialog? = null
 
@@ -479,14 +488,14 @@ object ConstantClass {
 
 
     fun isInternetAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
             val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
             return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        }
-        else {
+        } else {
             val networkInfo = connectivityManager.activeNetworkInfo
             return networkInfo != null && networkInfo.isConnected
         }
@@ -494,7 +503,7 @@ object ConstantClass {
     }
 
 
-    fun OpenPopUpForVeryfyOTP(context: Context){
+    fun OpenPopUpForVeryfyOTP(context: Context) {
         val d = Dialog(context)
         dialog = d
         d.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -506,7 +515,8 @@ object ConstantClass {
             addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             statusBarColor = Color.TRANSPARENT
             navigationBarColor = Color.TRANSPARENT
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
+            decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
 
         d.setCanceledOnTouchOutside(false)
@@ -522,7 +532,11 @@ object ConstantClass {
         val isEmail = Patterns.EMAIL_ADDRESS.matcher(mobileOrEmailID).matches()
 
         if (!isMobile && !isEmail) {
-            Toast.makeText(context, "Enter a valid 10-digit mobile number or valid email address", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Enter a valid 10-digit mobile number or valid email address",
+                Toast.LENGTH_SHORT
+            ).show()
             return false
         }
 
@@ -530,7 +544,11 @@ object ConstantClass {
     }
 
 
-    fun getCityStateFromPincode(context: Context, pincode: String, callback: (String?, String?, String?) -> Unit) {
+    fun getCityStateFromPincode(
+        context: Context,
+        pincode: String,
+        callback: (String?, String?, String?) -> Unit
+    ) {
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -623,7 +641,8 @@ object ConstantClass {
             }
 
             // ✅ Return a content Uri (works safely for sharing / upload)
-            FileProvider.getUriForFile(context, context.packageName + ".fileprovider",  // must match manifest
+            FileProvider.getUriForFile(
+                context, context.packageName + ".fileprovider",  // must match manifest
                 cacheFile
             )
 
@@ -705,72 +724,70 @@ object ConstantClass {
     }
 
 
+    /*  fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
+          return try {
+              val inputStream = context.contentResolver.openInputStream(imageUri) ?: return null
+              val bitmap = BitmapFactory.decodeStream(inputStream) ?: return null
+              inputStream.close()
+
+              val fileName = "$filename${System.currentTimeMillis()}.jpg"
+              val tempFile = File(context.cacheDir, fileName)
+
+              FileOutputStream(tempFile).use { output ->
+                  // Compress to ~70% quality
+                  bitmap.compress(Bitmap.CompressFormat.JPEG, 70, output)
+              }
+
+              tempFile
+          } catch (e: Exception) {
+              e.printStackTrace()
+              null
+          }
+      }*/
 
 
-  /*  fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
-        return try {
-            val inputStream = context.contentResolver.openInputStream(imageUri) ?: return null
-            val bitmap = BitmapFactory.decodeStream(inputStream) ?: return null
-            inputStream.close()
+    /* fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
 
-            val fileName = "$filename${System.currentTimeMillis()}.jpg"
-            val tempFile = File(context.cacheDir, fileName)
+         return try {
 
-            FileOutputStream(tempFile).use { output ->
-                // Compress to ~70% quality
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, output)
-            }
+             val options = BitmapFactory.Options().apply {
+                 inJustDecodeBounds = true
+             }
 
-            tempFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }*/
+             context.contentResolver.openInputStream(imageUri)?.use {
+                 BitmapFactory.decodeStream(it, null, options)
+             }
 
+             // Resize large images
+             options.inSampleSize = calculateInSampleSize(options, 1080, 1080)
+             options.inJustDecodeBounds = false
 
-   /* fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
+             val bitmap = context.contentResolver.openInputStream(imageUri)?.use {
+                 BitmapFactory.decodeStream(it, null, options)
+             } ?: return null
 
-        return try {
+             val fileName = "${filename}_${System.currentTimeMillis()}.jpg"
 
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
+             val tempFile = File(context.cacheDir, fileName)
 
-            context.contentResolver.openInputStream(imageUri)?.use {
-                BitmapFactory.decodeStream(it, null, options)
-            }
+             FileOutputStream(tempFile).use { output ->
 
-            // Resize large images
-            options.inSampleSize = calculateInSampleSize(options, 1080, 1080)
-            options.inJustDecodeBounds = false
+                 // 60% gives much faster upload
+                 bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
 
-            val bitmap = context.contentResolver.openInputStream(imageUri)?.use {
-                BitmapFactory.decodeStream(it, null, options)
-            } ?: return null
+                 output.flush()
+             }
 
-            val fileName = "${filename}_${System.currentTimeMillis()}.jpg"
+             bitmap.recycle()
 
-            val tempFile = File(context.cacheDir, fileName)
+             tempFile
 
-            FileOutputStream(tempFile).use { output ->
+         } catch (e: Exception) {
 
-                // 60% gives much faster upload
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
-
-                output.flush()
-            }
-
-            bitmap.recycle()
-
-            tempFile
-
-        } catch (e: Exception) {
-
-            e.printStackTrace()
-            null
-        }
-    }*/
+             e.printStackTrace()
+             null
+         }
+     }*/
 
 
     fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
@@ -844,7 +861,8 @@ object ConstantClass {
             val halfWidth = width / 2
 
             while ((halfHeight / inSampleSize) >= reqHeight &&
-                (halfWidth / inSampleSize) >= reqWidth) {
+                (halfWidth / inSampleSize) >= reqWidth
+            ) {
 
                 inSampleSize *= 2
             }
@@ -856,7 +874,8 @@ object ConstantClass {
 
     fun saveImageToPictures(context: Context, imageFile: File): File? {
         return try {
-            val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val picturesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val newFile = File(picturesDir, imageFile.name)
 
             imageFile.copyTo(newFile, overwrite = true)
@@ -872,9 +891,14 @@ object ConstantClass {
     }
 
 
-    fun createMultipartFromUri(context: Context, uri: Uri?, partName: String, filename:String): MultipartBody.Part? {
+    fun createMultipartFromUri(
+        context: Context,
+        uri: Uri?,
+        partName: String,
+        filename: String
+    ): MultipartBody.Part? {
         return uri?.let {
-            val cacheFile = saveImageToCache(context, it, filename )
+            val cacheFile = saveImageToCache(context, it, filename)
             cacheFile?.let { file ->
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 MultipartBody.Part.createFormData(partName, file.name, requestFile)
@@ -892,7 +916,6 @@ object ConstantClass {
     }
 
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun getCurrentStartDate(): String {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -901,17 +924,14 @@ object ConstantClass {
     }
 
 
-
-
     fun getAndroidId(context: Context): String {
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
 
-
     fun formatToYYYYMMDD(inputDate: String?): String {
         if (inputDate.isNullOrBlank()) return ""
-        
+
         val inputFormats = arrayOf(
             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
             "yyyy-MM-dd'T'HH:mm:ss.SS",
@@ -921,9 +941,9 @@ object ConstantClass {
             "MM/dd/yyyy",
             "d/M/yyyy"
         )
-        
+
         val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        
+
         for (format in inputFormats) {
             try {
                 val sdf = SimpleDateFormat(format, Locale.getDefault())
@@ -960,7 +980,11 @@ object ConstantClass {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun formatDueDateGracePeriodDateToDDMMYYYY(inputDate: String, gracePeriod: Int, paidEmiCount: Int): String {
+    fun formatDueDateGracePeriodDateToDDMMYYYY(
+        inputDate: String,
+        gracePeriod: Int,
+        paidEmiCount: Int
+    ): String {
         return try {
             val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
             val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -982,8 +1006,7 @@ object ConstantClass {
             }
 
             dueDate.format(outputFormatter)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             "" // return empty string or handle error as needed
         }
 
@@ -1078,11 +1101,19 @@ object ConstantClass {
     }
 
 
-    fun checkActiveStatusAndLogout(context: Context, activeStatus: String?, preference: SharedPreference) {
+    fun checkActiveStatusAndLogout(
+        context: Context,
+        activeStatus: String?,
+        preference: SharedPreference
+    ) {
 
         if (ConstantClass.SessionOutStatus.equals(activeStatus)!!) {
             try {
-                Toast.makeText(context, "Your account is inactive. Please contact support.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "Your account is inactive. Please contact support.",
+                    Toast.LENGTH_LONG
+                ).show()
 
                 preference.setBooleanValue(ConstantClass.LoggedIn, false)
                 preference.setStringValue(ConstantClass.LoginType, "")
@@ -1114,7 +1145,7 @@ object ConstantClass {
     }
 
 
-    fun convertToDDMMYYYY(isoDate: String ?): String {
+    fun convertToDDMMYYYY(isoDate: String?): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault())
         val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -1212,7 +1243,8 @@ object ConstantClass {
 
 
     fun generateQRCode(text: String, size: Int = 500): Bitmap {
-        val bitMatrix: BitMatrix = MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, size, size)
+        val bitMatrix: BitMatrix =
+            MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, size, size)
 
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565)
 
@@ -1238,14 +1270,17 @@ object ConstantClass {
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
 
-                var  Address = address.getAddressLine(0) ?: ""
+                var Address = address.getAddressLine(0) ?: ""
                 var cityName = address.locality ?: ""
                 var district = address.subAdminArea ?: ""
                 val state = address.adminArea ?: ""
                 var pincode = address.postalCode ?: ""
 
                 // You can return full formatted string
-                Log.d("Address", "Address: $Address\nCity: $cityName\nDistrict: $district\nState: $state\nPincode: $pincode")
+                Log.d(
+                    "Address",
+                    "Address: $Address\nCity: $cityName\nDistrict: $district\nState: $state\nPincode: $pincode"
+                )
                 "Address: $Address\nCity: $cityName\nDistrict: $district\nState: $state\nPincode: $pincode"
 
                 return "Address: $Address , $cityName , $district ($pincode)"
@@ -1259,7 +1294,6 @@ object ConstantClass {
     }
 
 
-
     fun Activity.showDevModeSnackbar(rootView: View) {
         Snackbar.make(
             rootView,
@@ -1269,7 +1303,6 @@ object ConstantClass {
             openDeveloperOptions()
         }.show()
     }
-
 
 
     fun Activity.openDeveloperOptions() {
@@ -1293,6 +1326,7 @@ object ConstantClass {
                         0
                     ) != 0
                 }
+
                 Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN -> {
                     @Suppress("DEPRECATION")
                     Settings.Secure.getInt(
@@ -1301,6 +1335,7 @@ object ConstantClass {
                         0
                     ) != 0
                 }
+
                 else -> false
             }
         } catch (e: Exception) {
@@ -1309,31 +1344,31 @@ object ConstantClass {
     }
 
 
-    fun uploadDataOnFirebaseConsole(data:String, collectionPath:String/*,context: Context*/){
-     /*   val context = context*/
-/*        val db = Firebase.firestore
+    fun uploadDataOnFirebaseConsole(data: String, collectionPath: String/*,context: Context*/) {
+        /*   val context = context*/
+        /*        val db = Firebase.firestore
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
-        val currentDateTime = sdf.format(Date())
+                val sdf = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
+                val currentDateTime = sdf.format(Date())
 
 
-        // Create a new user with a first and last name
-        val logData = hashMapOf(
-            "filename" to "PAY.txt",
-            "content" to data,
-            "timestamp" to System.currentTimeMillis()
-        )
+                // Create a new user with a first and last name
+                val logData = hashMapOf(
+                    "filename" to "PAY.txt",
+                    "content" to data,
+                    "timestamp" to System.currentTimeMillis()
+                )
 
-        db.collection(collectionPath)
-            .document(currentDateTime)
-            .set(logData)
-            .addOnSuccessListener {
-                //Toast.makeText(context, "Log saved in Firestore", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Log.d("Error", " $e.message")
-                //Toast.makeText(context, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }*/
+                db.collection(collectionPath)
+                    .document(currentDateTime)
+                    .set(logData)
+                    .addOnSuccessListener {
+                        //Toast.makeText(context, "Log saved in Firestore", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.d("Error", " $e.message")
+                        //Toast.makeText(context, "Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }*/
     }
 
 
@@ -1365,7 +1400,6 @@ object ConstantClass {
             ""
         }
     }
-
 
 
     fun eMandateformatDate(input: String): String {
@@ -1431,42 +1465,41 @@ object ConstantClass {
     }
 
 
-
     // DPCAPPJSON
 
-   /* {
+    /* {
 
 
 
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
-        "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
+         "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
+         "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
 
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":
-        "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
+         "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":
+         "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
 
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
-        "https://api.oqpay.in/api/V1/OQFinance/download-DPC",
+         "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
+         "https://api.oqpay.in/api/V1/OQFinance/download-DPC",
 
-        "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
+         "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
 
-        "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
-    }*/
+         "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
+     }*/
 
 
-/*    {
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
-        "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
+    /*    {
+            "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
+            "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
 
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":
-        "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
+            "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":
+            "gJD2YwtOiWJHkSMkkIfLRlj-quNqG1fb6v100QmzM9w=",
 
-        "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
-        "https://uatapi.aopay.co.in/api/V1/AopayFinance/download-DPC",
+            "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":
+            "https://uatapi.aopay.co.in/api/V1/AopayFinance/download-DPC",
 
-        "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
+            "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
 
-        "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
-    }*/
+            "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
+        }*/
 
 
 }

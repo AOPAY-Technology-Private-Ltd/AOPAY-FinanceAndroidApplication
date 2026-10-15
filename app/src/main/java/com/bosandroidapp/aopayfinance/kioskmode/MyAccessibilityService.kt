@@ -55,7 +55,7 @@ class MyAccessibilityService : AccessibilityService() {
                     }
                 }
             }
-            syncHandler.postDelayed(this, 15 * 60 * 1000L)
+            syncHandler.postDelayed(this, 15 * 60 * 1000L)  // run again after 15 minutes
         }
     }
 
@@ -83,18 +83,18 @@ class MyAccessibilityService : AccessibilityService() {
 
 
 
-        if (isMyAppInfoPage() && !isEMIsCompleted()) {
+       /* if (isMyAppInfoPage() && !isEMIsCompleted()) {
             Logger.d(ACCESSIBILITYTAG, "On App Info Page: Global Back")
             performGlobalAction(GLOBAL_ACTION_BACK)
-        }
+        }*/
 
 
 
-        if (isFactoryResetting(event?.text?.toString() ?: "") && !isEMIsCompleted()) {
+      /*  if (isFactoryResetting(event?.text?.toString() ?: "") && !isEMIsCompleted()) {
             Logger.d(ACCESSIBILITYTAG, "On Factory Reset Page: Global Back")
             performGlobalAction(GLOBAL_ACTION_BACK)
             this.showToast("You are not allowed to Factory reset your device when your EMIs are pending.")
-        }
+        }*/
 
 
 
