@@ -26,6 +26,7 @@ object RetrofitClient {
         chain.proceed(requestWithHeaders)
     }
 
+
     private fun getAllInstance(): Retrofit {
 
         val logging = HttpLoggingInterceptor()
@@ -109,6 +110,7 @@ object RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
     }
+
 
 
    /* private fun getInstanceOnlineEnach(): Retrofit{

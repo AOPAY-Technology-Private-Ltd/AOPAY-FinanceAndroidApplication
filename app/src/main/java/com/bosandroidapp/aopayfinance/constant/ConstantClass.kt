@@ -107,56 +107,83 @@ import javax.crypto.spec.SecretKeySpec
 
 object ConstantClass {
 
-      // Procustion  API
+    // Environment Definition
+    enum class AppEnvironment(
+        val baseUrl: String,
+        val baseUrlImage: String,
+        val envName: String,
+        val panRegId: String,
+        val pennyDropRegId: String,
+        val panRegIdOffline: String,
+        val pennyDropRegIdOffline: String
+    ) {
+        RELEASE_UAT(
+            baseUrl = "https://uat.api.aopay.finance/",
+            baseUrlImage = "https://uat.api.aopay.finance",
+            envName = "RELEASE UAT",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        STAGING(
+            baseUrl = "https://uatapi.aopay.co.in/",
+            baseUrlImage = "https://uatapi.aopay.co.in",
+            envName = "STAGING",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        DEV(
+            baseUrl = "https://dev.uatapi.aopay.co.in/",
+            baseUrlImage = "https://dev.uatapi.aopay.co.in",
+            envName = "DEV",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        PRODUCTION(
+            baseUrl = "https://api.aopay.finance/",
+            baseUrlImage = "https://api.aopay.finance",
+            envName = "PRODUCTION",
+            panRegId = "AOP-5056",
+            pennyDropRegId = "AOP-5056",
+            panRegIdOffline = "AOP-5048",
+            pennyDropRegIdOffline = "AOP-5048"
+        )
+    }
 
 
-/*        const val BASE_URL = "https://api.aopay.finance/"
-        const val BASE_URL_IMAGE = "https://api.aopay.finance"
+    // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
+    val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
 
-
-       // production merchant id online
-          const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
-
-
-         // production merchant id offline
-         const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
-         const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"
-
-          const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
-
-       // for enach option using registration id always use for bot uat and production ......................
-
-       // production merchant id online
-        const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
-
-       // production merchant id offline
-        const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
-
-
-       // UAT API
-       const val BASE_URL = "https://uatapi.aopay.co.in/"
-       const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-      /* const val CUSTOMERPPURLLINK= BASE_URL+"api/V1/AopayFinance/aopay-download"*/
-       const val CUSTOMERPPURLLINK="https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/AOPAY_CUSTOMER_UAT.2.0.3/AOPAY_CUSTOMER_UAT.2.0.3.apk"
+    val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
+    val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
+    val CUSTOMERPPURLLINK = BASE_URL + "api/V1/AopayFinance/aopay-download"
 
 
 
-    // UAT merchant id online
-     const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
-     const val PENNYDROP_REGISTRATION_ID = "AOP-554"
-
-    //  UAT merchant id offline
-    const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-554"
-    const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"
+    val PAN_VERIFICATION_REGISTRATION_ID = CURRENT_ENVIRONMENT.panRegId
+    val PENNYDROP_REGISTRATION_ID = CURRENT_ENVIRONMENT.pennyDropRegId
+    val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = CURRENT_ENVIRONMENT.panRegIdOffline
+    val PENNYDROP_REGISTRATION_ID_OFFLINE = CURRENT_ENVIRONMENT.pennyDropRegIdOffline
 
 
+    // production merchant id online
+    const val Enach_Option_Online_REGISTRATION_ID = "AOP-5056"
 
-     const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
-     const val PAN_BASE_URL = "https://api.aopay.in/"
+
+    // production merchant id offline
+    const val Enach_Option_Offline_REGISTRATION_ID = "AOP-5048"
 
 
-     const val ONLINE_PG = "https://api.dikshifinsure.com/"
+    const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
+    const val PAN_BASE_URL = "https://api.aopay.in/"
+
+    const val ONLINE_PG = "https://api.dikshifinsure.com/"
+
      //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
 
 
@@ -1247,7 +1274,6 @@ object ConstantClass {
     }
 
 
-
     fun Activity.showDevModeSnackbar(rootView: View) {
         Snackbar.make(
             rootView,
@@ -1257,7 +1283,6 @@ object ConstantClass {
             openDeveloperOptions()
         }.show()
     }
-
 
 
     fun Activity.openDeveloperOptions() {
@@ -1438,5 +1463,11 @@ object ConstantClass {
         "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
     }*/
 
+
+
+  /*   Naim Khan [3:32 PM]
+
+    AOP-5048  AOPAY FINANCE OFFLINE
+    AOP-5056  AOPAY FINANCE ONLINE  */
 
 }

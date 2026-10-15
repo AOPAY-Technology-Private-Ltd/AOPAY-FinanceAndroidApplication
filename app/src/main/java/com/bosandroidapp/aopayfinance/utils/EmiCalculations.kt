@@ -48,6 +48,7 @@ public var currentDate: String? = null
 const val ACCESSIBILITYTAG = "Accessibility Service"
 
 
+
 suspend fun String.getCurrentLastPaidDueDate(context: Context?, paidMonths: Long, payableMonths: Long, AllgrossPeriod: Int, customergrossPeriod: Int, servercurrentDate:String): ArrayList<MonthsAndPayables> = withContext(Dispatchers.IO) {
     val AllgrossPeriod = AllgrossPeriod
     val customergrossPeriod = customergrossPeriod
@@ -68,7 +69,6 @@ suspend fun String.getCurrentLastPaidDueDate(context: Context?, paidMonths: Long
     // switch back automatically since return value will flow to caller
     list // is showing all duedate list
 }
-
 
 
 private suspend fun getCustomerLoanEmiDetailsReq(req: GetCustomerLoanDetailsReq) =
@@ -134,7 +134,6 @@ suspend fun Context.forceSyncEmis() = withContext(Dispatchers.IO) {
 }
 
 
-
 private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
     val preference = SharedPreference(this)
     var loanemireq = GetCustomerLoanDetailsReq(
@@ -156,7 +155,6 @@ private suspend fun Context.fetchAndStoreEmis(sharedPref: SharedPreferences) {
         Log.e(ACCESSIBILITYTAG, "Error fetching EMIs: ${e.localizedMessage}")
     }
 }
-
 
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -486,6 +484,7 @@ private fun String.getGrossDate(grossPeriod: Int): String {
     } ?: this
 
 }
+
 
 
 /*private fun String.isLateFeesApplicable(): Boolean {

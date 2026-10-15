@@ -78,7 +78,8 @@ class CustomerAppInstall : BaseActivity() {
 
         if (ConstantClass.BASE_URL.contains("uat", ignoreCase = true)) {
             binding.frpmailid.text = ConstantClass.FRP_MAIL_ID_UAT
-        } else {
+        }
+        else {
             binding.frpmailid.text = ConstantClass.FRP_MAIL_ID_PROD
         }
 
