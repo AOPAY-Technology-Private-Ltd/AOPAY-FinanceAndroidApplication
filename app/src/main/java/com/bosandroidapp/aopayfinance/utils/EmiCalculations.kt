@@ -213,6 +213,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
                 }
             }
         }
+        
 
         if (emiDues == 0) {
             CheckCompleteEmiStatus = false

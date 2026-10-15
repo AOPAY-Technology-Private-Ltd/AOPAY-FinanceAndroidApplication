@@ -108,7 +108,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object ConstantClass {
 
-    // Procustion  API
+    // Production  API
 
 
     /*   const val BASE_URL = "https://api.aopay.finance/"
@@ -120,25 +120,29 @@ object ConstantClass {
           const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
 
 
-       // production merchant id offline
+      // production merchant id offline
           const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
           const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"*/
 
 
-/*    // UAT API
-    const val BASE_URL = "https://uatapi.aopay.co.in/"
-    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
 
-
-   /* // UAT API
-    const val BASE_URL = "https://uatapi.aopay.co.in/"
-    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"*/
+    /* // RELEASE (UAT) API FOR CLIENT TESTING ..........................................................................
+         const val BASE_URL = "https://uat.api.aopay.finance/"
+         const val BASE_URL_IMAGE = "https://uat.api.aopay.finance"*/
 
 
 
-    // UAT API
+    // STAGING API FOR TESTER .........................................................................................
     const val BASE_URL = "https://uatapi.aopay.co.in/"
     const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
+
+
+
+   /* // DEV API
+    const val BASE_URL = "https://dev.uatapi.aopay.co.in/"
+    const val BASE_URL_IMAGE = "https://dev.uatapi.aopay.co.in"*/
+
+
 
 
     // UAT merchant id online

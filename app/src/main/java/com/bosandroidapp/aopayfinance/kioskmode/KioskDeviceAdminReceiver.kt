@@ -72,7 +72,6 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
     }
 
-
     fun performDpcProvision(context: Context){
         //  This is where you set up kiosk mode
         val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
