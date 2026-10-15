@@ -6,7 +6,6 @@ plugins {
 
 
 android {
-
     namespace = "com.bosandroidapp.aopayfinance"
     compileSdk = 36
 

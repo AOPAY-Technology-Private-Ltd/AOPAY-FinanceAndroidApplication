@@ -108,51 +108,69 @@ import javax.crypto.spec.SecretKeySpec
 
 object ConstantClass {
 
-    // Production  API
+    // Environment Definition
+    enum class AppEnvironment(
+        val baseUrl: String,
+        val baseUrlImage: String,
+        val envName: String,
+        val panRegId: String,
+        val pennyDropRegId: String,
+        val panRegIdOffline: String,
+        val pennyDropRegIdOffline: String
+    ) {
+        RELEASE_UAT(
+            baseUrl = "https://uat.api.aopay.finance/",
+            baseUrlImage = "https://uat.api.aopay.finance",
+            envName = "RELEASE UAT",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        STAGING(
+            baseUrl = "https://uatapi.aopay.co.in/",
+            baseUrlImage = "https://uatapi.aopay.co.in",
+            envName = "STAGING",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        DEV(
+            baseUrl = "https://dev.uatapi.aopay.co.in/",
+            baseUrlImage = "https://dev.uatapi.aopay.co.in",
+            envName = "DEV",
+            panRegId = "AOP-554",
+            pennyDropRegId = "AOP-554",
+            panRegIdOffline = "AOP-554",
+            pennyDropRegIdOffline = "AOP-554"
+        ),
+        PRODUCTION(
+            baseUrl = "https://api.aopay.finance/",
+            baseUrlImage = "https://api.aopay.finance",
+            envName = "PRODUCTION",
+            panRegId = "AOP-5056",
+            pennyDropRegId = "AOP-5056",
+            panRegIdOffline = "AOP-5048",
+            pennyDropRegIdOffline = "AOP-5048"
+        )
+    }
 
 
-    /*   const val BASE_URL = "https://api.aopay.finance/"
-         const val BASE_URL_IMAGE = "https://api.aopay.finance"
 
+    // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
+    val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
 
-      // production merchant id online
-          const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-5048"
-          const val PENNYDROP_REGISTRATION_ID = "AOP-5048"
-
-
-      // production merchant id offline
-          const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-5050"
-          const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-5050"*/
+    val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
+    val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
 
 
 
-    /* // RELEASE (UAT) API FOR CLIENT TESTING ..........................................................................
-         const val BASE_URL = "https://uat.api.aopay.finance/"
-         const val BASE_URL_IMAGE = "https://uat.api.aopay.finance"*/
+    val PAN_VERIFICATION_REGISTRATION_ID = CURRENT_ENVIRONMENT.panRegId
+    val PENNYDROP_REGISTRATION_ID = CURRENT_ENVIRONMENT.pennyDropRegId
+    val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = CURRENT_ENVIRONMENT.panRegIdOffline
+    val PENNYDROP_REGISTRATION_ID_OFFLINE = CURRENT_ENVIRONMENT.pennyDropRegIdOffline
 
-
-
-    // STAGING API FOR TESTER .........................................................................................
-    const val BASE_URL = "https://uatapi.aopay.co.in/"
-    const val BASE_URL_IMAGE = "https://uatapi.aopay.co.in"
-
-
-
-   /* // DEV API
-    const val BASE_URL = "https://dev.uatapi.aopay.co.in/"
-    const val BASE_URL_IMAGE = "https://dev.uatapi.aopay.co.in"*/
-
-
-
-
-    // UAT merchant id online
-    const val PAN_VERIFICATION_REGISTRATION_ID = "AOP-554"
-    const val PENNYDROP_REGISTRATION_ID = "AOP-554"
-
-
-    //  UAT merchant id offline
-    const val PAN_VERIFICATION_REGISTRATION_ID_OFFLINE = "AOP-554"
-    const val PENNYDROP_REGISTRATION_ID_OFFLINE = "AOP-554"
 
 
     // for enach option using registration id always use for bot uat and production ......................
@@ -1473,8 +1491,6 @@ object ConstantClass {
 
     /* {
 
-
-
          "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":
          "com.afwsamples.testdpc/com.afwsamples.testdpc.DeviceAdminReceiver",
 
@@ -1504,6 +1520,12 @@ object ConstantClass {
 
             "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED": true
         }*/
+
+
+    /*   Naim Khan [3:32 PM]
+
+   AOP-5048  AOPAY FINANCE OFFLINE
+   AOP-5056  AOPAY FINANCE ONLINE  */
 
 
 }
