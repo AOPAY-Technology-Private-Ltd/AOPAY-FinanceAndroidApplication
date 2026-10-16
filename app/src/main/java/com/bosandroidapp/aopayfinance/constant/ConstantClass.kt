@@ -157,9 +157,8 @@ object ConstantClass {
     }
 
 
-
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.STAGING
+    val CURRENT_ENVIRONMENT = AppEnvironment.DEV
 
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
@@ -193,9 +192,11 @@ object ConstantClass {
     //const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
 
 
+
     // for online emandate auto pay
     const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"
     const val RegistrationID_UPIAUTOPAY = "registrationid"
+
 
 
     const val SMS_API_KEY = "KBSxc26XqjoiR7SA"
@@ -231,6 +232,7 @@ object ConstantClass {
 
     //const val ClientCode = "CMP0005"
     const val ClientCode = "clientcode"
+    const val AlreadyCustomerLoggedIn = "alreadycustomerloggedin"
     const val DefaulterEmiDebitAutoApproved = "admin"
     const val DefaulterEmiDebitPending = "retailer"
     const val SessionOutStatus = "Inactive"

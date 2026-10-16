@@ -47,6 +47,7 @@ data class RegistrationRes(@SerializedName("lastName")
                            @SerializedName("company_doc_Photo")
                            val companydoc: String? = "",
                            @SerializedName("clientcode")
-                           val clientCode: String? = ""
-
+                           val clientCode: String? = "",
+                           @SerializedName("isCustomerLoggedIn")
+                           val isCustomerLoggedIn: String? = ""
 )

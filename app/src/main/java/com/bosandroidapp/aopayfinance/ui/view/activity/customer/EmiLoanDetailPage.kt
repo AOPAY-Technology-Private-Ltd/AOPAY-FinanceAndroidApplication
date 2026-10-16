@@ -427,6 +427,7 @@ class EmiLoanDetailPage : BaseActivity() {
                 val selectedItem = parent.getItemAtPosition(position).toString().toInt()
                 var totalEmiAmount = 0.0   // use Double for calculation
                 Log.d("ListDueGrace",":".plus(listOfDueWithGraceDate))
+
                 if(listOfDueWithGraceDate.isNotEmpty()){
 
                     for (j in 1..selectedItem) {

@@ -332,8 +332,9 @@ class DashBoard : BaseActivity() {
             binding.appBarDashBoard.deskdesign.subtitle.text = "Track Your Loan. Pay with Ease"
 
             var accessKey = preference.getBoolanValue(ConstantClass.CustomerAccessKey,false)
+            var alreadyCustomerLoggedIn = preference.getStringValue(ConstantClass.AlreadyCustomerLoggedIn,"")
 
-            if(accessKey){
+            if(accessKey|| alreadyCustomerLoggedIn.toLowerCase().equals("true",ignoreCase = true)){
                 binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.visibility = View.GONE
                 binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE
             }

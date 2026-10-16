@@ -307,6 +307,7 @@ class LoginPage : BaseActivity() {
                         preference.setStringValue(ConstantClass.LoginMobileorMailid, emailOfMobile)
                         preference.setStringValue(ConstantClass.Loginpassword, password)
                         preference.setStringValue(ConstantClass.ClientCode, response.clientCode.toString())
+                        preference.setStringValue(ConstantClass.AlreadyCustomerLoggedIn, response.isCustomerLoggedIn.toString())
 
                         val intent = Intent(this@LoginPage, DashBoard::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
