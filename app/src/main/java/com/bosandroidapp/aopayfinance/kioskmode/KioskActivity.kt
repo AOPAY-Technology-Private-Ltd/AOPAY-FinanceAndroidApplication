@@ -18,6 +18,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -55,6 +56,8 @@ import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
 import com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusReq
 import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
@@ -67,6 +70,27 @@ import kotlin.toString
 
 
 class KioskActivity : AppCompatActivity() {
+
+    companion object {
+        var instance: KioskActivity? = null
+        fun finishKiosk() {
+            instance?.let { activity ->
+                activity.runOnUiThread {
+                    try {
+                        activity.stopLockIfRunning()
+                    } catch (e: Exception) {
+                        try {
+                            activity.stopLockTask()
+                        } catch (_: Exception) {}
+                    }
+                    activity.finish()
+                }
+            }
+            instance = null
+        }
+
+    }
+
     private lateinit var binding: ActivityKioskBinding
     lateinit var preference: SharedPreference
     lateinit var viewModel: AuthenticationViewModel
@@ -104,6 +128,17 @@ class KioskActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instance = this
+        registerUnlockReceiver()
+
+        if (!isLocked()) {
+            try {
+                stopLockIfRunning()
+            } catch (_: Exception) {}
+            finish()
+            return
+        }
+
         window.exitTransition = null
         window.returnTransition = null
         window.reenterTransition = null
@@ -143,6 +178,16 @@ class KioskActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        // instant unlock activity .................
+        if (!isLocked()) {
+            try {
+                stopLockIfRunning()
+            } catch (_: Exception) {}
+            finish()
+            return
+        }
+
+        
         if (!previousLoanData.isNullOrEmpty()) {
             setData(previousLoanData, previousCurrentDate)
 
@@ -285,7 +330,45 @@ class KioskActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if(isLocked()) finish()
+        if (!isLocked()) finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterUnlockReceiver()
+        if (instance == this) {
+            instance = null
+        }
+    }
+
+    private val unlockReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "com.bosandroidapp.aopayfinance.ACTION_UNLOCK_KIOSK") {
+                try {
+                    stopLockIfRunning()
+                } catch (_: Exception) {
+                    try {
+                        stopLockTask()
+                    } catch (_: Exception) {}
+                }
+                finish()
+            }
+        }
+    }
+
+    private fun registerUnlockReceiver() {
+        try {
+            val filter = IntentFilter("com.bosandroidapp.aopayfinance.ACTION_UNLOCK_KIOSK")
+            ContextCompat.registerReceiver(this, unlockReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        } catch (e: Exception) {
+            Log.e("KioskActivity", "Error registering unlock receiver", e)
+        }
+    }
+
+    private fun unregisterUnlockReceiver() {
+        try {
+            unregisterReceiver(unlockReceiver)
+        } catch (_: Exception) {}
     }
 
     override fun onStop() {

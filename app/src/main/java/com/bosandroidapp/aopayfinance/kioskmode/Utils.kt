@@ -7,6 +7,7 @@ import android.app.admin.DevicePolicyManager
 import android.app.usage.UsageStatsManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -28,17 +29,37 @@ fun Context.isEMIsCompleted(): Boolean {
     return sharedPref.getBoolean("isEMIsCompleted", true)
 }
 
+
 fun Context.stopLockSituation() {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     val editor = sharedPref.edit()
     editor.putBoolean("isLocked", false) // key: isLoggedIn, value: true
     editor.apply()
+
+    if (this is KioskActivity) {
+        try {
+            stopLockIfRunning()
+        } catch (_: Exception) {
+            try {
+                stopLockTask()
+            } catch (_: Exception) {}
+        }
+        finish()
+    }
+
+    KioskActivity.finishKiosk()
     try {
-        (this as KioskActivity).finish()
+        val intent = Intent("com.bosandroidapp.aopayfinance.ACTION_UNLOCK_KIOSK").apply {
+            setPackage(packageName)
+        }
+        sendBroadcast(intent)
     }
-    catch (e:Exception){
+    catch (e: Exception) {
+        Log.e("stopLockSituation", "Error sending unlock broadcast", e)
     }
+
 }
+
 
 fun Context.startLockSituation() {
     val sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE)
