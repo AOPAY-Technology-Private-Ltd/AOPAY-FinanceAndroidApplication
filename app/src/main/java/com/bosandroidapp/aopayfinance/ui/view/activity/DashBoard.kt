@@ -324,7 +324,8 @@ class DashBoard : BaseActivity() {
              binding.navAddaccount.visibility = View.VISIBLE
             binding.appBarDashBoard.deskdesign.subtitle.text = "One Tap to Your Next Loan"
 
-        } else {
+        }
+        else {
             binding.navWallet.visibility = View.GONE
             binding.navAddaccount.visibility = View.GONE
             binding.appBarDashBoard.deskdesign.retailersDashboard.visibility = View.GONE
@@ -357,6 +358,7 @@ class DashBoard : BaseActivity() {
         }
 
 
+
         binding.appBarDashBoard.swiperefresh.setOnRefreshListener {
             if (isInternetAvailable(this@DashBoard)) {
                 hitApiForRetailerWalletAmount()
@@ -365,8 +367,10 @@ class DashBoard : BaseActivity() {
         }
 
 
+
         binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.setOnClickListener{
-           /* hitApiForGetAndCheckAccessToken()*/
+
+            /* hitApiForGetAndCheckAccessToken()*/
 
             val currentCount = preference.getIntValue(ConstantClass.GENERATE_KEY_COUNT, 0)
 
@@ -385,12 +389,12 @@ class DashBoard : BaseActivity() {
                 hitApiForValidateKey()
             }
             else {
-
                 if (canGenerateKey()) {
                     hitApiForGetAndCheckAccessToken()
                 }
 
             }
+
         }
 
 
@@ -660,6 +664,7 @@ class DashBoard : BaseActivity() {
     }
 
 
+
     fun hitApiForGetAndCheckAccessToken(){
 
         val token = if (preference.getStringValue(ConstantClass.FCMTOKEN, "").isNullOrBlank()) {
@@ -724,7 +729,6 @@ class DashBoard : BaseActivity() {
     }
 
 
-
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -741,7 +745,6 @@ class DashBoard : BaseActivity() {
 
 
     }
-
 
 
     fun OpenPopUpForVeryfyOTP() {
@@ -995,6 +998,7 @@ class DashBoard : BaseActivity() {
     }
 
 
+
     fun hitApiForLogin() {
 
        var deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
@@ -1104,6 +1108,7 @@ class DashBoard : BaseActivity() {
         }
 
     }
+
 
     fun hitApiForUploadLatLong() {
         val modelName = Build.MODEL
