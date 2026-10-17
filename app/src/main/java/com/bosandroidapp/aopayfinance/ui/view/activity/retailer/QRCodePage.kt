@@ -18,11 +18,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RadioGroup
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -1916,30 +1920,48 @@ class QRCodePage : BaseActivity() {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         dialog.setCanceledOnTouchOutside(false)
+
         val nextLayout = dialog.findViewById<LinearLayout>(com.bosandroidapp.aopayfinance.R.id.nextlayout)
-        val accountnumber = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.accountnumber)
-        val banificeryName = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.banificeryName)
-        val ifsccode = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.ifsccode)
-        val bankname = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.bankname)
-        val branchname = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.branchname)
-        val branchaddress = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.branchaddress)
-        val acounttype = dialog.findViewById<TextView>(com.bosandroidapp.aopayfinance.R.id.acounttype)
+        val accountnumber = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.accountnumber)
+        val banificeryName = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.banificeryName)
+        val ifsccode = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.ifsccode)
+        val bankname = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.bankname)
+        val branchname = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.branchname)
+        val branchaddress = dialog.findViewById<EditText>(com.bosandroidapp.aopayfinance.R.id.branchaddress)
+        val acounttype = dialog.findViewById<Spinner>(com.bosandroidapp.aopayfinance.R.id.acounttype)
         val back = dialog.findViewById<ImageView>(com.bosandroidapp.aopayfinance.R.id.back)
 
-        accountnumber.text = AccountNumber
-        banificeryName.text = "${CustFirstName} ${CustLastName}"
-        ifsccode.text = BankIFSCCode
-        bankname.text = BankName
-        branchname.text = BranchName
-        branchaddress.text = BranchAddress
-        acounttype.text = AccountType
 
+        // Disable all fields
+        accountnumber.isEnabled = false
+        banificeryName.isEnabled = false
+        ifsccode.isEnabled = false
+        bankname.isEnabled = false
+        branchname.isEnabled = false
+        branchaddress.isEnabled = false
+        acounttype.isEnabled = false
+
+
+        val adapter = ArrayAdapter.createFromResource(this,  R.array.accounttype, R.layout.mobilenamelayout)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        acounttype.adapter = adapter
+
+        accountnumber.setText(AccountNumber)
+        banificeryName.setText ("${CustFirstName} ${CustLastName}")
+        ifsccode.setText (BankIFSCCode)
+        bankname.setText (BankName)
+        branchname.setText (BranchName)
+        branchaddress.setText (BranchAddress)
+        val position = adapter.getPosition(AccountType)
+        if (position >= 0) {
+            acounttype.setSelection(position)
+        }
         nextLayout.setOnClickListener {
             if (banificeryName.text.toString().isEmpty()) {
                 Toast.makeText(this@QRCodePage, "Please enter banificery name", Toast.LENGTH_SHORT).show()
-            } 
+            }
             else {
-                
+
                 val startDate = ConstantClass.formatToYYYYMMDD(LoanStartDate)
                 val endDate = ConstantClass.formatToYYYYMMDD(LoanEndDate)
                 val emiAmountVal = EmiAmount.toDoubleOrNull()?.roundToInt() ?: 0
@@ -1970,7 +1992,7 @@ class QRCodePage : BaseActivity() {
                 )
                 
                 hitApiForEnach(request, true)
-                
+
             }
         }
 
@@ -1979,7 +2001,9 @@ class QRCodePage : BaseActivity() {
         }
 
         dialog.show()
+
     }
+
 
 
     fun hitApiForEnach(request: EMandateRequest, check: Boolean) {

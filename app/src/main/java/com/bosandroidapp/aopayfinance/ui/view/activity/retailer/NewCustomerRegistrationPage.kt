@@ -161,6 +161,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.code
@@ -169,7 +172,6 @@ import kotlin.toString
 
 
 class NewCustomerRegistrationPage : BaseActivity() {
-
     lateinit var binding: ActivityNewCustomerRegistrationPageBinding
 
     lateinit var dialog: Dialog
@@ -2031,6 +2033,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog!!.dismiss()
                         binding.createaccount.isEnabled = true
+                        Toast.makeText(this@NewCustomerRegistrationPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
                     }
 
                     ApiStatus.LOADING -> {
@@ -2095,6 +2098,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 }
 
                                 if (!response.httpResponseCode.isNullOrBlank() && response.httpResponseCode.equals("200")) {
+                                    Toast.makeText(this@NewCustomerRegistrationPage, response.message.toString(), Toast.LENGTH_SHORT).show()
+
                                     if(response.result!=null){
                                         var data = response.result.resultJson.inProfileResponse
                                         userScore = data.score.bureauScore.toFloat()
@@ -2238,6 +2243,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     ApiStatus.ERROR -> {
                         ConstantClass.dialog!!.dismiss()
                         binding.createaccount.isEnabled = true
+                        Toast.makeText(this@NewCustomerRegistrationPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()
                     }
 
                     ApiStatus.LOADING -> {
@@ -2448,16 +2454,82 @@ class NewCustomerRegistrationPage : BaseActivity() {
                             PopOpForCibileScoreRequestToAdmin(cibilScoremsg, title,true)
                         }
                         else {
-                            val err = response.errorBody()?.string()
-                            Log.e("API_RESPONSE_ERROR", err ?: "Unknown error")
+                            val errorBody = response.errorBody()?.string()
+
+                            Log.e("API_RESPONSE_ERROR", errorBody ?: "Unknown error")
+
+                            val errorMessage = when (response.code()) {
+
+                                400 -> "Bad request"
+
+                                401 -> "Unauthorized access"
+
+                                403 -> "Access forbidden"
+
+                                404 -> "Data not found"
+
+                                405 -> "Method not allowed"
+
+                                408 -> "Request timeout"
+
+                                409 -> "Conflict occurred"
+
+                                422 -> "Validation failed"
+
+                                429 -> "Too many requests"
+
+                                500 -> "Internal server error"
+
+                                502 -> "Bad gateway"
+
+                                503 -> "Service unavailable"
+
+                                504 -> "Gateway timeout"
+
+                                else -> "Something went wrong"
+                            }
+
+                            PopOpForCibileScoreRequestToAdmin(errorMessage, "Error", false)
                             binding.createaccount.isEnabled = true
                         }
                     }
 
-                } catch (e: Exception) {
-                    ConstantClass.dialog?.takeIf { it.isShowing }?.dismiss()
-                    Log.e("API_EXCEPTION", "Error: ${e.localizedMessage}", e)
-                    binding.createaccount.isEnabled = true
+                }
+
+                catch (e: SocketTimeoutException) {
+
+                    withContext(Dispatchers.Main) {
+                        ConstantClass.dialog?.dismiss()
+                        PopOpForCibileScoreRequestToAdmin("Connection timeout", "Error", false)
+                        binding.createaccount.isEnabled = true
+                    }
+
+                }
+                catch (e: UnknownHostException) {
+
+                    withContext(Dispatchers.Main) {
+                        ConstantClass.dialog?.dismiss()
+                        PopOpForCibileScoreRequestToAdmin("No internet connection", "Error", false)
+                        binding.createaccount.isEnabled = true
+                    }
+
+                }
+                catch (e: IOException) {
+
+                    withContext(Dispatchers.Main) {
+                        ConstantClass.dialog?.dismiss()
+                        PopOpForCibileScoreRequestToAdmin("Network error", "Error", false)
+                        binding.createaccount.isEnabled = true
+                    }
+
+                }
+                catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        ConstantClass.dialog?.dismiss()
+                        PopOpForCibileScoreRequestToAdmin(e.message ?: "Something went wrong", "Error", false)
+                        binding.createaccount.isEnabled = true
+
+                    }
                 }
             }
 
@@ -2623,7 +2695,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                             ConstantClass.dialog!!.dismiss()
                         }
 
-                        // ✅ Print the full error details
+                        //  Print the full error details
                         Log.e("API_ERROR", "Status: ERROR")
                         Log.e("API_ERROR_CODE", resources.data?.code().toString())
                         Log.e("API_ERROR_MSG", resources.message ?: "Unknown Error")
@@ -2749,6 +2821,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                     }
 
                     ApiStatus.ERROR -> {
+                        binding.createaccount.isEnabled = true
                         Toast.makeText(this@NewCustomerRegistrationPage, resources.message ?: "Error occurred", Toast.LENGTH_SHORT).show()}
                 }
             }

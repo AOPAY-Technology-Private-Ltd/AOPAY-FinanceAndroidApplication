@@ -248,6 +248,8 @@ class IMEIDetailsPage : BaseActivity() {
                 ImeiNumber2SealPhotoPath = imei2photoUri
                 Invoive_Path = invoicePhotoUri
                 ImeiNumberPhotoPath = ImeiPhotoUri
+                iisAggrementVerified = true
+                IsRetailerAggrementVerified = "yes"
                 OpenPopUpForTermCondition()
                 //startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))
 

@@ -141,7 +141,7 @@ class AppScanInstallPage : BaseActivity() {
     lateinit var preference: SharedPreference
     private  var invoicePhotoUri: Uri? = null
     private lateinit var client: ProvisionerClient
-
+    private lateinit var callback : ProvisionerJattListener
     private var pairStatus: PairStatus? = null
     private var isDialogClosed: Boolean = false
     private var isModeSwitching: Boolean = false
@@ -187,7 +187,7 @@ class AppScanInstallPage : BaseActivity() {
         }
     }
 
-    private lateinit var callback : ProvisionerJattListener
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

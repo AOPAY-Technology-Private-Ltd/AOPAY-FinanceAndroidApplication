@@ -1732,7 +1732,6 @@ class PaymentInformation : BaseActivity() {
             }
         }
 
-
     }
 
 
