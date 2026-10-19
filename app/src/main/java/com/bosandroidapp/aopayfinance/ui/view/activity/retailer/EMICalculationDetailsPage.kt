@@ -137,6 +137,7 @@ class EMICalculationDetailsPage : BaseActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+
         preference = SharedPreference(this)
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
 
@@ -146,7 +147,7 @@ class EMICalculationDetailsPage : BaseActivity() {
         }
 
         if (ClickOnCardDashboard.equals("Product")) {
-            binding.nextbuttonlayout.visibility = View.GONE
+            binding.nextbuttonlayout.visibility = View.GONE // for testing
         }
 
         hitApiForGetEmiPercent(MobileData.brandName, MobileData.modelName)
@@ -286,6 +287,7 @@ class EMICalculationDetailsPage : BaseActivity() {
     }
 
 
+
     fun setDataOnUI(SellingPrice: String,mrp:String) {
         Glide.with(this).load(MobileData.imagePath).placeholder(R.drawable.samsung).error(R.drawable.samsung).into(binding.deviceImage)
         binding.brandname.text = MobileData.brandName
@@ -294,7 +296,7 @@ class EMICalculationDetailsPage : BaseActivity() {
        // binding.colorvarient.text = MobileData.avlbColors
        // binding.stroage.text = MobileData.variantName
        // binding.mrpamount.text = "₹ ".plus(MobileData.mrpPrice)
-        binding.mrpamount.text = "₹  $mrp"
+        binding.mrpamount.text = "₹ $mrp"
 
         // binding.sellingamount.text = "₹ ".plus(EmiSplitDataModel[0].sellingPrice)
         binding.sellingamount.setText(SellingPrice)
@@ -536,6 +538,7 @@ class EMICalculationDetailsPage : BaseActivity() {
         }
 
         checkKYC = false
+        var emiAmount = "%.2f".format(EmiAmount.toDouble())
 
         val req = ManageCustomerStepWiseReq(
             mode = "UPDATE",
@@ -545,10 +548,10 @@ class EMICalculationDetailsPage : BaseActivity() {
             modelName = ModelName,
             modelVariant = ModelVarient,
             color = ModelColor,
-            sellingPrice = SellingPrice,
+            sellingPrice = lastSellingPrice!!,
             downPayment = DownPayment,
             tenure = Tenure,
-            emiAmount = EmiAmount,
+            emiAmount = emiAmount ,
             customerCode = preference.getStringValue(ConstantClass.CustomerCode, ""),
         )
 
@@ -679,7 +682,6 @@ class EMICalculationDetailsPage : BaseActivity() {
 
     // as discuss by Naim Sir 03/06/2026
 
-
     fun UpdateEmiCalculationOnSellingPrice(EmiDataList: List<DataItems>, SellingPrice: String, tenureMonth: String,downPaymentPercentange: String) {
 
         binding.tenuretxt.text= "${tenureMonth} Month"
@@ -700,6 +702,7 @@ class EMICalculationDetailsPage : BaseActivity() {
         binding.downPayment.text = "₹ %.2f".format(downPayment)
 
        // binding.downpaymenttxt.text = "${resources.getString(R.string.down_payment)}(${EmiDataList[0].downPaymentPerc})%"
+
         binding.downpaymenttxt.text = "${resources.getString(R.string.down_payment)}(${downPaymentPercentange})%"
 
         // Step 2: Loan Amount (Principal)

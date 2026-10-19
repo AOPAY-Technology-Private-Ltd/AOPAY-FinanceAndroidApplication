@@ -2662,7 +2662,6 @@ class NewCustomerRegistrationPage : BaseActivity() {
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
-
                         it.data?.let { users ->
                             users.body()?.let { response ->
 
@@ -2723,6 +2722,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
     // new changes implement with new flow
+
 
     // hit api for upload customer data
 

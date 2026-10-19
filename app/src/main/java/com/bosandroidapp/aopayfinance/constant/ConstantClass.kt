@@ -115,8 +115,7 @@ object ConstantClass {
         val panRegId: String,
         val pennyDropRegId: String,
         val panRegIdOffline: String,
-        val pennyDropRegIdOffline: String
-    ) {
+        val pennyDropRegIdOffline: String) {
         RELEASE_UAT(
             baseUrl = "https://uat.api.aopay.finance/",
             baseUrlImage = "https://uat.api.aopay.finance",
@@ -157,7 +156,7 @@ object ConstantClass {
 
 
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.DEV
+    val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
 
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage

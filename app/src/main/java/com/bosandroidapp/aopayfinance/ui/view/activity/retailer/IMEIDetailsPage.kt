@@ -213,6 +213,9 @@ class IMEIDetailsPage : BaseActivity() {
         hitApiForLogin()
     }
 
+    override fun onBackPressed() {
+
+    }
 
     fun seonClickListner(){
 

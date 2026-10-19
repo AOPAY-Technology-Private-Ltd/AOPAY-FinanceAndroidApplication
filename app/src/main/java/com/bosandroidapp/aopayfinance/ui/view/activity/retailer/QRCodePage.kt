@@ -524,6 +524,11 @@ class QRCodePage : BaseActivity() {
     }
 
 
+    override fun onBackPressed() {
+
+    }
+
+
 
     @SuppressLint("SetTextI18n")
     fun OpenPopUpForQRScanAlert() {

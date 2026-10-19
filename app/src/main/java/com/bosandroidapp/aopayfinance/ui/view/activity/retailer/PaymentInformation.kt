@@ -453,6 +453,11 @@ class PaymentInformation : BaseActivity() {
     }
 
 
+    override fun onBackPressed() {
+
+    }
+
+
     fun containsEmoji(text: String): Boolean {
         for (char in text) {
             val type = Character.getType(char)

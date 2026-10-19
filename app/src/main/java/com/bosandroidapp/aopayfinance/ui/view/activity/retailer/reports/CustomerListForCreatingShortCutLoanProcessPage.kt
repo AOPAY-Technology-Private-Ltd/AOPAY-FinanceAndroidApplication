@@ -2,6 +2,7 @@ package com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports
 
 import android.R
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,6 +13,8 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -758,12 +761,12 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
 
         val adapter = ArrayAdapter.createFromResource(dialog.context, com.bosandroidapp.aopayfinance.R.array.accounttype, com.bosandroidapp.aopayfinance.R.layout.mobilenamelayout)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(com.bosandroidapp.aopayfinance.R.layout.spinner_dropdown_item)
         acounttype.adapter = adapter
 
 
         if(bankName.isNotEmpty()){
-            val bankadapter = ArrayAdapter(dialog.context, android.R.layout.simple_dropdown_item_1line, bankName)
+            val bankadapter = ArrayAdapter(dialog.context, com.bosandroidapp.aopayfinance.R.layout.spinner_dropdown_item, bankName)
             bankname.setAdapter(bankadapter)
         }
 
@@ -774,6 +777,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         bankname.setText(BankName)
         branchname.setText(BranchName)
         branchaddress.setText(BranchAddress)
+
 
         val position = adapter.getPosition(AccountType)
         if (position >= 0) {
@@ -798,15 +802,40 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         }
 
         clickbuttonforedit.setOnClickListener {
-            isDataEditedByUser = true
-            accountnumber.isEnabled = true
-            banificeryName.isEnabled = true
-            ifsccode.isEnabled = true
-            bankname.isEnabled = true
-            branchname.isEnabled = true
-            branchaddress.isEnabled = true
-            acounttype.isEnabled = true
-            Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, "Fields are now editable", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(this@CustomerListForCreatingShortCutLoanProcessPage)
+                .setTitle("Confirmation")
+                .setMessage("Are you sure you want to edit bank details?")
+                .setPositiveButton("Yes") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    isDataEditedByUser = true
+                    accountnumber.isEnabled = true
+                    banificeryName.isEnabled = true
+                    ifsccode.isEnabled = true
+                    bankname.isEnabled = true
+                    branchname.isEnabled = true
+                    branchaddress.isEnabled = true
+                    acounttype.isEnabled = true
+
+                    accountnumber.requestFocus()
+                    accountnumber.setSelection(accountnumber.text.length)
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.showSoftInput(accountnumber, InputMethodManager.SHOW_IMPLICIT)
+
+                    Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, "Fields are now editable", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("No") { dialogInterface, _ ->
+
+                    dialogInterface.dismiss()
+                    isDataEditedByUser = false
+                    accountnumber.isEnabled = false
+                    banificeryName.isEnabled = false
+                    ifsccode.isEnabled = false
+                    bankname.isEnabled = false
+                    branchname.isEnabled = false
+                    branchaddress.isEnabled = false
+                    acounttype.isEnabled = false
+                }
+                .show()
         }
 
         nextLayout.setOnClickListener {
@@ -914,34 +943,68 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                                                             customerCode = preference.getStringValue(ConstantClass.CustomerCode, "")
                                                                         )
 
+                                                                    Log.d("Step3UpdateReq", Gson().toJson(stepReq))
+
                                                                     viewModel.uploadCustomerListForShortCutLoanCreateProcess(stepReq).observe(this@CustomerListForCreatingShortCutLoanProcessPage) { stepRes ->
-                                                                        // Proceed to eMandate flow
-                                                                        val request = EMandateRequest(
-                                                                            categoryID = 7,
-                                                                            collectionAmount = emiAmountVal,
-                                                                            collectCollectionUntilCancle = false,
-                                                                            seqType = "RCUR",
-                                                                            iFSCCode = BankIFSCCode,
-                                                                            frequncy = "MNTH",
-                                                                            registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE,
-                                                                            accountHolderName = AccountHolderName,
-                                                                            finalCollectionDate = endDate,
-                                                                            loanNo = createLoanDetails!!.loanCode,
-                                                                            accountType = AccountType,
-                                                                            emailAddress = customerDetails!!.eMailID ?: CusteMailID,
-                                                                            firstCollectionDate = startDate,
-                                                                            mobileNumber = customerDetails!!.primaryMobileNumber,
-                                                                            bankAccountNumberConfirmation = AccountNumber,
-                                                                            addIn2 = BranchAddress,
-                                                                            addIn3 = "",
-                                                                            debitType = true,
-                                                                            teleNumber = "",
-                                                                            authType = "",
-                                                                            bankID = BankID,
-                                                                            bankAccountNumber = AccountNumber
-                                                                        )
-                                                                        hitApiForEnach(request, item, true)
+                                                                        when (stepRes.apiStatus) {
+                                                                            ApiStatus.SUCCESS -> {
+                                                                                stepRes.data?.let { response ->
+                                                                                    if (response.isSuccessful) {
+                                                                                        val body = response.body()
+                                                                                        Log.d("Step3UpdateRes", Gson().toJson(body))
+                                                                                        if (body != null && body.success == true && body.code == 200) {
+                                                                                            Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, body.message ?: "Bank details updated successfully", Toast.LENGTH_SHORT).show()
+
+                                                                                            // Proceed to eMandate flow
+                                                                                            val request = EMandateRequest(
+                                                                                                categoryID = 7,
+                                                                                                collectionAmount = emiAmountVal,
+                                                                                                collectCollectionUntilCancle = false,
+                                                                                                seqType = "RCUR",
+                                                                                                iFSCCode = BankIFSCCode,
+                                                                                                frequncy = "MNTH",
+                                                                                                registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE,
+                                                                                                accountHolderName = AccountHolderName,
+                                                                                                finalCollectionDate = endDate,
+                                                                                                loanNo = createLoanDetails!!.loanCode,
+                                                                                                accountType = AccountType,
+                                                                                                emailAddress = customerDetails!!.eMailID ?: CusteMailID,
+                                                                                                firstCollectionDate = startDate,
+                                                                                                mobileNumber = customerDetails!!.primaryMobileNumber,
+                                                                                                bankAccountNumberConfirmation = AccountNumber,
+                                                                                                addIn2 = BranchAddress,
+                                                                                                addIn3 = "",
+                                                                                                debitType = true,
+                                                                                                teleNumber = "",
+                                                                                                authType = "",
+                                                                                                bankID = BankID,
+                                                                                                bankAccountNumber = AccountNumber
+                                                                                            )
+                                                                                            hitApiForEnach(request, item, true)
+                                                                                        } else {
+                                                                                            ConstantClass.dialog?.dismiss()
+                                                                                            nextLayout.isEnabled = true
+                                                                                            Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, body?.message ?: "Failed to update bank details", Toast.LENGTH_LONG).show()
+                                                                                        }
+                                                                                    } else {
+                                                                                        ConstantClass.dialog?.dismiss()
+                                                                                        nextLayout.isEnabled = true
+                                                                                        val errorStr = response.message()
+                                                                                        Log.e("Step3UpdateResError", errorStr)
+                                                                                        Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, "Error: $errorStr", Toast.LENGTH_SHORT).show()
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            ApiStatus.ERROR -> {
+                                                                                ConstantClass.dialog?.dismiss()
+                                                                                nextLayout.isEnabled = true
+                                                                                Log.e("Step3UpdateError", stepRes.message ?: "Unknown error")
+                                                                                Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, stepRes.message ?: "Failed to update bank details", Toast.LENGTH_SHORT).show()
+                                                                            }
+                                                                            ApiStatus.LOADING -> {}
+                                                                        }
                                                                     }
+                                                               
                                                                 } else {
                                                                     nextLayout.isEnabled = true
                                                                     Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, statusResp.message ?: "Penny drop check failed", Toast.LENGTH_LONG).show()
@@ -1017,6 +1080,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
     fun hitApiForBankList(item: CustomerShortCutDataItem) {
         bankList.clear()
+        bankName.clear()
 
         var req = BankListReq(
             registrationID = if (ConstantClass.CheckOnlineOrOffline == ConstantClass.online) {
@@ -1081,7 +1145,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
     }
 
-
     private fun proceedWithLoanLogic(item: CustomerShortCutDataItem,step: String) {
         var loanData = item.createLoanDetails
         var invoiceAppVerification = item.invoiceAndAppVerification
@@ -1092,7 +1155,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
         if (!isEmandateVerifiedStatus) {
             val isBankDetailsMissing = bankDetails?.bankIFSCCode.isNullOrBlank() || bankDetails?.accountNumber.isNullOrBlank() || bankDetails?.accountType.isNullOrBlank()
-
             if (isBankDetailsMissing && LoanMode == ConstantClass.offline) {
                 startActivity(Intent(this, AppScanInstallPage::class.java))
             } else {
@@ -1115,7 +1177,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         }
 
     }
-
 
     private fun showEmandateSelectionDialog(item: CustomerShortCutDataItem) {
         val dialog = Dialog(this, com.bosandroidapp.aopayfinance.R.style.FullScreenDialog)
@@ -1155,7 +1216,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         dialog.show()
 
     }
-
 
     private fun fetchEmandateOptionsForDialog(dialog: Dialog) {
         val req = EmandateOptionSelectetionReq(
@@ -1253,10 +1313,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                     }
 
                                     var verifiedStatus = "No"
-
-                                    if (response.data?.customer != null) {
-                                        verifiedStatus = "Yes"
-                                    }
 
                                     val uploadReq = EnachDateUploadReq(
                                         isEmandateVerified = verifiedStatus,
@@ -1455,9 +1511,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
                                         var verifiedStatus = "No"
 
-                                        if (response.data?.customer != null) {
-                                            verifiedStatus = "Yes"
-                                        }
 
                                         val uploadReq = EnachDateUploadReq(
                                             isEmandateVerified = verifiedStatus,

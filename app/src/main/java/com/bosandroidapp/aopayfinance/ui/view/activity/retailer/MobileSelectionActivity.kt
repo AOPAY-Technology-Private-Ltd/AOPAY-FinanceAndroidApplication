@@ -30,6 +30,7 @@ import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityMobileselectionBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.ClickOnCardDashboard
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.LoginMobileorMailid
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Loginpassword
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
@@ -88,8 +89,13 @@ class MobileSelectionActivity : BaseActivity() {
         binding.showingMobileList.layoutManager = GridLayoutManager(this, 2)
         binding.showingMobileList.addItemDecoration(GridSpacingItemDecoration(2, spacingInPixels, true))
 
+
         setClickListner()
         hitApiForGetMobileDataList()
+
+
+        binding.back.visibility=View.GONE
+
 
     }
 
@@ -101,6 +107,9 @@ class MobileSelectionActivity : BaseActivity() {
 
     }
 
+    override fun onBackPressed() {
+
+    }
 
     fun setClickListner(){
 

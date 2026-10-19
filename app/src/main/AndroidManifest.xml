@@ -347,6 +347,7 @@
             android:name=".ui.view.activity.retailer.reports.CustomerListForCreatingShortCutLoanProcessPage"
             android:exported="false"
             android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.TheEmiClub"
             android:windowSoftInputMode="adjustResize" />
 
 
