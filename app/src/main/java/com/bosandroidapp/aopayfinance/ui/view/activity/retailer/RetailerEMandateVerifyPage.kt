@@ -343,6 +343,7 @@ class RetailerEMandateVerifyPage : BaseActivity() {
                                 emIfscCode = BankIFSCCode,
                                 emumrn = umn
                             )
+
                             hitApiForUploadEnachMandateDataResponse(uploadReq, isEmandateVerified)
                         }
                     }

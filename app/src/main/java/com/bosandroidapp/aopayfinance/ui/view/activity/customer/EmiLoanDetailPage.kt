@@ -447,7 +447,8 @@ class EmiLoanDetailPage : BaseActivity() {
                         totalEmiAmount += emiAmountWithFine
                     }
 
-                    binding.amount.text = "₹ ${totalEmiAmount}"
+                    //binding.amount.text = "₹ ${totalEmiAmount}"
+                    binding.amount.text = "₹ ${String.format("%.2f", totalEmiAmount)}"
 
                     // makepaymentamount =  "$totalEmiAmount"
                 }
