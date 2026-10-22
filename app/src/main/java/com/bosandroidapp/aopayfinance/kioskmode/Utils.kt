@@ -97,6 +97,7 @@ fun Context.setEMICompleted() {
         val admin = ComponentName(this, KioskDeviceAdminReceiver::class.java)
         if (dpm.isDeviceOwnerApp(packageName)) {
             dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
+            dpm.clearUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
             dpm.clearDeviceOwnerApp(packageName)
             dpm.removeActiveAdmin(admin)
         }

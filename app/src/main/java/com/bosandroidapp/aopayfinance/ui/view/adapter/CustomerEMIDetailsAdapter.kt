@@ -66,7 +66,7 @@ class CustomerEMIDetailsAdapter( var context:Context,var customerLoanEmiDetailsL
            LoanId = selectedLoanId
            customerCode = selectedCustomerCode
 
-           if (CustomerLoanStatus.equals(ConstantClass.Customer_LoanStatus, ignoreCase = true) || paidEmi == tenure.toString()) {
+           if (CustomerLoanStatus.toLowerCase().equals(ConstantClass.Customer_LoanStatus, ignoreCase = true) || paidEmi == tenure.toString()) {
                val intent = Intent(context, EmiLoanDetailPage::class.java).apply {
                    putExtra("LoanId", selectedLoanId)
                    putExtra("customerCode", selectedCustomerCode)

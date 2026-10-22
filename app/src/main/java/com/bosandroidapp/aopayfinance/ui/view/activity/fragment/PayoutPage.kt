@@ -406,6 +406,7 @@ class PayoutPage : Fragment() {
    }
 
         binding.holdamountrequest.setOnClickListener {
+
        if(holdcheckremarks){
            Toast.makeText(requireContext(),"Please enter valid remark",Toast.LENGTH_SHORT).show()
        }
@@ -480,9 +481,7 @@ class PayoutPage : Fragment() {
         }
     }
 
-    fun isValidForm(accountNumber: String, holdername: String, ifscCode: String, branchname: String, mode: String, amount: String,
-                    retailerName: String, isOffline: Boolean
-    ): Pair<Boolean, String?> {
+    fun isValidForm(accountNumber: String, holdername: String, ifscCode: String, branchname: String, mode: String, amount: String, retailerName: String, isOffline: Boolean): Pair<Boolean, String?> {
         if (isOffline) {
             /*if (retailerName.isBlank()) return Pair(false, "Enter retailer name")
             if (!checkRetailerName) return Pair(false, "Enter valid retailer name")*/

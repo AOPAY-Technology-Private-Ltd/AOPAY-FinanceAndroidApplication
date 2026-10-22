@@ -81,6 +81,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         dpm.setFactoryResetProtectionPolicy(admin, policy)
                     }
                     dpm.clearUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
+                    dpm.clearUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
                     dpm.clearDeviceOwnerApp(getPackageName())
                     dpm.removeActiveAdmin(admin)
                     hitApiForDeviceLockStatus(true)
