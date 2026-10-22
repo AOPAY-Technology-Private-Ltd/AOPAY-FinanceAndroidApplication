@@ -333,6 +333,7 @@ class KioskActivity : AppCompatActivity() {
         if (!isLocked()) finish()
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterUnlockReceiver()
@@ -365,21 +366,27 @@ class KioskActivity : AppCompatActivity() {
         }
     }
 
+
     private fun unregisterUnlockReceiver() {
         try {
             unregisterReceiver(unlockReceiver)
         } catch (_: Exception) {}
     }
 
+
     override fun onStop() {
         super.onStop()
         Log.d("Accessibility","onStop")
     }
 
+
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) enterImmersiveMode()
     }
+
+
 
     fun hitapiforGetUpdateProfile(){
 
@@ -436,6 +443,7 @@ class KioskActivity : AppCompatActivity() {
             }
         }
     }
+
 
     fun HitApiForEmiList(){
         if (isApiRunning) {

@@ -84,7 +84,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     dpm.clearUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
                     dpm.clearDeviceOwnerApp(getPackageName())
                     dpm.removeActiveAdmin(admin)
-                    hitApiForDeviceLockStatus(true)
+                    hitApiForDeviceLockStatus(true, "CUSTOMER_UNINSTALLED")
                 }
 
                 // 4. Open App Info settings screen easily
@@ -102,10 +102,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
+
             ConstantClass.UNLOCK , ConstantClass.LOCK-> {
                 Log.d("FCM_UNLOCK", "Unlock/Lock notification received")
                 runBlocking {
                     applicationContext.forceSyncEmis()
+                    if(ConstantClass.UNLOCK==notificationCode){
+                        hitApiForDeviceLockStatus(true,"CUSTOMER_UNLOCKED")
+                    }
                 }
             }
 
@@ -114,7 +118,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-    fun hitApiForDeviceLockStatus(status: Boolean) {
+    fun hitApiForDeviceLockStatus(status: Boolean, actionName: String) {
         val preference = SharedPreference(this)
 
         val req = CustomerDeviceLockStatusReq(
@@ -130,7 +134,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             manufacturer = Build.MANUFACTURER,
             performedAt = ConstantClass.getCurrentUtcTimestamp(),
             appPackageName = packageName,
-            actionName = "CUSTOMER_UNINSTALLED"
+            actionName = actionName
         )
 
         Log.d("DeviceUninstallReq", Gson().toJson(req))

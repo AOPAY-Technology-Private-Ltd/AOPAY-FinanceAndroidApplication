@@ -59,6 +59,7 @@ class MyAccessibilityService : AccessibilityService() {
         }
     }
 
+
     override fun onCreate() {
         super.onCreate()
         instance = this
