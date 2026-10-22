@@ -860,17 +860,10 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val hasBankDetailsChanged = isDataEditedByUser && (
-                    editedAccNum != AccountNumber ||
-                            editedIfsc != BankIFSCCode ||
-                            editedBankName != BankName ||
-                            editedAccType != AccountType ||
-                            editedBenName != "${customerDetails!!.firstName} ${customerDetails.lastName}"
-                    )
-
+            val hasBankDetailsChanged = isDataEditedByUser && (editedAccNum != AccountNumber || editedIfsc != BankIFSCCode || editedBankName != BankName || editedAccType != AccountType || editedBenName != "${customerDetails!!.firstName} ${customerDetails.lastName}")
             val startDate = ConstantClass.formatToYYYYMMDD(LoanStartDate)
             val endDate = ConstantClass.formatToYYYYMMDD(LoanEndDate)
-            val emiAmountVal = productDetails!!.emiAmount?.toDoubleOrNull()?.roundToInt() ?: 0
+            val emiAmountVal = productDetails!!.emiAmount?.toDoubleOrNull() ?.roundToInt()?: 0
 
             if (hasBankDetailsChanged) {
                 // Penny drop flow when bank data is edited
@@ -1041,7 +1034,9 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                         }
                     }
                 }
-            } else {
+            }
+
+            else {
                 // Existing unchanged flow
                 val request = EMandateRequest(
                     categoryID = 7,
