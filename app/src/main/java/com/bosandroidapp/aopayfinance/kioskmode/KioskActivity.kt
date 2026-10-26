@@ -374,6 +374,7 @@ class KioskActivity : AppCompatActivity() {
     }
 
 
+
     override fun onStop() {
         super.onStop()
         Log.d("Accessibility","onStop")

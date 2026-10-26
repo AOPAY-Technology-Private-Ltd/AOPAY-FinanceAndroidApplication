@@ -415,6 +415,7 @@ class DashBoard : BaseActivity() {
             binding.appBarDashBoard.deskdesign.customerdashboardItemlayout.visibility = View.VISIBLE*/
 
             var generateKey = preference.getStringValue(ConstantClass.GENERATEKEY, "")
+
             if(generateKey.isNotEmpty()){
                 hitApiForValidateKey()
             }
