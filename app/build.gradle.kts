@@ -101,6 +101,7 @@ dependencies {
     // for qrcode...................................
     implementation(libs.core)
 
+
     // google map..................................
     implementation(libs.play.services.maps)
     implementation(libs.maps.ktx)

@@ -946,7 +946,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                                                                         val body = response.body()
                                                                                         Log.d("Step3UpdateRes", Gson().toJson(body))
                                                                                         if (body != null && body.success == true && body.code == 200) {
-                                                                                            Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage, body.message ?: "Bank details updated successfully", Toast.LENGTH_SHORT).show()
+                                                                                            Toast.makeText(this@CustomerListForCreatingShortCutLoanProcessPage,  "Bank details updated successfully", Toast.LENGTH_SHORT).show()
 
                                                                                             // Proceed to eMandate flow
                                                                                             val request = EMandateRequest(
@@ -974,6 +974,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                                                                                 bankAccountNumber = AccountNumber
                                                                                             )
                                                                                             hitApiForEnach(request, item, true)
+
                                                                                         } else {
                                                                                             ConstantClass.dialog?.dismiss()
                                                                                             nextLayout.isEnabled = true

@@ -2740,17 +2740,19 @@ class NewCustomerRegistrationPage : BaseActivity() {
                             val customerCode = responseBody?.data?.customerCode
 
                             Log.d("CustomerListResp", Gson().toJson(responseBody))
-                            Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
+
 
                             if(status==true && customerCode!!.isNotEmpty()|| errorCode==400){
                                 Log.d("CustomerCode" ,customerCode!!)
                                 binding.createaccount.isEnabled = true
                                 preference.setStringValue(ConstantClass.CustomerCode, customerCode)
+                                Toast.makeText(this, "Data upload successfully", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this@NewCustomerRegistrationPage, MobileSelectionActivity::class.java))
                             }
                             else{
                                 binding.createaccount.isEnabled = true
                                 preference.setStringValue(ConstantClass.CustomerCode, "")
+                                Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
                             }
 
                         }

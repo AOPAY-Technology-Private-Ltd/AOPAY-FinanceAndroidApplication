@@ -632,12 +632,13 @@ class IMEIDetailsPage : BaseActivity() {
                             val errorCode = responseBody?.code
                             val customerCode = responseBody?.data?.customerCode
                             Log.d("IMEIDetailsresponse", Gson().toJson(responseBody))
-                            Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
 
                             if(status == true || errorCode== 400){
+                                Toast.makeText(this, "Data upload successfully", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this@IMEIDetailsPage, QRCodePage::class.java))
                             }
                             else{
+                                Toast.makeText(this, responseBody?.message, Toast.LENGTH_SHORT).show()
 
                             }
 

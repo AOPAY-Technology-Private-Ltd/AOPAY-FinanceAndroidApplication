@@ -1704,12 +1704,14 @@ class PaymentInformation : BaseActivity() {
                             var errorCode = getData!!.code
                             var customerCode = getData!!.data!!.customerCode
                             Log.d("PaymentInformationresponse", Gson().toJson(getData))
-                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
+
 
                             if(status==true ){
+                                Toast.makeText(this, "Data upload successfully", Toast.LENGTH_SHORT).show()
                                 setselectionForSecondCard()
                             }else{
                                 binding.nextlayout.isEnabled = true
+                                Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
                             }
 
 
@@ -1753,12 +1755,13 @@ class PaymentInformation : BaseActivity() {
                             var errorCode = getData!!.code
                             var customerCode = getData!!.data!!.customerCode
                             Log.d("PaymentInformationresponse", Gson().toJson(getData))
-                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
+
 
                             if(status==true ){
+                                Toast.makeText(this, "Data upload successfully", Toast.LENGTH_SHORT).show()
                                 setselectionForThirdCard()
                             }else{
-
+                                Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
                             }
 
 
@@ -1802,12 +1805,13 @@ class PaymentInformation : BaseActivity() {
                             var errorCode = getData!!.code
                             var customerCode = getData!!.data!!.customerCode
                             Log.d("PaymentInformationresponse", Gson().toJson(getData))
-                            Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
 
                             if(status==true){
+                                Toast.makeText(this, "Data upload successfully", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this@PaymentInformation, IMEIDetailsPage::class.java))
                             }
                             else{
+                                Toast.makeText(this, getData!!.message, Toast.LENGTH_SHORT).show()
 
                             }
 
