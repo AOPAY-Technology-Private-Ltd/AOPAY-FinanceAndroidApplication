@@ -1505,6 +1505,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                             Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
                                         }
 
+
                                         var verifiedStatus = "No"
 
 
