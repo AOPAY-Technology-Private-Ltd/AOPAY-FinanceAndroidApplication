@@ -118,13 +118,17 @@ class AddBank : Fragment() {
                                 if(response!!.status!!.toLowerCase().equals("false")){
                                     Toast.makeText(requireContext(),response.message, Toast.LENGTH_SHORT).show()
                                 }
-                                response?.data?.banks?.forEach {
-                                    bankList.add(it!!.name!!)
-                                    bankList.sort()
-                                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bankList)
-                                    binding.bankname.setAdapter(adapter)
+                                response?.data?.banks?.forEach { bank ->
+                                    bank?.name?.let { name ->
+                                        if (!bankList.contains(name)) {
+                                            bankList.add(name)
+                                        }
+                                    }
                                 }
-
+                                bankList.sort()
+                                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bankList)
+                                binding.bankname.setAdapter(adapter)
+                                binding.bankname.threshold = 1
                             }
 
                         }
@@ -150,6 +154,32 @@ class AddBank : Fragment() {
     
 
     fun setview(){
+
+        binding.bankname.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+
+        binding.bankname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                if (before > count) {
+                    // User is deleting / backspacing text
+                    binding.bankname.dismissDropDown()
+                    binding.bankname.post {
+                        binding.bankname.dismissDropDown()
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    binding.bankname.dismissDropDown()
+                    binding.bankname.post {
+                        binding.bankname.dismissDropDown()
+                    }
+                }
+            }
+        })
 
         binding.accountholdername.addTextChangedListener(object : TextWatcher {
 
@@ -356,6 +386,12 @@ class AddBank : Fragment() {
 
         binding.bankname.setOnClickListener {
             binding.bankname.showDropDown()
+        }
+
+        binding.bankname.setOnItemClickListener { _, _, _, _ ->
+            binding.bankname.post {
+                binding.bankname.setSelection(binding.bankname.text.length)
+            }
         }
 
     }

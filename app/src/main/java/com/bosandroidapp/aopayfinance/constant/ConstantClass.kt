@@ -152,11 +152,13 @@ object ConstantClass {
             panRegIdOffline = "AOP-5048",
             pennyDropRegIdOffline = "AOP-5048"
         )
+
+
     }
 
 
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.DEV
+    val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
 
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
