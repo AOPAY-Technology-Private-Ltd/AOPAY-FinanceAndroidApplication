@@ -158,12 +158,11 @@ object ConstantClass {
 
 
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
+    val CURRENT_ENVIRONMENT = AppEnvironment.PRODUCTION
 
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
     val CUSTOMERPPURLLINK = BASE_URL + "api/V1/AopayFinance/aopay-download"
-
 
     val PAN_VERIFICATION_REGISTRATION_ID = CURRENT_ENVIRONMENT.panRegId
     val PENNYDROP_REGISTRATION_ID = CURRENT_ENVIRONMENT.pennyDropRegId
