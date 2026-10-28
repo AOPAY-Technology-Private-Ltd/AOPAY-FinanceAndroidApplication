@@ -24,6 +24,7 @@ import com.bosandroidapp.aopayfinance.kioskmode.startLockSituation
 import com.bosandroidapp.aopayfinance.kioskmode.stopLockSituation
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
+import com.bosandroidapp.aopayfinance.utils.AppUpdateManager
 import com.bosandroidapp.aopayfinance.utils.forceSyncEmis
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -113,6 +114,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
 
+            ConstantClass.APP_UPDATE  -> {
+                installApkSilently()
+            }
+
         }
 
     }
@@ -154,5 +159,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
+
+    fun installApkSilently() {
+
+        CoroutineScope(Dispatchers.Main).launch {
+            AppUpdateManager.downloadAndInstallApk(applicationContext, ConstantClass.CUSTOMERPPURLLINK)
+        }
+
+    }
 
 }

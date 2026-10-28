@@ -20,6 +20,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.bosandroidapp.aopayfinance.BuildConfig
 import com.bosandroidapp.aopayfinance.databinding.SplashMainBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isDevModeEnabled
@@ -27,6 +28,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.showDevModeSnackbar
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
+import com.bosandroidapp.aopayfinance.utils.AppUpdateManager
 import com.bosandroidapp.aopayfinance.workmanager.EmiNotificationWorker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +49,17 @@ class SplashScreen : AppCompatActivity() {
         binding = SplashMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         preference = SharedPreference(this)
+
+        val lastSavedVersion = preference.getStringValue("LAST_APP_VERSION", "")
+        val currentVersion = BuildConfig.VERSION_NAME
+
+        if (lastSavedVersion.isNotEmpty() && lastSavedVersion != currentVersion) {
+            preference.setStringValue("LAST_APP_VERSION", currentVersion)
+            AppUpdateManager.hitApiForDeviceLockStatus(this, true, "APP_UPDATED")
+        }
+        else if (lastSavedVersion.isEmpty()) {
+            preference.setStringValue("LAST_APP_VERSION", currentVersion)
+        }
 
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
