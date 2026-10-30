@@ -14,15 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
-import com.bosandroidapp.aopayfinance.data.model.CibilDataItem
-import com.bosandroidapp.aopayfinance.data.model.LowCibilCustomerReportReq
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentAdminReportRequest
 import com.bosandroidapp.aopayfinance.data.model.MakePaymentReportDataItem
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.FragmentReportPageBinding
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
-import com.bosandroidapp.aopayfinance.ui.slideshow.adapter.LowCibilScoreCustomerReportListAdapter
 import com.bosandroidapp.aopayfinance.ui.view.adapter.MakePaymentAdminReportAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus

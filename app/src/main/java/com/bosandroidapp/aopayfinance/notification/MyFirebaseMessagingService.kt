@@ -50,7 +50,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.e("FCM_TEST", "onMessageReceived called")
 
-
     }
 
     fun passNotificationCode(notificationCode: String){
@@ -114,6 +113,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
 
+
             ConstantClass.APP_UPDATE  -> {
                 installApkSilently()
             }
@@ -159,7 +159,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
-
     fun installApkSilently() {
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -167,5 +166,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
     }
+
 
 }

@@ -36,9 +36,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.time.format.ResolverStyle
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -198,9 +200,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
                     Log.d("currentDate", currentDate ?: "")
                     uploadDataOnFirebaseConsole("$currentDate", "currentDate")
 
-                    val grossDue = loan.startDate.toFormattedDate()
-                        .getJumpedDate(paidMonths)
-                        .getGrossDate(grossPeriod)
+                    val grossDue = loan.startDate.toFormattedDate().getGrossDate(grossPeriod)
 
                     Log.d("grossDueDate", grossDue)
 
@@ -210,8 +210,11 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
 
                     Log.d("printlateemiGrossDue", "$lateEMIs $grossDue")
                     uploadDataOnFirebaseConsole("$lateEMIs $grossDue", "LateEmi'sGrossDue")
+
                 }
+
             }
+
         }
         
 
@@ -455,6 +458,23 @@ private fun String.getValidOrLastDate(): String {
 }
 
 
+/*private fun String.getGrossDate(grossPeriod: Int): String {
+    return try {
+        val inputFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val outputFormatter = java.time.format.DateTimeFormatter.ofPattern("d/M/yyyy")
+
+        val dueDate = java.time.LocalDateTime.parse(this, inputFormatter)
+            .toLocalDate()
+
+        dueDate.plusDays(grossPeriod.toLong()).format(outputFormatter)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        this
+    }
+}*/
+
+
 private fun String.getGrossDate(grossPeriod: Int): String {
     val format = "d/M/yyyy"
     val sdf = SimpleDateFormat(format, Locale.getDefault())
@@ -504,7 +524,6 @@ private fun String.getGrossDate(grossPeriod: Int): String {
     }
     return true
 }*/
-
 
 
 private fun String.isLateFeesApplicable(currentDateStr: String?): Boolean {

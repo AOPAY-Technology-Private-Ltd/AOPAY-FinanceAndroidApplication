@@ -28,9 +28,6 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bosandroidapp.aopayfinance.network.ApiInterface
@@ -38,30 +35,18 @@ import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.chaos.view.PinView
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.AppVersion
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceBrand
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceName
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceOSVersion
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.IMEI
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Retailer
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.deviceManufacturer
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.deviceModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.uploadDataOnFirebaseConsole
-import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.VerifyOTPReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.verification.SendOtpReq
 import com.bosandroidapp.aopayfinance.data.notification.NotificationSendTokenRequest
-import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.databinding.ActivityLoginPageBinding
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.ForgetPasswordPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.SignupPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.firebase.messaging.FirebaseMessaging
@@ -166,10 +151,10 @@ class LoginPage : BaseActivity() {
         }*/
 
 
-        binding.signupText.setOnClickListener{
+       /* binding.signupText.setOnClickListener{
             val mainIntent = Intent(this@LoginPage, SignupPage::class.java)
             startActivity(mainIntent)
-        }
+        }*/
 
 
         binding.emailormobilenumber.addTextChangedListener(object : TextWatcher {
@@ -211,10 +196,10 @@ class LoginPage : BaseActivity() {
         }
 
 
-        binding.forgetpageLayout.setOnClickListener {
+      /*  binding.forgetpageLayout.setOnClickListener {
             val mainIntent = Intent(this@LoginPage, ForgetPasswordPage::class.java)
             startActivity(mainIntent)
-        }
+        }*/
 
         binding.back.setOnClickListener {
             finish()

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.BankDetailsCardLayoutBinding
 import com.bosandroidapp.aopayfinance.databinding.LoandetailesItemlayoutBinding
-import com.bosandroidapp.aopayfinance.databinding.RetailerWalletReportsBinding
+
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToReport
 import com.bosandroidapp.aopayfinance.data.model.BankDataItem

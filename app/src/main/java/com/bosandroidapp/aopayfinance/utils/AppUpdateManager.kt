@@ -75,6 +75,7 @@ object AppUpdateManager {
         }
     }
 
+
     fun downloadAndInstallApk(context: Context, apkUrl: String = ConstantClass.CUSTOMERPPURLLINK) {
 
         if (apkUrl.isBlank()) {
@@ -94,29 +95,44 @@ object AppUpdateManager {
                     apkFile.delete()
                 }
 
-                val url = URL(apkUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connectTimeout = 15000
-                connection.readTimeout = 15000
-                connection.connect()
+                val client = okhttp3.OkHttpClient.Builder()
+                    .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    .readTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                    .writeTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                    .followRedirects(true)
+                    .followSslRedirects(true)
+                    .build()
 
-                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                    connection.inputStream.use { input ->
-                        FileOutputStream(apkFile).use { output ->
-                            input.copyTo(output)
+                val request = okhttp3.Request.Builder()
+                    .url(apkUrl)
+                    .header("User-Agent", "Mozilla/5.0 (Linux; Android)")
+                    .header("Accept-Encoding", "identity")
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (response.isSuccessful && response.body != null) {
+                        response.body!!.byteStream().use { input ->
+                            FileOutputStream(apkFile).use { output ->
+                                val buffer = ByteArray(32 * 1024)
+                                var bytesRead: Int
+                                while (input.read(buffer).also { bytesRead = it } != -1) {
+                                    output.write(buffer, 0, bytesRead)
+                                }
+                                output.flush()
+                            }
                         }
-                    }
-                    Log.d(TAG, "APK Downloaded successfully: ${apkFile.absolutePath}")
+                        Log.d(TAG, "APK Downloaded successfully: ${apkFile.absolutePath}")
 
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context.applicationContext, "Download complete. Installing update...", Toast.LENGTH_SHORT).show()
-                        installApkFile(context, apkFile)
-                    }
-                } else {
-                    Log.e(TAG, "Download failed with HTTP code: ${connection.responseCode}")
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context.applicationContext, "Failed to download update (${connection.responseCode})", Toast.LENGTH_SHORT).show()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context.applicationContext, "Download complete. Installing update...", Toast.LENGTH_SHORT).show()
+                            installApkFile(context, apkFile)
+                        }
+                    } else {
+                        val code = response.code
+                        Log.e(TAG, "Download failed with HTTP code: $code")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context.applicationContext, "Failed to download update ($code)", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -126,7 +142,9 @@ object AppUpdateManager {
                 }
             }
         }
+
     }
+
 
     fun installApkFile(context: Context, apkFile: File) {
         if (!apkFile.exists() || apkFile.length() == 0L) {
@@ -143,6 +161,7 @@ object AppUpdateManager {
             installApkViaFileProvider(context, apkFile)
         }
     }
+
 
     fun installApkSilently(context: Context, apkFile: File) {
         try {

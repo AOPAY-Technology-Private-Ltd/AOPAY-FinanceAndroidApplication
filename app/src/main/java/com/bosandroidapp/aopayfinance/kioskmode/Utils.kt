@@ -149,8 +149,8 @@ fun Context.getByteArray(): ByteArray? {
 
 
 fun RecyclerView.fillApps(context: Context,apps:List<PaymentApp>){
-    val adapter = AppAdapter(context, apps)
-    this.adapter = adapter
+   /* val adapter = AppAdapter(context, apps)
+    this.adapter = adapter*/
 }
 
 

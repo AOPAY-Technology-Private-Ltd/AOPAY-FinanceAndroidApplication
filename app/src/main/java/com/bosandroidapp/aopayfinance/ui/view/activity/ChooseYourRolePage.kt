@@ -7,19 +7,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bosandroidapp.aopayfinance.BuildConfig
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
@@ -31,7 +26,6 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.Customer
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceBrand
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceName
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.DeviceOSVersion
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.Retailer
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.deviceManufacturer
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.deviceModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.loginType
@@ -40,10 +34,7 @@ import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth
-import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth.Companion.startActivityForAuth
-import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.LoginPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.NewCustomerRegistrationPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
 import com.google.gson.Gson
@@ -78,15 +69,15 @@ class ChooseYourRolePage : BaseActivity() {
 
     fun setOnClickListner(){
 
-        binding.retailerid.setOnClickListener{
-           /*
+       /* binding.retailerid.setOnClickListener{
+           *//*
             this.startActivityForAuth()
             loginType = Retailer
             binding.retailerid.strokeColor = resources.getColor(R.color.darkpurple)
             binding.customerid.strokeColor = resources.getColor(R.color.white)
             val mainIntent = Intent(this@ChooseYourRolePage, LoginPage::class.java)
-            startActivity(mainIntent)*/
-        }
+            startActivity(mainIntent)*//*
+        }*/
 
         binding.customerid.setOnClickListener{
             if(!checkPermissionsrRetailer()){
@@ -128,7 +119,7 @@ class ChooseYourRolePage : BaseActivity() {
     fun intentNextPage(){
         loginType = Customer
         binding.customerid.strokeColor = resources.getColor(R.color.darkpurple)
-        binding.retailerid.strokeColor = resources.getColor(R.color.white)
+       // binding.retailerid.strokeColor = resources.getColor(R.color.white)
         val mainIntent = Intent(this@ChooseYourRolePage, LoginPage::class.java)
         startActivity(mainIntent)
     }

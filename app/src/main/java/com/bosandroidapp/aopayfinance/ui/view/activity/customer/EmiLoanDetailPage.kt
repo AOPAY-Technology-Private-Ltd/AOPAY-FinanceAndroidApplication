@@ -20,11 +20,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -32,14 +30,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bosandroidapp.aopayfinance.network.ApiInterface
@@ -47,17 +42,12 @@ import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityEmiLoanDetailPageBinding
 import com.bosandroidapp.aopayfinance.constant.ConstantClass
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAlternateMobileOTP
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustAlternateMobileVerified
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryMobileVerified
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.CustPrimaryOTP
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.Customer
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.HoldAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.MaxHoldingAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.MinHoldingAmount
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.OTPTYPE
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.WalletBalance
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.createMultipartFromUri
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.dikshifinsureOnlinePGModel
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDueDateGracePeriodDateToDDMMYYYY
@@ -82,9 +72,7 @@ import com.bosandroidapp.aopayfinance.data.viewModelFactory.PanViewModelFactory
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.DashBoard
-import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.PGWebViewActivity.Companion.emiList
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.NewCustomerRegistrationPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.bosandroidapp.aopayfinance.ui.viewmodel.PanViewModel
@@ -96,19 +84,9 @@ import com.chaos.view.PinView
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-import kotlin.collections.get
-import kotlin.sequences.ifEmpty
 import kotlin.text.equals
 import kotlin.toString
 
@@ -167,10 +145,10 @@ class EmiLoanDetailPage : BaseActivity() {
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             // Handle the photoUri, e.g., show image in ImageView
-            binding.receiptPhoto.visibility = View.VISIBLE
+           /* binding.receiptPhoto.visibility = View.VISIBLE
             binding.cameraicon.visibility = View.GONE
             binding.receiptPhoto.setImageURI(photoUri)
-            binding.clicktosealphoto1.text="Re-Send"
+            binding.clicktosealphoto1.text="Re-Send"*/
             receiptUri= photoUri!!
             imagepath = saveImageToCache(this,receiptUri,"ReceiptPhoto")!!.absolutePath
 
@@ -363,7 +341,7 @@ class EmiLoanDetailPage : BaseActivity() {
         if (logintype.equals(Customer)){
             binding.qrcodelayout.visibility=View.GONE
             binding.txnNumber.visibility=View.GONE
-            binding.uploadphotolayout.visibility=View.GONE
+            /*//binding.uploadphotolayout.visibility=View.GONE*/
             binding.paymentmodelayout.visibility=View.GONE
             val companyAdapter = ArrayAdapter.createFromResource(this,  R.array.paymentmodeCustomer, R.layout.mobilenamelayout)
             companyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -372,7 +350,7 @@ class EmiLoanDetailPage : BaseActivity() {
         else{
             binding.qrcodelayout.visibility=View.GONE
             binding.txnNumber.visibility=View.GONE
-            binding.uploadphotolayout.visibility=View.GONE
+           /* //binding.uploadphotolayout.visibility=View.GONE*/
             binding.paymentmodelayout.visibility=View.GONE
             val companyAdapter = ArrayAdapter.createFromResource(this,  R.array.paymentmodeRetailer, R.layout.mobilenamelayout)
             companyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -388,20 +366,20 @@ class EmiLoanDetailPage : BaseActivity() {
 
                 if(selectedItem.equals("Cash")){
                     binding.txnNumber.visibility=View.GONE
-                    binding.uploadphotolayout.visibility=View.GONE
+                    //binding.uploadphotolayout.visibility=View.GONE
                     binding.qrcodelayout.visibility=View.GONE
                 }
 
                 if(selectedItem.equals("NEFT")||selectedItem.equals("Cheque")){
                     binding.txnNumber.visibility=View.VISIBLE
-                    binding.uploadphotolayout.visibility=View.VISIBLE
+                   // binding.uploadphotolayout.visibility=View.VISIBLE
                     binding.qrcodelayout.visibility=View.GONE
                 }
 
                 if(selectedItem.equals("UPI")){
                     binding.qrcodelayout.visibility=View.GONE
                     binding.txnNumber.visibility=View.GONE
-                    binding.uploadphotolayout.visibility=View.GONE
+                    //binding.uploadphotolayout.visibility=View.GONE
                 }
 
                 else{
@@ -470,9 +448,10 @@ class EmiLoanDetailPage : BaseActivity() {
             finish()
         }
 
-        binding.clicktosealphoto1.setOnClickListener {
+
+       /* binding.clicktosealphoto1.setOnClickListener {
             checkCameraPermissionAndOpenCamera()
-        }
+        }*/
 
 
         binding.txnNumber.addTextChangedListener(object: TextWatcher{

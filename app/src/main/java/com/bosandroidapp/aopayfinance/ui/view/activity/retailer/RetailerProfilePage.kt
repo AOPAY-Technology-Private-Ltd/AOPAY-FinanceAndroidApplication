@@ -128,7 +128,8 @@ class RetailerProfilePage : BaseActivity() {
             binding.pannumber.setTextColor(resources.getColor(R.color.grey))
             customerCode = preference.getStringValue(ConstantClass.RetailerCode, "")
             hitapiforGetUpdateProfile()
-        } else {
+        }
+        else {
             binding.codetype.text = "Customer Code"
             binding.edittext.visibility = View.INVISIBLE
             binding.verifybuttonlayout.visibility = View.GONE
@@ -139,6 +140,7 @@ class RetailerProfilePage : BaseActivity() {
             customerCode = preference.getStringValue(ConstantClass.CustomerCode, "")
             hitapiforGetUpdateProfile()
         }
+
         setViewValidation()
         setClickListner()
 

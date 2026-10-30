@@ -2,7 +2,6 @@ package com.bosandroidapp.aopayfinance.ui.slideshow.activity
 
 import android.Manifest
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -10,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +18,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -28,14 +25,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.bosandroidapp.aopayfinance.network.RetrofitClient
 import com.bosandroidapp.aopayfinance.R
 import com.bosandroidapp.aopayfinance.databinding.ActivityDashBoardBinding
@@ -66,21 +59,18 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.clickMakePaymentPag
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.convertDate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatDateToDDMMYYYY
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.formatIndianAmount
-import com.bosandroidapp.aopayfinance.constant.ConstantClass.getDeviceIpAddress
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.isInternetAvailable
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.latitude
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.longitude
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.scheduleLocationWorker
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.scheduleOneTimeLocationWorker
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.uploadDataOnFirebaseConsole
-import com.bosandroidapp.aopayfinance.data.model.CustomerlocationUploadReq
 import com.bosandroidapp.aopayfinance.data.model.GenerateAccessTokenRequest
 import com.bosandroidapp.aopayfinance.data.model.NavParentItem
 import com.bosandroidapp.aopayfinance.data.model.RetailerWalletAmountReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateSessionRequest
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.GetCustomerLoanDetailsReq
-import com.bosandroidapp.aopayfinance.data.model.loginsignup.LoginReq
 import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.notification.SendNotificationFeatureNameRequest
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
@@ -91,20 +81,11 @@ import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerEMIPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.CustomerReportsPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.BankDetailsPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.CustomerAppInstall
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.IDVerificationPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MapActivity
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports.LowCibilScoreCustomerReports
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.MobileSelectionActivity
 import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.RetailerProfilePage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.WalletAccountDetails
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.makepayment.MakePaymentPage
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports.ReportSelectionPage
+
 import com.bosandroidapp.aopayfinance.ui.view.adapter.NavAdapter
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
-import com.bosandroidapp.aopayfinance.utils.LocationPermissionHelper
 import com.bosandroidapp.aopayfinance.utils.MonthsAndPayables
 import com.bosandroidapp.aopayfinance.utils.getCurrentLastPaidDueDate
 import com.bosandroidapp.aopayfinance.workmanager.EmiNotificationWorker
@@ -114,12 +95,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
-import kotlin.compareTo
 
 
 class DashBoard : BaseActivity() {
@@ -353,10 +332,9 @@ class DashBoard : BaseActivity() {
 
     fun setonclickListner() {
 
-        binding.makePaymentLayout.setOnClickListener {
+       /* binding.makePaymentLayout.setOnClickListener {
             startActivity(Intent(this@DashBoard, MakePaymentPage::class.java))
-        }
-
+        }*/
 
 
         binding.appBarDashBoard.swiperefresh.setOnRefreshListener {
@@ -365,8 +343,6 @@ class DashBoard : BaseActivity() {
                 binding.appBarDashBoard.swiperefresh.isRefreshing = true
             }
         }
-
-
 
         binding.appBarDashBoard.deskdesign.customerGenerateKeyLayout.setOnClickListener{
 
@@ -428,7 +404,7 @@ class DashBoard : BaseActivity() {
         }
 
 
-        binding.navProfile.setOnClickListener {
+/*        binding.navProfile.setOnClickListener {
             binding.drawerLayout.closeDrawers()
             startActivity(Intent(this, RetailerProfilePage::class.java))
         }
@@ -462,6 +438,10 @@ class DashBoard : BaseActivity() {
 
         binding.appBarDashBoard.deskdesign.customerprofile.setOnClickListener {
             startActivity(Intent(this, RetailerProfilePage::class.java))
+        }*/
+
+        binding.appBarDashBoard.deskdesign.customerprofile.setOnClickListener {
+            startActivity(Intent(this, RetailerProfilePage::class.java))
         }
 
 
@@ -475,7 +455,7 @@ class DashBoard : BaseActivity() {
         }
 
 
-        binding.appBarDashBoard.deskdesign.emicard.setOnClickListener {
+     /*   binding.appBarDashBoard.deskdesign.emicard.setOnClickListener {
             ConstantClass.ClickOnCardDashboard = "Product"
             startActivity(Intent(this@DashBoard, MobileSelectionActivity::class.java))
         }
@@ -484,7 +464,7 @@ class DashBoard : BaseActivity() {
         binding.appBarDashBoard.deskdesign.customer.setOnClickListener {
             ConstantClass.ClickOnCardDashboard = "Customer"
             startActivity(Intent(this@DashBoard, IDVerificationPage::class.java))
-        }
+        }*/
 
 
         binding.appBarDashBoard.deskdesign.customeremicard.setOnClickListener {
@@ -492,7 +472,7 @@ class DashBoard : BaseActivity() {
         }
 
 
-       /* binding.appBarDashBoard.deskdesign.customerMakePaymentCard.setOnClickListener {
+        /* binding.appBarDashBoard.deskdesign.customerMakePaymentCard.setOnClickListener {
             if (clickMakePaymentPage) {
                 startActivity(Intent(this@DashBoard, MakePaymentPage::class.java))
             } else {
@@ -502,10 +482,9 @@ class DashBoard : BaseActivity() {
 
         }*/
 
-
-        binding.appBarDashBoard.deskdesign.credit.setOnClickListener {
+        /*    binding.appBarDashBoard.deskdesign.credit.setOnClickListener {
             startActivity(Intent(this@DashBoard, ReportSelectionPage::class.java))
-        }
+        }*/
 
 
         binding.appBarDashBoard.deskdesign.customerreports.setOnClickListener {

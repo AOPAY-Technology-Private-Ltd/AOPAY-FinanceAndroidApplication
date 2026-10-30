@@ -784,7 +784,7 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
+                      <!--  <LinearLayout
                             android:id="@+id/uploadphotolayout"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_150sdp"
@@ -793,7 +793,6 @@
                             android:layout_gravity="center"
                             android:visibility="gone"
                             android:background="@drawable/bg_black_border"
-                            app:layout_constraintTop_toBottomOf="@id/biomatriclayout"
                             android:orientation="vertical">
 
                             <LinearLayout
@@ -846,7 +845,7 @@
                             </LinearLayout>
 
 
-                        </LinearLayout>
+                        </LinearLayout>-->
 
                         <LinearLayout
                             android:id="@+id/submitpayment"

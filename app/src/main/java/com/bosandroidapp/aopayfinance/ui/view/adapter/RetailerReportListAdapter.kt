@@ -20,7 +20,7 @@ import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.LoanId
 import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage.Companion.customerCode
-import com.bosandroidapp.aopayfinance.ui.view.activity.retailer.reports.RetailerCustomerReportsPage
+
 import kotlin.text.equals
 
 class RetailerReportListAdapter(private val ReportsDataList: MutableList<com.bosandroidapp.aopayfinance.data.model.loginsignup.reports.ReportsDataItem> = mutableListOf(), var context: Context, var loginType : String
@@ -135,7 +135,7 @@ class RetailerReportListAdapter(private val ReportsDataList: MutableList<com.bos
         }
 
 
-        holder.itemView.setOnClickListener {
+       /* holder.itemView.setOnClickListener {
             if (context is RetailerCustomerReportsPage) {
                 if (status.equals("Disbursed")) {
                     preference.setStringValue(ConstantClass.CustomerCode, ReportsDataList[position].customerCode)
@@ -153,7 +153,7 @@ class RetailerReportListAdapter(private val ReportsDataList: MutableList<com.bos
 
             }
 
-        }
+        }*/
 
 
     }
