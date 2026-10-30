@@ -162,8 +162,8 @@ object ConstantClass {
     val CURRENT_ENVIRONMENT = AppEnvironment.RELEASE_UAT
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
-   // val CUSTOMERPPURLLINK= BASE_URL +"api/V1/AopayFinance/download"
-    val CUSTOMERPPURLLINK= "https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_2.0.7/Aopay_Customer_2.0.7.apk"
+    val CUSTOMERPPURLLINK= BASE_URL +"api/V1/AopayFinance/download"
+   // val CUSTOMERPPURLLINK= "https://github.com/BOS-CENTER-UAT/AOPAY-APK-UAT/releases/download/Aopay_Customer_2.0.7/Aopay_Customer_2.0.7.apk"
 
 
     val PAN_VERIFICATION_REGISTRATION_ID = CURRENT_ENVIRONMENT.panRegId
