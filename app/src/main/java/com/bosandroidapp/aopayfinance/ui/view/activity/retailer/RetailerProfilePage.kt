@@ -97,6 +97,7 @@ class RetailerProfilePage : BaseActivity() {
     var checkEmailId: Boolean = false
     lateinit var logintype: String
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

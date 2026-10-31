@@ -436,9 +436,11 @@ class DashBoard : BaseActivity() {
         }
 
 
+
         binding.appBarDashBoard.deskdesign.customerprofile.setOnClickListener {
             startActivity(Intent(this, RetailerProfilePage::class.java))
         }*/
+
 
         binding.appBarDashBoard.deskdesign.customerprofile.setOnClickListener {
             startActivity(Intent(this, RetailerProfilePage::class.java))
