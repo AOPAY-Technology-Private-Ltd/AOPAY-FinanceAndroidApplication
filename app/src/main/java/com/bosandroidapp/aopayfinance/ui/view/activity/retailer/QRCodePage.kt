@@ -1966,7 +1966,7 @@ class QRCodePage : BaseActivity() {
 
                 val startDate = ConstantClass.formatToYYYYMMDD(LoanStartDate)
                 val endDate = ConstantClass.formatToYYYYMMDD(LoanEndDate)
-                val emiAmountVal = EmiAmount.toDoubleOrNull()?.roundToInt() ?: 0
+                val emiAmountVal = EmiAmount.toDoubleOrNull()?: 0.0
 
                 val request = EMandateRequest(
                     categoryID = 7,

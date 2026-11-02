@@ -8,19 +8,19 @@ data class EMandateRequest(
 	val categoryID: Int? = null,
 
 	@field:SerializedName("CollectionAmount")
-	val collectionAmount: Int? = null,
+	val collectionAmount: Double? = null,
 
 	@field:SerializedName("CollectCollectionUntilCancle")
 	val collectCollectionUntilCancle: Boolean? = null,
 
-	@field:SerializedName("SeqType")
-	val seqType: String? = null,
+	@field:SerializedName("Frequncy")
+	val frequncy: String? = null,
 
 	@field:SerializedName("IFSCCode")
 	val iFSCCode: String? = null,
 
-	@field:SerializedName("Frequncy")
-	val frequncy: String? = null,
+	@field:SerializedName("SeqType")
+	val seqType: String? = null,
 
 	@field:SerializedName("RegistrationID")
 	val registrationID: String? = null,
@@ -46,11 +46,11 @@ data class EMandateRequest(
 	@field:SerializedName("MobileNumber")
 	val mobileNumber: String? = null,
 
-	@field:SerializedName("BankAccountNumberConfirmation")
-	val bankAccountNumberConfirmation: String? = null,
-
 	@field:SerializedName("AddIn2")
 	val addIn2: String? = null,
+
+	@field:SerializedName("BankAccountNumberConfirmation")
+	val bankAccountNumberConfirmation: String? = null,
 
 	@field:SerializedName("AddIn3")
 	val addIn3: String? = null,
