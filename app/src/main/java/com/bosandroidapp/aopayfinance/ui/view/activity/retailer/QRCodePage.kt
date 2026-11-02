@@ -398,7 +398,6 @@ class QRCodePage : BaseActivity() {
 
     }
 
-
     fun updateUI(isRegistered: Boolean, showPopup: Boolean = true) {
 
         if (isRegistered) {
@@ -431,7 +430,6 @@ class QRCodePage : BaseActivity() {
 
     }
 
-
     private fun showSuccessPopup() {
 
         val dialog = Dialog(this)
@@ -462,7 +460,6 @@ class QRCodePage : BaseActivity() {
         hitApiForLogin()
 
     }
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)

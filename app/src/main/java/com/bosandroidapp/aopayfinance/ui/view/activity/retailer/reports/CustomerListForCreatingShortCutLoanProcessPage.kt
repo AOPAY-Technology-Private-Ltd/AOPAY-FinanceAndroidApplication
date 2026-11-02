@@ -471,7 +471,7 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                     LoanEndDate = ""
                 }
                 isEmandateVerified = createLoanDetails.isEmandateVerified ?: ""
-                ConstantClass.CheckOnlineOrOffline = createLoanDetails.loanMode ?: ConstantClass.online
+                ConstantClass.CheckOnlineOrOffline = createLoanDetails.loanMode!!
             }
 
             invoiceAndAppVerification?.let { invoiceAndAppVerification->
@@ -1081,7 +1081,8 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
         var req = BankListReq(
             registrationID = if (ConstantClass.CheckOnlineOrOffline == ConstantClass.online) {
                 ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
-            } else {
+            }
+            else {
                 ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE
             }
         )
