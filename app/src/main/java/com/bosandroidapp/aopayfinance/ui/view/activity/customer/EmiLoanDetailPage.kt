@@ -612,7 +612,8 @@ class EmiLoanDetailPage : BaseActivity() {
                     if(isInternetAvailable(this@EmiLoanDetailPage)) {
 
                         lifecycleScope.launch {
-                            selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                            //selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                            selectedNoofEmi = binding.noOfEmi.selectedItemPosition + 1
                             // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
                             // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
                             var ForServerlatefine:String ?= ""
@@ -1549,7 +1550,8 @@ class EmiLoanDetailPage : BaseActivity() {
                                     if (dialog != null && dialog!!.isShowing) {
                                         dialog!!.dismiss()
                                     }
-                                    var selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+
+                                    val selectedNoofEmi = binding.noOfEmi.selectedItemPosition + 1
 
                                     lifecycleScope.launch {
 
