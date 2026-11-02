@@ -119,7 +119,6 @@ class RetailerProfilePage : BaseActivity() {
 
         logintype = preference.getStringValue(ConstantClass.LoginType, "").orEmpty()
 
-
         if (logintype.equals(Retailer)) {
             binding.edittext.visibility = View.VISIBLE
             binding.codetype.text = "Retailer Code"

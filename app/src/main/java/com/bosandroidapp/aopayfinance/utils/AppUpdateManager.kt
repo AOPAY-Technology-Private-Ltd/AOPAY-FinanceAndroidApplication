@@ -90,57 +90,75 @@ object AppUpdateManager {
         val apkFile = File(storageDir, fileName)
 
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                if (apkFile.exists()) {
-                    apkFile.delete()
-                }
+            var attempts = 0
+            var success = false
+            val maxAttempts = 3
 
-                val client = okhttp3.OkHttpClient.Builder()
-                    .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                    .readTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
-                    .writeTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
-                    .followRedirects(true)
-                    .followSslRedirects(true)
-                    .build()
+            while (attempts < maxAttempts && !success) {
+                attempts++
+                try {
+                    if (apkFile.exists()) {
+                        apkFile.delete()
+                    }
 
-                val request = okhttp3.Request.Builder()
-                    .url(apkUrl)
-                    .header("User-Agent", "Mozilla/5.0 (Linux; Android)")
-                    .header("Accept-Encoding", "identity")
-                    .build()
+                    val client = okhttp3.OkHttpClient.Builder()
+                        .retryOnConnectionFailure(true)
+                        .connectionPool(okhttp3.ConnectionPool(0, 1, java.util.concurrent.TimeUnit.NANOSECONDS))
+                        .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                        .readTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                        .writeTimeout(15, java.util.concurrent.TimeUnit.MINUTES)
+                        .followRedirects(true)
+                        .followSslRedirects(true)
+                        .build()
 
-                client.newCall(request).execute().use { response ->
-                    if (response.isSuccessful && response.body != null) {
-                        response.body!!.byteStream().use { input ->
-                            FileOutputStream(apkFile).use { output ->
-                                val buffer = ByteArray(32 * 1024)
-                                var bytesRead: Int
-                                while (input.read(buffer).also { bytesRead = it } != -1) {
-                                    output.write(buffer, 0, bytesRead)
+                    val request = okhttp3.Request.Builder()
+                        .url(apkUrl)
+                        .header("User-Agent", "Mozilla/5.0 (Linux; Android)")
+                        .header("Accept-Encoding", "identity")
+                        .header("Connection", "close")
+                        .build()
+
+                    client.newCall(request).execute().use { response ->
+                        if (response.isSuccessful && response.body != null) {
+                            response.body!!.byteStream().use { input ->
+                                FileOutputStream(apkFile).use { output ->
+                                    val buffer = ByteArray(32 * 1024)
+                                    var bytesRead: Int
+                                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                                        output.write(buffer, 0, bytesRead)
+                                    }
+                                    output.flush()
                                 }
-                                output.flush()
+                            }
+                            success = true
+                            Log.d(TAG, "APK Downloaded successfully on attempt $attempts: ${apkFile.absolutePath}")
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context.applicationContext, "Download complete. Installing update...", Toast.LENGTH_SHORT).show()
+                                installApkFile(context, apkFile)
+                            }
+                        } else {
+                            val code = response.code
+                            Log.e(TAG, "Attempt $attempts failed with HTTP code: $code")
+                            if (attempts >= maxAttempts) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(context.applicationContext, "Failed to download update ($code)", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                        Log.d(TAG, "APK Downloaded successfully: ${apkFile.absolutePath}")
-
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context.applicationContext, "Download complete. Installing update...", Toast.LENGTH_SHORT).show()
-                            installApkFile(context, apkFile)
-                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Attempt $attempts failed: ${e.message}", e)
+                    if (attempts < maxAttempts) {
+                        kotlinx.coroutines.delay(1000)
                     } else {
-                        val code = response.code
-                        Log.e(TAG, "Download failed with HTTP code: $code")
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context.applicationContext, "Failed to download update ($code)", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context.applicationContext, "Error downloading update: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error downloading update APK", e)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context.applicationContext, "Error downloading update: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
             }
+
         }
 
     }
