@@ -14,8 +14,8 @@ android {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
         targetSdk = 36
-        versionCode = 19
-        versionName = "2.0.9"  // uat 2.0.6  16     // prod 2.0.1  10 old prod
+        versionCode = 11
+        versionName = "2.0.2"     // prod 2.0.1  10 old prod                  //  uat 2.0.9  19
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -150,7 +150,7 @@ dependencies {
 
     // for Provisioning dependency ......................................
 
-    implementation("com.github.jatinsinghsatija:Provisioner-Jatt-SDK:v1.2.3")
+    implementation("com.github.jatinsinghsatija:Provisioner-Jatt-SDK:v1.3.0")
 
 
 }
