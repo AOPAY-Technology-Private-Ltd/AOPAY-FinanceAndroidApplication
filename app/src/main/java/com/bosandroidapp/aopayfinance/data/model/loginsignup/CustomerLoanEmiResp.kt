@@ -22,6 +22,9 @@ data class CustomerLoanEmiResp(
 
 data class CustomerDataItem(
 
+	@field:SerializedName("emiDetails")
+	val emiDetails: List<EmiDetailsItemCustomerEMI?>? = null,
+
 	@field:SerializedName("gracePeriod")
 	val gracePeriod: String? = null,
 
@@ -132,5 +135,55 @@ data class CustomerDataItem(
 
 	@field:SerializedName("recordStatus")
 	val recordStatus: String? = null
+
+)
+
+
+data class EmiDetailsItemCustomerEMI(
+
+	@field:SerializedName("emI_No")
+	val emINo: Int? = null,
+
+	@field:SerializedName("dueDate")
+	val dueDate: String? = null,
+
+	@field:SerializedName("loanRID")
+	val loanRID: Int? = null,
+
+	@field:SerializedName("interestAmount")
+	val interestAmount: Double? = null,
+
+	@field:SerializedName("totalEMI")
+	val totalEMI: Int? = null,
+
+	@field:SerializedName("rid")
+	val rid: Int? = null,
+
+	@field:SerializedName("netDueAmount")
+	val netDueAmount: Double? = null,
+
+	@field:SerializedName("principalAmount")
+	val principalAmount: Double? = null,
+
+	@field:SerializedName("isPaid")
+	val isPaid: Boolean? = null,
+
+	@field:SerializedName("emiStatus")
+	val emiStatus: String? = null,
+
+	@field:SerializedName("emiAmount")
+	val emiAmount: Double? = null,
+
+	@field:SerializedName("bouncingCharge")
+	val bouncingCharge: Double? = null,
+
+	@field:SerializedName("paidAmount")
+	val paidAmount: Double? = null,
+
+	@field:SerializedName("pendingAmount")
+	val pendingAmount: Double? = null,
+
+	@field:SerializedName("lateFine")
+	val lateFine: Double? = null
 
 )

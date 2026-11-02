@@ -33,7 +33,6 @@ import com.bosandroidapp.aopayfinance.data.model.UploadDeviceInfoReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.internetchecker.BaseActivity
-import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth
 import com.bosandroidapp.aopayfinance.ui.slideshow.activity.LoginPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.bosandroidapp.aopayfinance.utils.ApiStatus
@@ -59,7 +58,7 @@ class ChooseYourRolePage : BaseActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        GoogleAuth.initialize(this)
+
         viewModel = ViewModelProvider(this, CommonViewModelFactory(AuthRepository(RetrofitClient.apiInterface)))[AuthenticationViewModel::class.java]
         setOnClickListner()
 
@@ -71,7 +70,6 @@ class ChooseYourRolePage : BaseActivity() {
 
        /* binding.retailerid.setOnClickListener{
            *//*
-            this.startActivityForAuth()
             loginType = Retailer
             binding.retailerid.strokeColor = resources.getColor(R.color.darkpurple)
             binding.customerid.strokeColor = resources.getColor(R.color.white)
@@ -196,14 +194,6 @@ class ChooseYourRolePage : BaseActivity() {
 
     }
 
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        GoogleAuth.onActivityResult(requestCode, data)?.let { details ->
-            Toast.makeText(this, details, Toast.LENGTH_LONG).show()
-        }
-    }
 
 
 }

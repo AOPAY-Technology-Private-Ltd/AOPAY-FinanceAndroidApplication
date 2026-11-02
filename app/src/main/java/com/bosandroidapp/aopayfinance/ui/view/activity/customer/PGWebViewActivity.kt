@@ -22,6 +22,7 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -100,6 +101,12 @@ class PGWebViewActivity : BaseActivity() {
 
         mode = intent.getStringExtra("mode")
         merchantid = intent.getStringExtra("merchantid")
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showingRejectionePGPopUp()
+            }
+        })
 
         clearWebViewData(binding.pgwebview)
 
@@ -226,6 +233,7 @@ class PGWebViewActivity : BaseActivity() {
         binding.pgwebview.loadDataWithBaseURL("https://secure.payu.in/", finalHtml, "text/html", "UTF-8", null)
 
         binding.pgwebview.loadUrl(pgUrl!!)
+
     }
 
 
@@ -280,7 +288,7 @@ class PGWebViewActivity : BaseActivity() {
     }
 
 
-    fun HitApiForPayEmiAmount(emicount:Int,loopcount :Int,emiamount : String,fine:String?/*,imageFile:File*/,loanCode:String,dialog: Dialog,utrNumber: String){
+    fun HitApiForPayEmiAmount(totalEmiCount: Int, currentIndex: Int, emiamount: String, fine: String?, loanCode: String, utrNumber: String){
 
         var  createdBy = preference.getStringValue(ConstantClass.CustomerCode, "")
         var customercode =  preference.getStringValue(ConstantClass.CustomerCode, "")
@@ -314,7 +322,7 @@ class PGWebViewActivity : BaseActivity() {
                                 response ->
                                 Log.d("loanEmiReceiveResp", response.toString())
 
-                                if(loopcount==emicount){
+                                if(currentIndex == totalEmiCount){
                                     if(ConstantClass.dialog!=null && ConstantClass.dialog?.isShowing==true){
                                         ConstantClass.dialog!!.dismiss()
                                     }
@@ -431,10 +439,19 @@ class PGWebViewActivity : BaseActivity() {
         val message = "Your EMI payment of ${EMIamountPG} for Loan Code ${LoanCodePG} has been successfully processed."
         textmessage.text = message
 
-        Ok.setOnClickListener {
+       /* Ok.setOnClickListener {
             if(emiList.size>0){
                 for(i in 0 until emiList.size){
                     HitApiForPayEmiAmount(emiList[i].selectedNoofEmi, emiList[i].emiNo, emiList[i].emiAmount,emiList[i].lateFine,emiList[i].loancode,dialog,utrNumber)
+                }
+            }
+        }*/
+
+        Ok.setOnClickListener {
+            if (emiList.size > 0) {
+                val totalCount = emiList.size
+                for (i in 0 until totalCount) {
+                    HitApiForPayEmiAmount(totalEmiCount = totalCount, currentIndex = i + 1, emiamount = emiList[i].emiAmount, fine = emiList[i].lateFine, loanCode = emiList[i].loancode, utrNumber = utrNumber)
                 }
             }
         }
@@ -443,12 +460,6 @@ class PGWebViewActivity : BaseActivity() {
 
         dialog!!.show()
 
-    }
-
-
-
-    override fun onBackPressed() {
-        showingRejectionePGPopUp()
     }
 
 

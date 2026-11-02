@@ -336,6 +336,11 @@ class DashBoard : BaseActivity() {
             startActivity(Intent(this@DashBoard, MakePaymentPage::class.java))
         }*/
 
+        binding.navProfile.setOnClickListener {
+            binding.drawerLayout.closeDrawers()
+            startActivity(Intent(this, RetailerProfilePage::class.java))
+        }
+
 
         binding.appBarDashBoard.swiperefresh.setOnRefreshListener {
             if (isInternetAvailable(this@DashBoard)) {

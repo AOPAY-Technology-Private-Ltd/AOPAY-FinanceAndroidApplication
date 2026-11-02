@@ -132,8 +132,8 @@ class CustomerReportsPage : BaseActivity() {
                                     reportAdapter = RetailerReportListAdapter(ReportDataList, this, ConstantClass.Customer)
                                     binding.showreports.adapter = reportAdapter
                                     reportAdapter.notifyDataSetChanged()
-
-                                } else {
+                                }
+                                else {
                                     binding.showreports.visibility = View.GONE
                                     binding.notfoundimage.visibility = View.VISIBLE
                                 }

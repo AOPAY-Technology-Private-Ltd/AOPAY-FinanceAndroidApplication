@@ -239,6 +239,7 @@ private suspend fun Context.isEMIDue(sharedPref: SharedPreferences) = withContex
             this@isEMIDue.stopLockSituation()
         }
 
+
     } catch (e: Exception) {
         Logger.d(ACCESSIBILITYTAG, e.localizedMessage ?: "")
     }

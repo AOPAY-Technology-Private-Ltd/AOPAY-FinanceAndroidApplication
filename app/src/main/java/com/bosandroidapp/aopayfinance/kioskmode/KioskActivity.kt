@@ -60,8 +60,10 @@ import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
 import com.bosandroidapp.aopayfinance.data.model.customerreq.CustomerDeviceLockStatusReq
+import com.bosandroidapp.aopayfinance.data.model.loginsignup.EmiDetailsItemCustomerEMI
 import com.bosandroidapp.aopayfinance.data.repository.DikshifinsureRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.DikshifinsureOnlinePGModelFactory
+import com.bosandroidapp.aopayfinance.ui.view.activity.customer.EmiLoanDetailPage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.DikshifinsureViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -113,6 +115,7 @@ class KioskActivity : AppCompatActivity() {
     var emiamount : Double = 0.0
     var selectedNoofEmi: Int = 0
     var listOfDueWithGraceDate : ArrayList<MonthsAndPayables> = arrayListOf()
+    private var unpaidEmiDetailsList: List<EmiDetailsItemCustomerEMI> = emptyList()
     var BounceChargeApplicable : String = ""
 
     lateinit var panViewModel: PanViewModel
@@ -236,13 +239,14 @@ class KioskActivity : AppCompatActivity() {
                          else{
                              if(emiamount>0.0){
                                  lifecycleScope.launch {
-                                     selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                    // selectedNoofEmi = binding.noOfEmi.selectedItem.toString().toInt()
+                                     selectedNoofEmi = binding.noOfEmi.selectedItemPosition + 1
                                      // val file = saveImageToCache(this@EmiLoanDetailPage,receiptUri,"ReceiptPhoto")
                                      // ConstantClass.OpenPopUpForVeryfyOTP(this@EmiLoanDetailPage)
                                      var ForServerlatefine:String ?= ""
                                      PGWebViewActivity.emiList.clear()
 
-                                     for (j in 1..selectedNoofEmi) {
+                                     /*for (j in 1..selectedNoofEmi) {
 
                                          val emiIndex = j - 1
 
@@ -269,10 +273,39 @@ class KioskActivity : AppCompatActivity() {
                                          Log.d("EMIAmount", emiAmountWithFine)
                                          emiList.add(EmiData(selectedNoofEmi,emiNo = j, emiAmount = emiAmountWithFine, lateFine = ForServerlatefine!!,BounceChargeApplicable,loanCode)
                                          )
+                                     }*/
+
+                                     if (unpaidEmiDetailsList.isNotEmpty()) {
+                                         val selectedEmiItems = unpaidEmiDetailsList.take(selectedNoofEmi)
+                                         for (j in 1..selectedEmiItems.size) {
+                                             val emiItem = selectedEmiItems[j - 1]
+                                             val itemEmiNo = emiItem.emINo ?: j
+                                             val itemNetDue = (emiItem.netDueAmount ?: 0.0).toString()
+                                             val itemLateFine = (emiItem.lateFine ?: 0.0).toString()
+                                             val itemBounceCharge = (emiItem.bouncingCharge ?: 0.0).toString()
+
+                                             Log.d("emiAmountWithFine", itemNetDue)
+                                             Log.d("EMIAmount", itemNetDue)
+
+                                             emiList.add(
+                                                 EmiLoanDetailPage.EmiData(
+                                                     selectedNoofEmi = selectedEmiItems.size,
+                                                     emiNo = itemEmiNo,
+                                                     emiAmount = itemNetDue,
+                                                     lateFine = itemLateFine,
+                                                     bounceCharge = itemBounceCharge,
+                                                     loancode = loanCode
+                                                 )
+                                             )
+                                         }
                                      }
 
                                      val email = preference.getStringValue(ConstantClass.CustomerEmailID, "") .ifEmpty { "bos.centerpvtltd@gmail.com" }
-                                     val emiNumbers=  (1..selectedNoofEmi).joinToString("")
+                                     val emiNumbers = if (unpaidEmiDetailsList.isNotEmpty()) {
+                                         unpaidEmiDetailsList.take(selectedNoofEmi).mapNotNull { it.emINo }.joinToString("")
+                                     } else {
+                                         /*(1..selectedNoofEmi).joinToString("")*/
+                                     }
                                      PGWebViewActivity.LoanCodePG = loanCode
 
                                      if(loanmode!!.toLowerCase().equals("online",ignoreCase = true)){
@@ -526,12 +559,45 @@ class KioskActivity : AppCompatActivity() {
         lifecycleScope.launch {
             listOfDueWithGraceDate = formatDateToDDMMYYYY(LoanEmiList!![0]!!.startDate.toString()).getCurrentLastPaidDueDate(this@KioskActivity,LoanEmiList!![0]!!.paidEMI!!.toLong(),LoanEmiList!![0]!!.duesEMI!!.toLong(), AllgracePeriod!!.toInt(),CustomergracePeriod!!.toInt(),currentDate!!)
             Log.d("DueList", "Data". plus(listOfDueWithGraceDate))
-            setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(),LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0)
+            val emiDetails = LoanEmiList!![0]?.emiDetails?.filterNotNull()
+            setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(), LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0, emiDetails)
+
+           // setDataInspinner(LoanEmiList!![0]!!.duesEMI!!.toInt(),LoanEmiList?.get(0)?.emiAmount?.toDoubleOrNull() ?: 0.0)
         }
     }
 
-    fun setDataInspinner(tenure:Int,emiAmount:Double?){
-        val emiOptions = ConstantClass.generateEMIOptions(tenure)
+    fun setDataInspinner(tenure: Int, emiAmount: Double?, emiDetailsList: List<EmiDetailsItemCustomerEMI>? = null){
+
+        val unpaidEmiDetails = emiDetailsList?.filter { it.isPaid != true } ?: emptyList()
+        unpaidEmiDetailsList = unpaidEmiDetails
+
+        if (unpaidEmiDetails.isNotEmpty()) {
+            val emiOptions = unpaidEmiDetails.map { "${it.emINo}" }
+            val noOfEmiAdapter = ArrayAdapter(this, R.layout.mobilenamelayout, emiOptions)
+            noOfEmiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.noOfEmi.adapter = noOfEmiAdapter
+
+            binding.noOfEmi.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                    val selectedEmiItems = unpaidEmiDetails.take(position + 1)
+
+                    val sumNetDueAmount = selectedEmiItems.sumOf { it.netDueAmount ?: 0.0 }
+                    val sumLateFine = selectedEmiItems.sumOf { it.lateFine ?: 0.0 }
+                    val sumBounceCharge = selectedEmiItems.sumOf { it.bouncingCharge ?: 0.0 }
+
+                    binding.amount.text = "₹ %.2f".format(sumNetDueAmount)
+                    emiamount = sumNetDueAmount
+
+                    latefine = "%.2f".format(sumLateFine)
+                    BounceCharge = "%.2f".format(sumBounceCharge)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {}
+            }
+        }
+
+
+      /*  val emiOptions = ConstantClass.generateEMIOptions(tenure)
         val noOfEmiAdapter = ArrayAdapter(this, R.layout.mobilenamelayout, emiOptions )
         noOfEmiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.noOfEmi.adapter = noOfEmiAdapter
@@ -571,7 +637,7 @@ class KioskActivity : AppCompatActivity() {
                 // Optional
             }
 
-        }
+        }*/
 
     }
 
