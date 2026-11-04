@@ -21,6 +21,7 @@ class CustomerEMIDetailsAdapter( var context:Context,var customerLoanEmiDetailsL
 
     lateinit var preference : SharedPreference
 
+
     class ViewHolder (private val binding: LoandetailesItemlayoutBinding): RecyclerView.ViewHolder(binding.root) {
         var viewdetailscard = binding.viewdetailscard
         var brandName = binding.brandName
