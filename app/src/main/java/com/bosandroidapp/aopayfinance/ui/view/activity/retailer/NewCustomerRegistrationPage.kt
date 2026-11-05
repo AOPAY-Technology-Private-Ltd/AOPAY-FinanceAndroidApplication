@@ -167,6 +167,7 @@ import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.code
+import kotlin.compareTo
 import kotlin.text.toDouble
 import kotlin.toString
 
@@ -2070,13 +2071,13 @@ class NewCustomerRegistrationPage : BaseActivity() {
         var cibilReq = CibilScoreReq(
             firstName = CustFirstName,
             lastName = CustLastName,
-            mobilenumber = CustPrimaryMobileNumber,
-            dob = formattedDate,
-            mailid = emailID,
+            phonenumber = CustPrimaryMobileNumber,
+           /* dob = formattedDate,
+            mailid = emailID,*/
             pannumber = pannumber,
-            otp = otp,
+           /* otp = otp,
             consentmessage = "I agree to share my data for verification purposes",
-            consentacceptence = "yes",
+            consentacceptence = "yes",*/
             registrationID = ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
         )
 
@@ -2090,23 +2091,25 @@ class NewCustomerRegistrationPage : BaseActivity() {
                             users.body()?.let { response ->
                                 ConstantClass.dialog!!.dismiss()
                                 var otp = response.value
+                                val isHttpSuccess = response.code == 200
+                                var userScore = response.creditScore!!
+                                CibilResponse = Gson().toJson(response)
                                 Log.d("cibilresp", Gson().toJson(response))
 
-                                if(response.status.toLowerCase().equals("false")&& !response.resultCode.equals("101")){
+                               /* if(response.status.toLowerCase().equals("false")&& !response.resultCode.equals("101")){
                                     PopOpForCibileScoreRequestToAdmin(response.message.toString(), "Mismatch Details",false)
                                     binding.createaccount.isEnabled = true
-                                }
+                                }*/
 
-                                if (!response.httpResponseCode.isNullOrBlank() && response.httpResponseCode.equals("200")) {
+                                if (isHttpSuccess) {
                                     Toast.makeText(this@NewCustomerRegistrationPage, response.message.toString(), Toast.LENGTH_SHORT).show()
 
-                                    if(response.result!=null){
-                                        var data = response.result.resultJson.inProfileResponse
-                                        userScore = data.score.bureauScore.toFloat()
-                                        CibilResponse = Gson().toJson(response)
-                                        var AdminSetCibilScore = AdminCibilScore.toFloatOrNull() ?: 0.0f
+                                    if(userScore>0){
+                                        var AdminSetCibilScore = AdminCibilScore.toIntOrNull() ?: 0
 
                                         if(userScore>=AdminSetCibilScore){
+                                            Log.d("AdminSetCibilScore", "${AdminSetCibilScore.toString()} ${userScore.toString()}")
+
                                             if(AdminLoanApprovedStatus.toLowerCase().equals("yes",ignoreCase = true)){
                                                 CustomerLoanStatus = CustomerLoanStatusApproved
                                             }else{
@@ -2216,7 +2219,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                         else{
                                             if(!CustAlternateMobileNumber.isNullOrBlank()){
                                                 GlobalScope.launch(Dispatchers.Main) {
-                                                    hitApiForCustomerRegister("Your CIBIL score is below ${AdminCibilScore}. Please contact your Admin for approval before applying for a loan.","Low CIBIL Score")
+                                                    hitApiForCustomerRegister(userScore,"Your CIBIL score is below ${AdminCibilScore}. Please contact your Admin for approval before applying for a loan.","Low CIBIL Score")
                                                 }
 
                                             }
@@ -2232,8 +2235,18 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                     }
                                 }
                                 else {
-                                    Toast.makeText(this@NewCustomerRegistrationPage, response.message, Toast.LENGTH_LONG).show()
-                                    binding.createaccount.isEnabled = true
+                                    if (response.code == 102) {
+                                        userScore = 0
+                                        CibilResponse = Gson().toJson(response)
+                                        GlobalScope.launch(Dispatchers.Main) {
+                                            hitApiForCustomerRegister(userScore,"Your CIBIL score is low or No Record Available. Please contact your Admin for approval before applying for a loan.", "Low CIBIL Score")
+                                        }
+                                    }
+                                    else{
+                                        binding.createaccount.isEnabled = true
+                                        val errorMsg = if (!response.message.isNullOrBlank()) response.message else "Authentication failed. Please contact administrator."
+                                        PopOpForCibileScoreRequestToAdmin(errorMsg, "Authentication Error", false)
+                                    }
                                 }
 
                             }
@@ -2259,7 +2272,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
 
-    fun hitApiForCustomerRegister(cibilScoremsg: String, title: String) {
+    fun hitApiForCustomerRegister(cibilScore:Int,cibilScoremsg: String, title: String) {
         ConstantClass.OpenPopUpForVeryfyOTP(this)
 
         if(CustCountry.isNullOrBlank()){
@@ -2301,8 +2314,8 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 memberShipFees=membershipAmt,
                 panApiResponse = PanResponse,
                 aadhaarApiResponse = AadhaarResponse,
-                cibilApiResponse = userScore.toInt().toString(),
-                cibilScore = cibilScoremsg.toString(),
+                cibilApiResponse = CibilResponse,
+                cibilScore = cibilScore.toString(),
                 retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
                 activeStatus = "Pending",
                 custPhoto_path = "",
@@ -2363,10 +2376,10 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 "RefmobileNo" to "".toRequestBody(),
                 "RefAddress" to "".toRequestBody(),
                 "DebitOrCreditCard" to "".toRequestBody(),
-                "UPIMandate" to "yes".toRequestBody(),
+                "UPIMandate" to "".toRequestBody(),
                 "CreatedBy" to "".toRequestBody(),
                 "RetailerCode" to retailercode.toRequestBody(),
-                "CibilScore" to userScore.toString().toRequestBody(),
+                "CibilScore" to cibilScore.toString().toRequestBody(),
                 "IsAggrementVerified" to "".toRequestBody(),
                 "IsRetailerAggrementVerified" to "".toRequestBody(),
                 "clientcode" to preference.getStringValue(ConstantClass.ClientCode, "").toRequestBody(),

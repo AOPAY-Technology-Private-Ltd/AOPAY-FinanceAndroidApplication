@@ -10,27 +10,32 @@ data class CibilScoreReq(
     @SerializedName("LastName")
     var lastName: String ,
 
-    @SerializedName("MobileNumber")
-    var mobilenumber: String ,
+    /*@SerializedName("MobileNumber")
+    var mobilenumber: String ,*/
 
-    @SerializedName("DateOfBirth")
-    var dob: String ,
+    @SerializedName("PhoneNumber")
+    var phonenumber: String ,
 
-    @SerializedName("EmailID")
-    var mailid: String ,
+    /* @SerializedName("DateOfBirth")
+     var dob: String ,
+
+     @SerializedName("EmailID")
+     var mailid: String ,*/
 
     @SerializedName("PanNumber")
     var pannumber: String ,
 
-    @SerializedName("OTP")
-    var otp: String ,
+    /*   @SerializedName("OTP")
+       var otp: String ,
 
-    @SerializedName("ConsentMessage")
-    var consentmessage: String,
+       @SerializedName("ConsentMessage")
+       var consentmessage: String,
 
-    @SerializedName("ConsentAcceptance")
-    var consentacceptence: String,
+       @SerializedName("ConsentAcceptance")
+       var consentacceptence: String,*/
 
     @SerializedName("RegistrationID")
     var registrationID: String
+
+
 )

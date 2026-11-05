@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.beastblocks.provisionerjattsdk.PairingDialogColors
 import com.beastblocks.provisionerjattsdk.ProvisionerJatt
@@ -26,9 +27,11 @@ import com.bosandroidapp.aopayfinance.data.model.loginsignup.LogoutReq
 import com.bosandroidapp.aopayfinance.data.repository.AuthRepository
 import com.bosandroidapp.aopayfinance.data.viewModelFactory.CommonViewModelFactory
 import com.bosandroidapp.aopayfinance.localdb.SharedPreference
+import com.bosandroidapp.aopayfinance.network.google_auth.GoogleAuth
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.google.gson.Gson
+import com.stacker.stacker.StackerAndroid
 /*import com.stacker.stacker.StackerAndroid*/
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +56,7 @@ class ApplicationClass : Application() {
     override fun onCreate() {
         super.onCreate()
 
-       // StackerAndroid.enable(this)
+        StackerAndroid.enable(this)
 
         Log.d("ApplicationClass", "Application started")
 
@@ -106,9 +109,18 @@ class ApplicationClass : Application() {
 
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
+            // GoogleAuth.initialize(this)
+            // this.startActivityForAuth()
         }
     }
 
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        GoogleAuth.onActivityResult(requestCode, data)?.let { details ->
+            Toast.makeText(this, details, Toast.LENGTH_LONG).show()
+        }
+    }*/
 
 
 }

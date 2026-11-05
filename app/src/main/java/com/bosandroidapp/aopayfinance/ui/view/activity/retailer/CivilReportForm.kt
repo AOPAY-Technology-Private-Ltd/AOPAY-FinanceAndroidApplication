@@ -202,7 +202,7 @@ class CivilReportForm : BaseActivity() {
         var pannumber = binding.panEditText.text.toString().trim()
         var dob = binding.dob.text.toString().trim()
 
-        var cibilReq = CibilScoreReq(
+/*        var cibilReq = CibilScoreReq(
             firstName= firstName,
             lastName = lastName,
             mobilenumber = mobilenumber,
@@ -309,7 +309,7 @@ class CivilReportForm : BaseActivity() {
 
                 }
             }
-        }
+        }*/
 
     }
 

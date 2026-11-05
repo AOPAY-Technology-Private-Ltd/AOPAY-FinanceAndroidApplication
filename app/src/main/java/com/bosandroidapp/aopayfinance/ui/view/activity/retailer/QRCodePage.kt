@@ -1362,66 +1362,74 @@ class QRCodePage : BaseActivity() {
             resources.let {
                 when (it.apiStatus) {
                     ApiStatus.SUCCESS -> {
+
                         it.data?.let { users ->
-                            users.body()?.let { response ->
-                                Log.d("customerres", Gson().toJson(response))
+                            if(users.isSuccessful){
+                                users.body()?.let { response ->
+                                    Log.d("customerres", Gson().toJson(response))
 
-                                if (response.status?.toLowerCase().equals(ConstantClass.LoanSuccessStatus)) {
-                                    binding.LoanCreatelayout.isEnabled = false
-                                    loaneCode = response.data!!.loanCode!!
-                                    ConstantClass.LoanRID = response.data!!.rid!!
-                                    FirstName = CustFirstName
-                                    MiddleName = CustMiddleName
-                                    LastName = CustLastName
-                                    if(response.data!!.customerCode.isNullOrBlank()){
-                                        Toast.makeText(this@QRCodePage,"Customer code not found after loan creation", Toast.LENGTH_SHORT).show()
-                                        CustomerCodeForEnach=""
-                                    }
-                                    else{
-                                        CustomerCodeForEnach = response.data!!.customerCode!!
-                                    }
-                                    LoanCodeForEnach = response.data!!.loanCode!!
-                                    RetailerCodeForEnach = response.data!!.retailerCode!!
+                                    if (response.status?.toLowerCase().equals(ConstantClass.LoanSuccessStatus)) {
+                                        binding.LoanCreatelayout.isEnabled = false
+                                        loaneCode = response.data!!.loanCode!!
+                                        ConstantClass.LoanRID = response.data!!.rid!!
+                                        FirstName = CustFirstName
+                                        MiddleName = CustMiddleName
+                                        LastName = CustLastName
+                                        if(response.data!!.customerCode.isNullOrBlank()){
+                                            Toast.makeText(this@QRCodePage,"Customer code not found after loan creation", Toast.LENGTH_SHORT).show()
+                                            CustomerCodeForEnach=""
+                                        }
+                                        else{
+                                            CustomerCodeForEnach = response.data!!.customerCode!!
+                                        }
+                                        LoanCodeForEnach = response.data!!.loanCode!!
+                                        RetailerCodeForEnach = response.data!!.retailerCode!!
 
-                                    LoanStartDate = response.data.startDate!!
-                                    LoanEndDate = response.data.endDate!!
+                                        LoanStartDate = response.data.startDate!!
+                                        LoanEndDate = response.data.endDate!!
 
-                                    var req = ManageCustomerStepWiseReq(
-                                        mode = "UPDATE",
-                                        step = "7",
-                                        rid = "",
-                                        customerCode = preference.getStringValue(
-                                            ConstantClass.CustomerCode,
-                                            ""
+                                        var req = ManageCustomerStepWiseReq(
+                                            mode = "UPDATE",
+                                            step = "7",
+                                            rid = "",
+                                            customerCode = preference.getStringValue(
+                                                ConstantClass.CustomerCode,
+                                                ""
+                                            )
                                         )
-                                    )
-                                    
-                                    Log.d("Loanreq", Gson().toJson(req))
 
-                                    hitApiForUploadCustomerLoanData(req)
+                                        Log.d("Loanreq", Gson().toJson(req))
 
-                                    val isBankDetailsMissing = BankIFSCCode.trim().isEmpty() || AccountNumber.trim().isEmpty() || AccountType.trim().isEmpty()
+                                        hitApiForUploadCustomerLoanData(req)
 
-                                    if (isBankDetailsMissing && LoanMode == ConstantClass.offline) {
-                                        val intent = Intent(this@QRCodePage, AppScanInstallPage::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    } else {
-                                        showEmandateOptionsInPage()
+                                        val isBankDetailsMissing = BankIFSCCode.trim().isEmpty() || AccountNumber.trim().isEmpty() || AccountType.trim().isEmpty()
+
+                                        if (isBankDetailsMissing && LoanMode == ConstantClass.offline) {
+                                            val intent = Intent(this@QRCodePage, AppScanInstallPage::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                            showEmandateOptionsInPage()
+                                        }
+
+                                    }
+                                    else {
+                                        if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
+                                            ConstantClass.dialog!!.dismiss()
+                                        }
+                                        Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
+
                                     }
 
                                 }
-                                else {
-                                    if (ConstantClass.dialog != null && ConstantClass.dialog?.isShowing==true) {
-                                        ConstantClass.dialog!!.dismiss()
-                                    }
-                                    Toast.makeText(this,response!!.message.toString(), Toast.LENGTH_SHORT).show()
-
-                                }
-
                             }
+                            else {
+                                val errorMsg = users.errorBody()?.string()
+                                handleApiError(users.code(), errorMsg)
+                            }
+
                         }
-                        Toast.makeText(this@QRCodePage,it.message.toString(), Toast.LENGTH_SHORT).show()
+
                     }
 
                     ApiStatus.ERROR -> {

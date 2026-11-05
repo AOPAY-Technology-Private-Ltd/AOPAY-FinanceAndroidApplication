@@ -111,6 +111,7 @@ import com.bosandroidapp.oqmobilefinance.data.model.CustomerSearchForShortCutLoa
 import com.bosandroidapp.oqmobilefinance.data.model.CustomerSearchForShortCutLoanResponse
 import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyRequest
 import com.bosandroidapp.oqmobilefinance.data.model.ValidateCustomerAccessKeyResponse
+import com.bosandroidapp.oqmobilefinance.data.model.updatecibilscore.CibilScoreResp
 import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGRequest
 import com.bosandroidapp.oqmobilefinance.data.pg.GetOrderStatusOnlinePGResponse
 import com.bosandroidapp.oqmobilefinance.data.pg.PGOnlineRequestCall
@@ -155,8 +156,9 @@ interface ApiInterface {
 
     // cibil api for getting cibil score...............
 
-    @POST("api/AOP/CreditAnalytics/Report")
-    suspend fun getcibilscore(@Body req : CibilScoreReq): Response<CibilScroeResp>?
+    /*@POST("api/AOP/CreditAnalytics/Report")*/
+    @POST("api/AOPay/Online/V2/Transunion/Score/Hybrid")
+    suspend fun getcibilscore(@Body req : CibilScoreReq): Response<CibilScoreResp>?
 
 
 
