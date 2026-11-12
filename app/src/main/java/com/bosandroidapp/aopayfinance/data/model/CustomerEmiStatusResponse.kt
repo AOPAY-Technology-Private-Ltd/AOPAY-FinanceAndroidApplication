@@ -56,7 +56,7 @@ data class CustomerEMIDataItem(
 	val overdueDays: Int? = null,
 
 	@field:SerializedName("totalCharges")
-	val totalCharges: Any? = null,
+	val totalCharges: Double? = null,
 
 	@field:SerializedName("paymentDate")
 	val paymentDate: String? = null,

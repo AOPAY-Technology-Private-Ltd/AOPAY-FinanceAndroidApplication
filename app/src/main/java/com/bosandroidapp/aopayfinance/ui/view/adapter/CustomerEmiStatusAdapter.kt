@@ -13,7 +13,9 @@ import com.bosandroidapp.aopayfinance.databinding.CustomerEmiStatusLayoutBinding
 class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<CustomerEMIDataItem?>) : Adapter<CustomerEmiStatusAdapter.ViewHolder>() {
 
 
+
     class ViewHolder(var binding: CustomerEmiStatusLayoutBinding) : RecyclerView.ViewHolder(binding.root)
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomerEmiStatusAdapter.ViewHolder {
@@ -21,22 +23,29 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
         return ViewHolder(binding)
     }
 
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = ledgerReportList[position] ?: return
         val binding = holder.binding
 
         binding.tvReceiptNo.text = item.receiptNo ?: ""
 
+        val totalCharges = item.totalCharges ?: 0.0
+        val emiAmount = item.emiAmount ?: 0.0
+        val dueOrPaidAmount = formatTwoDecimalAmount(totalCharges + emiAmount)
+
         if (item.recordStatus?.equals("paid", ignoreCase = true) == true) {
             binding.doneimage.setImageResource(com.bosandroidapp.aopayfinance.R.drawable.doneicon)
             binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.paid_amount)
             binding.tvRecordStatus.setTextColor(ContextCompat.getColor(context, com.bosandroidapp.aopayfinance.R.color.green))
-            binding.tvPendingAmount.text = formatTwoDecimalAmount(item.emiAmount)
-        } else {
+            binding.tvPendingAmount.text = dueOrPaidAmount
+        }
+        else {
             binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.due_amount)
             binding.tvRecordStatus.setTextColor(ContextCompat.getColor(context, com.bosandroidapp.aopayfinance.R.color.red))
             binding.doneimage.setImageResource(com.bosandroidapp.aopayfinance.R.drawable.crossicon)
-            binding.tvPendingAmount.text = formatTwoDecimalAmount(item.pendingAmount)
+            binding.tvPendingAmount.text = dueOrPaidAmount
         }
 
         binding.tvEmiAmount.text = formatTwoDecimalAmount(item.emiAmount)
