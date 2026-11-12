@@ -619,6 +619,11 @@ class AppScanInstallPage : BaseActivity() {
                                     val startDate = getCurrentStartDate()
                                     val endDate = calculateEmiEndDateFromNow(Tenure.trim().toIntOrNull() ?: 0)
 
+                                    val currentMode = preference.getStringValue(ConstantClass.Loanmode, "")
+                                    LoanMode = currentMode
+                                    ConstantClass.CheckOnlineOrOffline = currentMode
+                                    preference.setStringValue(ConstantClass.Loanmode, currentMode)
+
                                     var loancreatedreq = LoanCreatedReq(
                                         modetype = "UPDATE",
                                         rid = ConstantClass.LoanRID,
@@ -645,7 +650,7 @@ class AppScanInstallPage : BaseActivity() {
                                         validateKey = binding.accesstoken.text.toString(),
                                         defaultEmidebit = DefaulterEmiDebitPending,
                                         sellingPrice = ConstantClass.SellingPrice.trim().toDoubleOrNull() ?: 0.0,
-                                        loanMode = LoanMode,
+                                        loanMode = currentMode,
                                         clientCode = preference.getStringValue(ConstantClass.ClientCode, "")
                                     )
                                     hitApiForRetailerCreatedLoan(loancreatedreq!!)
@@ -781,6 +786,7 @@ class AppScanInstallPage : BaseActivity() {
                             Log.d("VerifiedReq", Gson().toJson(responseBody))
 
                             if(status == true ){
+                                preference.setStringValue(ConstantClass.Loanmode,"")
                                 startActivity(Intent(this@AppScanInstallPage, CongratulationPage::class.java))
                                 clearData()
                                 finish()

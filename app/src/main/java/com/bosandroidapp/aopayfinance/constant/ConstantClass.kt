@@ -241,6 +241,7 @@ object ConstantClass {
      const val online = "Online"
      const val offline = "Offline"
      const val UPIAUTOPAY = "UPI Autopay"
+     const val Loanmode = "loanmode"
 
      var isPgClosing = false
      var isLockTaskStarted = false

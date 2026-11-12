@@ -154,6 +154,7 @@ class IDVerificationPage : BaseActivity() {
                         RefAadharTransactionIdNo = ""
                         ReferenceAadharVerified=""
                         ReferenceAadharNumber=""
+                        preference.setStringValue(ConstantClass.Loanmode, ConstantClass.online)
                         onResume()
                     }
 
@@ -168,6 +169,7 @@ class IDVerificationPage : BaseActivity() {
                         RefAadharTransactionIdNo = ""
                         ReferenceAadharVerified=""
                         ReferenceAadharNumber=""
+                        preference.setStringValue(ConstantClass.Loanmode, ConstantClass.offline)
                         onResume()
                     }
 

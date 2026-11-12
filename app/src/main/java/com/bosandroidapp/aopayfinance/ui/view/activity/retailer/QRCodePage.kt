@@ -251,13 +251,14 @@ class QRCodePage : BaseActivity() {
         val endDate = calculateEmiEndDateFromNow(Tenure.trim().toIntOrNull() ?: 0)
         val firstName = preference.getStringValue(ConstantClass.FirstName, "").orEmpty()
         val lastName = preference.getStringValue(ConstantClass.LastName, "").orEmpty()
+        val loanmode = preference.getStringValue(ConstantClass.Loanmode, "").orEmpty()
         val safeLastName = if (!lastName.isNullOrBlank() && lastName != "null") lastName else ""
         val createdBy = firstName.plus(" ").plus(safeLastName)
 
         var recordStatus = ""
         var defaultEmiDebit = ""
 
-        if (CheckOnlineOrOffline.equals(ConstantClass.online)) {
+        if (loanmode.equals(ConstantClass.online)) {
             val adminSetCibilScore = AdminCibilScore.toFloatOrNull() ?: 0.0f
             if (userScore >= adminSetCibilScore) {
                 if (AdminLoanApprovedStatus.equals("yes", ignoreCase = true)) {
@@ -336,9 +337,10 @@ class QRCodePage : BaseActivity() {
 
     fun hitApiForBankList(check: Boolean, showPopup: Boolean = true) {
         bankList.clear()
+        val loanmode = preference.getStringValue(ConstantClass.Loanmode, "")
 
         var req = BankListReq(
-            registrationID =  if (ConstantClass.CheckOnlineOrOffline == ConstantClass.online) {
+            registrationID =  if (loanmode.equals(ConstantClass.online, ignoreCase = true)) {
                 ConstantClass.PAN_VERIFICATION_REGISTRATION_ID
             } else {
                 ConstantClass.PAN_VERIFICATION_REGISTRATION_ID_OFFLINE
@@ -1845,9 +1847,10 @@ class QRCodePage : BaseActivity() {
 
 
     private fun fetchEmandateOptionsInPage() {
+        val loanmode = preference.getStringValue(ConstantClass.Loanmode, "")
         val req = EmandateOptionSelectetionReq(
-            mode = LoanMode,
-            registrationID = if (LoanMode == ConstantClass.online) {
+            mode = loanmode,
+            registrationID = if (loanmode.equals(ConstantClass.online, ignoreCase = true)) {
                 ConstantClass.Enach_Option_Online_REGISTRATION_ID
             } else {
                 ConstantClass.Enach_Option_Offline_REGISTRATION_ID
@@ -2061,15 +2064,12 @@ class QRCodePage : BaseActivity() {
                                         }
 
                                     }
-
-                                    val error = users.body()?.statusDesc ?: users.message() ?: "Something went wrong"
-                                    Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                                } else {
+                                }
+                                else {
                                     var error = resources.data.toString()
                                     Toast.makeText(this@QRCodePage, error, Toast.LENGTH_SHORT).show()
 
                                 }
-
                             }
 
                         }
@@ -2212,8 +2212,6 @@ class QRCodePage : BaseActivity() {
                                         )
                                         hitApiForUploadEnachMandateDataResponse(uploadReq)
                                     }
-                                    val error = users.body()?.statusDesc ?: users.message() ?: "Something went wrong"
-                                    Toast.makeText(this, error, Toast.LENGTH_LONG).show()
                                 } else {
                                     Toast.makeText(this@QRCodePage, resources.data.toString(), Toast.LENGTH_SHORT).show()
                                 }

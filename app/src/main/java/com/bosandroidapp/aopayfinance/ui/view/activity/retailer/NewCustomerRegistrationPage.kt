@@ -320,13 +320,86 @@ class NewCustomerRegistrationPage : BaseActivity() {
            setDataIfGeetingPanVerification()
        }
        else {
-          /* if(AlreadyCustomerCodeHaveEligiblity.isNotEmpty()){
+           if(AlreadyCustomerCodeHaveEligiblity.isNotEmpty()){
                setDataIfCustomerAlreadyExist()
-           }*/
+           }
 
        }
         hitApiForLogin()
         hitApiForRetailerWalletAmount()
+        validateAndSyncMobileVerificationState()
+    }
+
+    fun validateAndSyncMobileVerificationState() {
+        val primaryMobileText = binding.mobileNumber.text.toString().trim()
+
+        if (primaryMobileText.isBlank()) {
+            if (!CustPrimaryMobileNumber.isNullOrBlank() && (mobileveryfied || CustPrimaryMobileVerified.equals("yes", ignoreCase = true))) {
+                binding.mobileNumber.setText(CustPrimaryMobileNumber)
+                binding.mobileNumber.isEnabled = false
+                binding.verifyiconphonenumber.visibility = View.VISIBLE
+                binding.verifymobilenumber.visibility = View.GONE
+            } else if (PanMobileNumber.isNotBlank()) {
+                binding.mobileNumber.setText(PanMobileNumber)
+                binding.verifyiconphonenumber.visibility = View.GONE
+                if (PanMobileNumber.length == 10) {
+                    binding.verifymobilenumber.visibility = View.VISIBLE
+                } else {
+                    binding.verifymobilenumber.visibility = View.GONE
+                }
+            } else {
+                mobileveryfied = false
+                CustPrimaryMobileVerified = ""
+                binding.verifyiconphonenumber.visibility = View.GONE
+                binding.verifymobilenumber.visibility = View.GONE
+                binding.mobileNumber.isEnabled = true
+            }
+        } else {
+            if (mobileveryfied || CustPrimaryMobileVerified.equals("yes", ignoreCase = true)) {
+                binding.verifyiconphonenumber.visibility = View.VISIBLE
+                binding.verifymobilenumber.visibility = View.GONE
+                binding.mobileNumber.isEnabled = false
+            } else if (primaryMobileText.length == 10) {
+                binding.verifyiconphonenumber.visibility = View.GONE
+                binding.verifymobilenumber.visibility = View.VISIBLE
+                binding.mobileNumber.isEnabled = true
+            } else {
+                binding.verifyiconphonenumber.visibility = View.GONE
+                binding.verifymobilenumber.visibility = View.GONE
+                binding.mobileNumber.isEnabled = true
+            }
+        }
+
+        val altMobileText = binding.alternatemobileNumber.text.toString().trim()
+
+        if (altMobileText.isBlank()) {
+            if (!CustAlternateMobileNumber.isNullOrBlank() && (alternatemobileveryfied || CustAlternateMobileVerified.equals("yes", ignoreCase = true))) {
+                binding.alternatemobileNumber.setText(CustAlternateMobileNumber)
+                binding.alternatemobileNumber.isEnabled = false
+                binding.alternateverifyiconphonenumber.visibility = View.VISIBLE
+                binding.alternateverifymobilenumber.visibility = View.GONE
+            } else {
+                alternatemobileveryfied = false
+                CustAlternateMobileVerified = ""
+                binding.alternateverifyiconphonenumber.visibility = View.GONE
+                binding.alternateverifymobilenumber.visibility = View.GONE
+                binding.alternatemobileNumber.isEnabled = true
+            }
+        } else {
+            if (alternatemobileveryfied || CustAlternateMobileVerified.equals("yes", ignoreCase = true)) {
+                binding.alternateverifyiconphonenumber.visibility = View.VISIBLE
+                binding.alternateverifymobilenumber.visibility = View.GONE
+                binding.alternatemobileNumber.isEnabled = false
+            } else if (altMobileText.length == 10) {
+                binding.alternateverifyiconphonenumber.visibility = View.GONE
+                binding.alternateverifymobilenumber.visibility = View.VISIBLE
+                binding.alternatemobileNumber.isEnabled = true
+            } else {
+                binding.alternateverifyiconphonenumber.visibility = View.GONE
+                binding.alternateverifymobilenumber.visibility = View.GONE
+                binding.alternatemobileNumber.isEnabled = true
+            }
+        }
     }
 
 
@@ -522,20 +595,35 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 val primaryNumber = s.toString().trim()
                 val altNumber = binding.alternatemobileNumber.text.toString().trim()
 
+                if (primaryNumber.isBlank()) {
+                    mobileveryfied = false
+                    CustPrimaryMobileVerified = ""
+                    binding.verifyiconphonenumber.visibility = View.GONE
+                    binding.verifymobilenumber.visibility = View.GONE
+                    binding.mobileNumber.isEnabled = true
+                    return
+                }
+
+                if (mobileveryfied || CustPrimaryMobileVerified.equals("yes", ignoreCase = true)) {
+                    binding.verifyiconphonenumber.visibility = View.VISIBLE
+                    binding.verifymobilenumber.visibility = View.GONE
+                    binding.mobileNumber.isEnabled = false
+                    return
+                }
+
                 if (primaryNumber.length == 10) {
-                    // ✅ Check if alternate is same
                     if (primaryNumber == altNumber && altNumber.isNotEmpty()) {
-                        binding.mobileNumber.error =
-                            "Primary mobile number should not be same as alternate number"
+                        binding.mobileNumber.error = "Primary mobile number should not be same as alternate number"
                         binding.verifymobilenumber.visibility = View.GONE
+                        binding.verifyiconphonenumber.visibility = View.GONE
                         return
                     }
 
-                    // ✅ Show verify if valid
                     binding.verifymobilenumber.visibility = View.VISIBLE
-
+                    binding.verifyiconphonenumber.visibility = View.GONE
                 } else {
                     binding.verifymobilenumber.visibility = View.GONE
+                    binding.verifyiconphonenumber.visibility = View.GONE
                 }
             }
         })
@@ -549,25 +637,35 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 val altNumber = s.toString().trim()
                 val primaryNumber = binding.mobileNumber.text.toString().trim()
 
+                if (altNumber.isBlank()) {
+                    alternatemobileveryfied = false
+                    CustAlternateMobileVerified = ""
+                    binding.alternateverifyiconphonenumber.visibility = View.GONE
+                    binding.alternateverifymobilenumber.visibility = View.GONE
+                    binding.alternatemobileNumber.isEnabled = true
+                    return
+                }
+
+                if (alternatemobileveryfied || CustAlternateMobileVerified.equals("yes", ignoreCase = true)) {
+                    binding.alternateverifyiconphonenumber.visibility = View.VISIBLE
+                    binding.alternateverifymobilenumber.visibility = View.GONE
+                    binding.alternatemobileNumber.isEnabled = false
+                    return
+                }
+
                 if (altNumber.length == 10) {
-
-                    if (mobileveryfied) {
-                        binding.verifymobilenumber.visibility = View.GONE
-                    } else {
-                        binding.verifymobilenumber.visibility = View.VISIBLE
-                    }
-
-
                     if (altNumber == primaryNumber) {
                         binding.alternatemobileNumber.error = "Alternate mobile number should not be same as primary number"
                         binding.alternateverifymobilenumber.visibility = View.GONE
+                        binding.alternateverifyiconphonenumber.visibility = View.GONE
                         return
                     }
 
                     binding.alternateverifymobilenumber.visibility = View.VISIBLE
-
+                    binding.alternateverifyiconphonenumber.visibility = View.GONE
                 } else {
                     binding.alternateverifymobilenumber.visibility = View.GONE
+                    binding.alternateverifyiconphonenumber.visibility = View.GONE
                 }
             }
         })
@@ -916,6 +1014,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                     retailercode=preference.getStringValue(ConstantClass.RetailerCode,""),
                                     clientCode= preference.getStringValue(ConstantClass.ClientCode,""),
                                     cibilScore=userScore.toString(),
+                                    activeStatus = "Approved",
                                     cibilApiResponse = CibilResponse,
                                     aadhaarApiResponse = AadhaarResponse,
                                     panApiResponse = PanResponse,
@@ -1718,11 +1817,35 @@ class NewCustomerRegistrationPage : BaseActivity() {
         binding.middleName.setText(PanMiddleName)
         binding.lastName.setText(PanLastName)
 
-        if(binding.verifyiconphonenumber.visibility==View.GONE){
+        if (mobileveryfied || CustPrimaryMobileVerified.equals("yes", ignoreCase = true) || !CustPrimaryMobileNumber.isNullOrBlank()) {
+            if (binding.mobileNumber.text.toString().trim().isBlank()) {
+                binding.mobileNumber.setText(CustPrimaryMobileNumber)
+            }
+            binding.verifyiconphonenumber.visibility = View.VISIBLE
+            binding.verifymobilenumber.visibility = View.GONE
+            binding.mobileNumber.isEnabled = false
+        }
+        else if (PanMobileNumber.isNotBlank()) {
             binding.mobileNumber.setText(PanMobileNumber)
+            binding.verifyiconphonenumber.visibility = View.GONE
+            binding.mobileNumber.isEnabled = true
+        } else {
+            binding.mobileNumber.isEnabled = true
         }
 
-        binding.emailId.setText(PanEmailId)
+        if (emailIdveryfied || !CusteMailID.isNullOrBlank()) {
+            if (binding.emailId.text.toString().trim().isBlank()) {
+                binding.emailId.setText(CusteMailID)
+            }
+            binding.verifyiconemailId.visibility = View.VISIBLE
+            binding.verifyEmailId.visibility = View.GONE
+            binding.emailId.isEnabled = false
+        } else if (PanEmailId.isNotBlank()) {
+            binding.emailId.setText(PanEmailId)
+            binding.emailId.isEnabled = true
+        } else {
+            binding.emailId.isEnabled = true
+        }
 
         if(PanBuilding.isNotEmpty()){
             binding.flathouseno.setText(PanBuilding)
@@ -2102,8 +2225,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                 }*/
 
                                 if (isHttpSuccess) {
-                                    Toast.makeText(this@NewCustomerRegistrationPage, response.message.toString(), Toast.LENGTH_SHORT).show()
-
+                                   // Toast.makeText(this@NewCustomerRegistrationPage, response.message.toString(), Toast.LENGTH_SHORT).show()
                                     if(userScore>0){
                                         var AdminSetCibilScore = AdminCibilScore.toIntOrNull() ?: 0
 
@@ -2160,7 +2282,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                                                         cibilApiResponse = CibilResponse,
                                                         cibilScore = userScore.toInt().toString(),
                                                         retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-                                                        activeStatus = "activeStatus",
+                                                        activeStatus = "Approved",
                                                         custPhoto_path = "",
                                                         custPhoto_File = customerImageFile
                                                     )
@@ -2292,7 +2414,6 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
         if(AlreadyCustomerCodeHaveEligiblity.isNotEmpty()){
             val customerImageFile = saveImageToCache(this, CustPhotoPath!!, "CustomerPhoto" )
-
             var req = UpdateCustomerUploadDataReq(
                 customerCode = AlreadyCustomerCodeHaveEligiblity,
                 updatedBy = retailercode,
@@ -2317,11 +2438,10 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 cibilApiResponse = CibilResponse,
                 cibilScore = cibilScore.toString(),
                 retailerCode = preference.getStringValue(ConstantClass.RetailerCode, ""),
-                activeStatus = "Pending",
+                activeStatus = "Approved",
                 custPhoto_path = "",
                 custPhoto_File = customerImageFile
             )
-
             hitApiForUpdateCustomerData(req)
 
         }
@@ -2549,9 +2669,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         }
 
 
-
     }
-
 
 
     fun PopOpForCibileScoreRequestToAdmin(cibilScore : String,title:String,check:Boolean){
@@ -2659,7 +2777,6 @@ class NewCustomerRegistrationPage : BaseActivity() {
     }
 
 
-
     fun hitApiForRetailerWalletAmount() {
 
         var registrationID = preference.getStringValue(ConstantClass.RetailerCode, "")
@@ -2742,7 +2859,9 @@ class NewCustomerRegistrationPage : BaseActivity() {
     fun hitApiForUploadCustomerData(request : ManageCustomerStepWiseReq){
 
         viewModel.uploadCustomerListForShortCutLoanCreateProcess(request).observe(this) { resources ->
+
             when (resources.apiStatus) {
+
                 ApiStatus.SUCCESS ->{
                     resources.data.let { user->
                         ConstantClass.dialog!!.dismiss()
@@ -2792,6 +2911,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 }
 
             }
+
         }
 
 

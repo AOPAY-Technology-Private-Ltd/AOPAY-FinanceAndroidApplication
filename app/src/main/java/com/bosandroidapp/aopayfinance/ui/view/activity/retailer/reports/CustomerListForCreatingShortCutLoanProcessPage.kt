@@ -457,7 +457,22 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
             }
 
             if (createLoanDetails != null && !(createLoanDetails.loanCode.isNullOrBlank())) {
-                LoanMode = createLoanDetails.loanMode ?: ""
+                val serverLoanMode = createLoanDetails.loanMode.orEmpty().trim()
+                if (serverLoanMode.isNotBlank()) {
+                    LoanMode = serverLoanMode
+                    preference.setStringValue(ConstantClass.Loanmode, serverLoanMode)
+                    ConstantClass.CheckOnlineOrOffline = serverLoanMode
+                }
+                else {
+                    val savedMode = preference.getStringValue(ConstantClass.Loanmode, "").ifBlank {
+                        ConstantClass.CheckOnlineOrOffline.ifBlank { LoanMode }
+                    }
+                    if (savedMode.isNotBlank()) {
+                        LoanMode = savedMode
+                        preference.setStringValue(ConstantClass.Loanmode, savedMode)
+                        ConstantClass.CheckOnlineOrOffline = savedMode
+                    }
+                }
                 LoanStatus = createLoanDetails.loanStatus ?: ""
                 LoanRID = createLoanDetails.loanRID?.takeIf { it.isNotBlank() }?.toIntOrNull() ?: 0
                 loaneCode = createLoanDetails.loanCode ?: ""
@@ -524,12 +539,16 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            ConstantClass.CheckOnlineOrOffline = if (selectedId == com.bosandroidapp.aopayfinance.R.id.rbOnline) {
+            val selectedMode = if (selectedId == com.bosandroidapp.aopayfinance.R.id.rbOnline) {
                 ConstantClass.online
             }
             else {
                 ConstantClass.offline
             }
+
+            LoanMode = selectedMode
+            ConstantClass.CheckOnlineOrOffline = selectedMode
+            preference.setStringValue(ConstantClass.Loanmode, selectedMode)
 
             dialog.dismiss()
 
@@ -1329,11 +1348,8 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                                     hitApiForUploadEnachMandateDataResponse(uploadReq)
                                 }
 
-                                val error = users.body()?.statusDesc ?: users.message()
-                                ?: "Something went wrong"
-
-                                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                            } else {
+                            }
+                            else {
                                 var error = resources.data.toString()
                                 Toast.makeText(
                                     this@CustomerListForCreatingShortCutLoanProcessPage,
@@ -1380,7 +1396,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
                         when (it.apiStatus) {
                             ApiStatus.SUCCESS -> {
                                 it.data.let { users ->
-
                                     if(users!!.isSuccessful){
                                         users!!.body().let { response ->
                                             Log.d("eMandateUpiOnlineRes", Gson().toJson(response))
@@ -1527,10 +1542,6 @@ class CustomerListForCreatingShortCutLoanProcessPage : AppCompatActivity() {
 
                                         hitApiForUploadEnachMandateDataResponse(uploadReq)
                                     }
-
-                                    val error = users.body()?.statusDesc ?: users.message() ?: "Something went wrong"
-
-                                    Toast.makeText(this, error, Toast.LENGTH_LONG).show()
                                 }
                                 else {
                                     var error = resources.data.toString()
