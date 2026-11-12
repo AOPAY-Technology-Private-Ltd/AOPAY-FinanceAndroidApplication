@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1081949183725",
+    "project_id": "aopay-finance",
+    "storage_bucket": "aopay-finance.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081949183725:android:5e0b1965bdbb10d90bf6e4",
+        "android_client_info": {
+          "package_name": "com.bosandroidapp.aopayfinance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmZE7_Bh1uUpn1NwvRHKgMO0f0nQ2Gb40"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

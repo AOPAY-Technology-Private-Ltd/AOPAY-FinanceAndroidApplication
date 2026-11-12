@@ -1,0 +1,14 @@
+package com.bosandroidapp.aopayfinance.data.model
+
+import com.google.gson.annotations.SerializedName
+
+data class RetailerWalletAmountReq(
+    @SerializedName("retailerID")
+    var retailerID: String,
+
+    @SerializedName("amountType")
+    var amountType: String,
+
+    @SerializedName("clientcode")
+    var clientCode: String
+)

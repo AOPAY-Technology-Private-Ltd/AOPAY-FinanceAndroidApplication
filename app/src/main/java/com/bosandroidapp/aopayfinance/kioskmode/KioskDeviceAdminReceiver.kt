@@ -17,9 +17,9 @@ import kotlin.jvm.java
 
 class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
-   /* var frpAccounts = arrayListOf("112311833109524480913")  //harvirji9368@gmail.com*/
+    var frpAccounts = arrayListOf("112311833109524480913")  //harvirji9368@gmail.com
 
-    var frpAccounts = arrayListOf("112250138021796577559") // banarji.gupta1988@gmail.com
+   /* var frpAccounts = arrayListOf("112250138021796577559") // banarji.gupta1988@gmail.com*/
 
 
     override fun onEnabled(context: Context, intent: Intent) {
@@ -54,7 +54,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
             )
             dpm.setOrganizationName(admin, ConstantClass.OrganizationName)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
-            //dpm.addUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
             dpm.setPermittedAccessibilityServices(admin, Arrays.asList(context.packageName))
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_FINE_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_BACKGROUND_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)
@@ -91,7 +91,7 @@ class KioskDeviceAdminReceiver : DeviceAdminReceiver(){
 
             dpm.setOrganizationName(admin, ConstantClass.OrganizationName)
             dpm.addUserRestriction(admin, UserManager.DISALLOW_FACTORY_RESET)
-           // dpm.addUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
+            dpm.addUserRestriction(admin, UserManager.DISALLOW_DEBUGGING_FEATURES)
             dpm.setPermittedAccessibilityServices(admin, Arrays.asList(context.packageName))
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_FINE_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)
             dpm.setPermissionGrantState(admin, context.packageName, "android.permission.ACCESS_BACKGROUND_LOCATION", DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED)

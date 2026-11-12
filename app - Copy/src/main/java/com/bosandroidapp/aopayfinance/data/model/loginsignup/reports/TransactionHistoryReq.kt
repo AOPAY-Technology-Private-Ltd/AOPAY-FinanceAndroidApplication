@@ -1,0 +1,21 @@
+package com.bosandroidapp.aopayfinance.data.model.loginsignup.reports
+
+import com.google.gson.annotations.SerializedName
+
+data class TransactionHistoryReq(
+
+	@field:SerializedName("fromDate")
+	val fromDate: String? = null,
+
+	@field:SerializedName("toDate")
+	val toDate: String? = null,
+
+	@field:SerializedName("registrationId")
+	val registrationId: String? = null,
+
+	@field:SerializedName("status")
+	val status: String? = null,
+
+	@SerializedName("clientcode")
+	var clientCode: String
+)
