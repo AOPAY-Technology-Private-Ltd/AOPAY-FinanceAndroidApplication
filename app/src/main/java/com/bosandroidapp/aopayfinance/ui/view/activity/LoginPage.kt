@@ -176,7 +176,7 @@ class LoginPage : BaseActivity() {
 
 
 
-        binding.loginlayout.setOnClickListener {
+     /*   binding.loginlayout.setOnClickListener {
             var emailOfMobile = binding.emailormobilenumber.text.toString().trim()
             var password = binding.password.text.toString().trim()
 
@@ -193,7 +193,7 @@ class LoginPage : BaseActivity() {
                }
            }
 
-        }
+        }*/
 
 
       /*  binding.forgetpageLayout.setOnClickListener {
@@ -240,17 +240,42 @@ class LoginPage : BaseActivity() {
     }
 
 
-    fun hitApiForLogin(emailOfMobile:String,password:String){
-        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        preference.setStringValue("deviceid",deviceId)
+    fun hitApiForLogin(emailOfMobile: String, password: String) {
+        val storedToken = preference.getStringValue(ConstantClass.FCMTOKEN, "")
+        if (FireBaseToken.isEmpty() && storedToken.isNotEmpty()) {
+            FireBaseToken = storedToken
+        }
 
-        var loginRequest = LoginReq(
+        if (FireBaseToken.isEmpty()) {
+            Log.d("FCM_CHECK", "Firebase token is empty, retrying to fetch token before login...")
+            ConstantClass.OpenPopUpForVeryfyOTP(this)
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                ConstantClass.dialog?.dismiss()
+                if (task.isSuccessful && !task.result.isNullOrEmpty()) {
+                    FireBaseToken = task.result
+                    preference.setStringValue(ConstantClass.FCMTOKEN, FireBaseToken)
+                    Log.d("FCM_TOKEN_RETRY_SUCCESS", FireBaseToken)
+                } else {
+                    Log.e("FCM_TOKEN_RETRY_FAILED", "Failed to retrieve FCM token", task.exception)
+                }
+                proceedLoginApiCall(emailOfMobile, password)
+            }
+        } else {
+            proceedLoginApiCall(emailOfMobile, password)
+        }
+    }
+
+    private fun proceedLoginApiCall(emailOfMobile: String, password: String) {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        preference.setStringValue("deviceid", deviceId)
+
+        val loginRequest = LoginReq(
             mobileormailid = emailOfMobile,
             password = password,
             logintype = loginType,
             deviceId = deviceId,
             token = FireBaseToken,
-            imeiNumber =  ConstantClass.IMEI
+            imeiNumber = ConstantClass.IMEI
         )
 
         Log.d("LoginReq", Gson().toJson(loginRequest))
@@ -264,7 +289,7 @@ class LoginPage : BaseActivity() {
                 }
 
                 ApiStatus.SUCCESS -> {
-                    ConstantClass.dialog!!.dismiss()
+                    ConstantClass.dialog?.dismiss()
 
                     val response = it.data?.body()
                     Log.d("LoginResponse", Gson().toJson(response))
@@ -272,7 +297,7 @@ class LoginPage : BaseActivity() {
                     if (response != null && response.statuss) {
 
                         val req = NotificationSendTokenRequest(
-                            deviceType= ConstantClass.DeviceType,
+                            deviceType = ConstantClass.DeviceType,
                             clientCode = response.clientCode.toString(),
                             customerCode = response.customerCode.toString(),
                             retailerCode = response.retailerCode.toString(),
@@ -307,8 +332,7 @@ class LoginPage : BaseActivity() {
                 }
 
                 ApiStatus.ERROR -> {
-                    ConstantClass.dialog!!.dismiss()
-                    // 👇 Show proper error from ViewModel (404, 500 etc.)
+                    ConstantClass.dialog?.dismiss()
                     val errorMessage = it.message ?: "Something went wrong"
                     OpenPopUpForVAlert(errorMessage)
 
@@ -318,8 +342,6 @@ class LoginPage : BaseActivity() {
             }
 
         }
-
-
     }
 
     fun validateLoginInput(mobileOrEmailID: String, password: String, context: Context): Boolean {

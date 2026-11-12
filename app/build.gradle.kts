@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 
@@ -105,6 +106,7 @@ dependencies {
 
     // firebase ...................................
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.crashlytics)
     // Firebase BOM MUST be platform()
     implementation(platform(libs.firebase.bom))
     // Firestore KTX

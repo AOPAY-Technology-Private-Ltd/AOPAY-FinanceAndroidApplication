@@ -29,6 +29,7 @@ import com.bosandroidapp.aopayfinance.localdb.SharedPreference
 import com.bosandroidapp.aopayfinance.ui.view.activity.ChooseYourRolePage
 import com.bosandroidapp.aopayfinance.ui.viewmodel.AuthenticationViewModel
 import com.google.gson.Gson
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 /*import com.stacker.stacker.StackerAndroid*/
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,17 @@ class ApplicationClass : Application() {
        // StackerAndroid.enable(this)
 
         Log.d("ApplicationClass", "Application started")
+
+        // Initialize Firebase Crashlytics
+        val crashlytics = FirebaseCrashlytics.getInstance()
+        crashlytics.setCrashlyticsCollectionEnabled(true)
+        preference = SharedPreference(this)
+
+        val customerCode = preference.getStringValue(ConstantClass.CustomerCode, "")
+
+        if (customerCode.isNotEmpty()) {
+            crashlytics.setUserId(customerCode)
+        }
 
         // Create default notification channel once
         createNotificationChannel()
@@ -85,15 +97,6 @@ class ApplicationClass : Application() {
             }
         })
 
-       /* ProvisionerJatt.initialize(
-            this,
-            ProvisionerOptions(
-                pairingColors = PairingDialogColors(),
-                pairingWatermarkResId = R.drawable.logosplash, // omit for none
-                showProvisionerDialog = true, // default; pass false to skip
-            ),
-        )*/
-        
 
     }
 

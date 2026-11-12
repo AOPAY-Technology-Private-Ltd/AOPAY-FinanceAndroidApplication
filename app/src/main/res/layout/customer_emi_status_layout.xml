@@ -133,7 +133,7 @@
                     android:layout_height="@dimen/_32sdp"
                     android:background="@drawable/bg_light_blue_rounded"
                     android:padding="@dimen/_6sdp"
-                    android:src="@drawable/wallet"
+                    android:src="@drawable/ic_wallet"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/darkpurple" />

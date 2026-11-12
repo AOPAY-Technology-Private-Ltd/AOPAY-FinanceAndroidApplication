@@ -157,6 +157,7 @@ object ConstantClass {
     }
 
 
+
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
     val CURRENT_ENVIRONMENT = AppEnvironment.DEV
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
@@ -569,11 +570,7 @@ object ConstantClass {
     }
 
 
-    fun getCityStateFromPincode(
-        context: Context,
-        pincode: String,
-        callback: (String?, String?, String?) -> Unit
-    ) {
+    fun getCityStateFromPincode(context: Context, pincode: String, callback: (String?, String?, String?) -> Unit) {
         val client = OkHttpClient()
 
         val request = Request.Builder()

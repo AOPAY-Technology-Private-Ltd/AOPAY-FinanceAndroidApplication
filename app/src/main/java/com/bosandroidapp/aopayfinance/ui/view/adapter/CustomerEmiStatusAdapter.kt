@@ -35,19 +35,19 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
         val emiAmount = item.emiAmount ?: 0.0
         val dueOrPaidAmount = formatTwoDecimalAmount(totalCharges + emiAmount)
 
+
         if (item.recordStatus?.equals("paid", ignoreCase = true) == true) {
             binding.doneimage.setImageResource(com.bosandroidapp.aopayfinance.R.drawable.doneicon)
             binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.paid_amount)
             binding.tvRecordStatus.setTextColor(ContextCompat.getColor(context, com.bosandroidapp.aopayfinance.R.color.green))
-            binding.tvPendingAmount.text = dueOrPaidAmount
         }
         else {
             binding.amounttitle.text = context.getString(com.bosandroidapp.aopayfinance.R.string.due_amount)
             binding.tvRecordStatus.setTextColor(ContextCompat.getColor(context, com.bosandroidapp.aopayfinance.R.color.red))
             binding.doneimage.setImageResource(com.bosandroidapp.aopayfinance.R.drawable.crossicon)
-            binding.tvPendingAmount.text = dueOrPaidAmount
         }
 
+        binding.tvPendingAmount.text = dueOrPaidAmount
         binding.tvEmiAmount.text = formatTwoDecimalAmount(item.emiAmount)
         binding.tvFineAmount.text = formatTwoDecimalAmount(item.fine)
         binding.tvBounceAmount.text = formatTwoDecimalAmount(item.bouncingCharges)
@@ -61,7 +61,9 @@ class CustomerEmiStatusAdapter(var context: Context, var ledgerReportList: List<
         binding.tvDueDate.text = "Due Date: ${item.emIDueDate ?: ""}"
     }
 
+
     override fun getItemCount(): Int {
         return ledgerReportList.size
     }
+
 }
