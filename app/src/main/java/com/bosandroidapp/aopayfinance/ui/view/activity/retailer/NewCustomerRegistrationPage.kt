@@ -2209,6 +2209,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         viewCibilModel.getCibilReq(cibilReq).observe(this) { resources ->
             resources.let {
                 when (it.apiStatus) {
+
                     ApiStatus.SUCCESS -> {
                         it.data?.let { users ->
                             users.body()?.let { response ->
@@ -2385,13 +2386,11 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
                     }
 
-
                 }
             }
         }
 
     }
-
 
 
     fun hitApiForCustomerRegister(cibilScore:Int,cibilScoremsg: String, title: String) {

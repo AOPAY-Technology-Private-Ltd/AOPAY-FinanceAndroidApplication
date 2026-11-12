@@ -14,8 +14,8 @@ android {
         applicationId = "com.bosandroidapp.aopayfinance"
         minSdk = 28
         targetSdk = 36
-        versionCode = 19
-        versionName = "2.0.9"     // prod 2.0.1  10 old prod   11  2.0.2  Live          //  uat 2.0.9  19
+        versionCode = 12
+        versionName = "2.0.3"     // 11  2.0.2 old prod     Live  12  2.0.3   //  uat 2.0.9  19
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -135,7 +135,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
 
-    val stacker = "com.github.jatinsinghsatija.Stacker"
+/*    val stacker = "com.github.jatinsinghsatija.Stacker"
     val stackerVersion = "v0.2.0"
 
 
@@ -144,7 +144,7 @@ dependencies {
 
 
     releaseImplementation("$stacker:stacker_inspector_release:$stackerVersion")
-    releaseImplementation("$stacker:flutter_release:$stackerVersion")
+    releaseImplementation("$stacker:flutter_release:$stackerVersion")*/
 
 
 
