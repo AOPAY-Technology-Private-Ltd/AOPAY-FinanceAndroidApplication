@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.location.LocationManager
@@ -18,6 +19,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
+import androidx.exifinterface.media.ExifInterface
 import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
@@ -157,7 +159,7 @@ object ConstantClass {
 
 
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.PRODUCTION
+    val CURRENT_ENVIRONMENT = AppEnvironment.DEV
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
     val CUSTOMERPPURLLINK = BASE_URL + "api/V1/AopayFinance/aopay-download"
@@ -176,13 +178,13 @@ object ConstantClass {
 
     const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
 
-    const val PAN_BASE_URL = "https://api.aopay.in/"
+   // const val PAN_BASE_URL = "https://api.aopay.in/"
 
- //   const val PAN_BASE_URL = "https://uat.api.aopay.in/"
+    const val PAN_BASE_URL = "https://uat.api.aopay.in/"
 
-    const val ONLINE_PG = "https://api.dikshifinsure.com/"
+   // const val ONLINE_PG = "https://api.dikshifinsure.com/"
 
-  //  const val ONLINE_PG = "https://uat.api.dikshifinsure.com/"
+    const val ONLINE_PG = "https://uat.api.dikshifinsure.com/"
 
 
     const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
@@ -790,9 +792,22 @@ object ConstantClass {
 
 
     fun saveImageToCache(context: Context, imageUri: Uri, filename: String): File? {
-
         return try {
+            // 1. Read EXIF orientation
+            var orientation = androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+            try {
+                context.contentResolver.openInputStream(imageUri)?.use { inputStream ->
+                    val exif = androidx.exifinterface.media.ExifInterface(inputStream)
+                    orientation = exif.getAttributeInt(
+                        androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                        androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+                    )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
+            // 2. Decode bounds for downsampling large / high-resolution / 45MB+ images
             val options = BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
             }
@@ -801,22 +816,64 @@ object ConstantClass {
                 BitmapFactory.decodeStream(it, null, options)
             }
 
-            options.inSampleSize =
-                calculateInSampleSize(
+            options.inSampleSize = calculateInSampleSize(
                     options,
                     1080,
                     1080
                 )
+            if (options.outWidth > 3000 || options.outHeight > 3000) {
+                options.inSampleSize *= 2
+            }
             options.inJustDecodeBounds = false
 
-            val bitmap = context.contentResolver.openInputStream(imageUri)?.use {
-                BitmapFactory.decodeStream(it, null, options)
+            // 3. Decode bitmap with OOM protection
+            val decodedBitmap = try {
+                context.contentResolver.openInputStream(imageUri)?.use {
+                    BitmapFactory.decodeStream(it, null, options)
+                }
+            } catch (e: OutOfMemoryError) {
+                System.gc()
+                options.inSampleSize *= 2
+                try {
+                    context.contentResolver.openInputStream(imageUri)?.use {
+                        BitmapFactory.decodeStream(it, null, options)
+                    }
+                } catch (e2: OutOfMemoryError) {
+                    e2.printStackTrace()
+                    return null
+                }
             } ?: return null
 
+            // 4. Rotate bitmap if required by EXIF orientation (fixes rotation for vertical/portrait photos)
+            val matrix = android.graphics.Matrix()
+            when (orientation) {
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            }
 
+            val bitmap = if (!matrix.isIdentity) {
+                try {
+                    val rotated = Bitmap.createBitmap(
+                        decodedBitmap, 0, 0,
+                        decodedBitmap.width, decodedBitmap.height,
+                        matrix, true
+                    )
+                    if (rotated != decodedBitmap) {
+                        decodedBitmap.recycle()
+                    }
+                    rotated
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    decodedBitmap
+                }
+            } else {
+                decodedBitmap
+            }
+
+            // 5. Compress and save to cache file
             val tempFile = File(context.cacheDir, "${filename}_${System.currentTimeMillis()}.jpg")
-
-            var quality = 90
+            var quality = 85
 
             do {
                 FileOutputStream(tempFile).use { output ->
@@ -825,22 +882,21 @@ object ConstantClass {
                 }
 
                 val fileSizeKB = tempFile.length() / 1024
-
                 Log.d("FILE_SIZE", "Quality=$quality, Size=${fileSizeKB}KB")
 
-                if (fileSizeKB <= 600) {
+                if (fileSizeKB <= 500) {
                     break
                 }
 
-                quality -= 5
+                quality -= 10
 
-            } while (quality >= 20)
+            } while (quality >= 15)
 
             bitmap.recycle()
             Log.d("FILE_SIZE_FINAL", "Final Size=${tempFile.length() / 1024}KB")
             tempFile
 
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             e.printStackTrace()
             null
         }
@@ -848,22 +904,25 @@ object ConstantClass {
 
 
     fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-
         val height = options.outHeight
         val width = options.outWidth
-
         var inSampleSize = 1
 
         if (height > reqHeight || width > reqWidth) {
-
             val halfHeight = height / 2
             val halfWidth = width / 2
 
             while ((halfHeight / inSampleSize) >= reqHeight &&
                 (halfWidth / inSampleSize) >= reqWidth) {
-
                 inSampleSize *= 2
             }
+        }
+
+        if (inSampleSize < 2 && (height > 2000 || width > 2000)) {
+            inSampleSize = 2
+        }
+        if (inSampleSize < 4 && (height > 4000 || width > 4000)) {
+            inSampleSize = 4
         }
 
         return inSampleSize

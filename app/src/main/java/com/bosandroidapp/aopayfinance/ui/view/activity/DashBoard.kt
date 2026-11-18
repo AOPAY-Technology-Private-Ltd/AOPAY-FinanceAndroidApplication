@@ -479,6 +479,8 @@ class DashBoard : BaseActivity() {
         binding.appBarDashBoard.deskdesign.customer.setOnClickListener {
             ConstantClass.ClickOnCardDashboard = "Customer"
             ConstantClass.CheckOnlineOrOffline=""
+            ConstantClass.CustPrimaryMobileVerified=""
+            ConstantClass.CustPrimaryMobileNumber=""
             PanNumber=""
             preference.setStringValue(ConstantClass.Loanmode,"")
             startActivity(Intent(this@DashBoard, IDVerificationPage::class.java))

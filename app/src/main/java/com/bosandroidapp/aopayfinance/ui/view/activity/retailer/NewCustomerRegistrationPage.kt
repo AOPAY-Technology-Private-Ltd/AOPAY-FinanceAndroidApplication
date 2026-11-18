@@ -195,6 +195,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
     var clickemailId: Boolean = false
     var EmailId: String = ""
     var customerImagePath: String? = ""
+    private var isAlreadyCustomerDataLoaded = false
     var checkFirstName:Boolean = false
     var checkMiddleName:Boolean = false
     var checkLastName:Boolean = false
@@ -209,25 +210,31 @@ class NewCustomerRegistrationPage : BaseActivity() {
 
 
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success) {
-                // Handle the photoUri, e.g., show image in ImageView
-                AadharImage=""
-                binding.userimage.visibility = View.VISIBLE
-                binding.lockimage.visibility = View.GONE
+        if (success && photoUri != null) {
+            AadharImage=""
+            binding.userimage.visibility = View.VISIBLE
+            binding.lockimage.visibility = View.GONE
+            
+            // Process photoUri through saveImageToCache for downsampling, compression, and EXIF orientation rotation
+            val cacheFile = saveImageToCache(this, photoUri!!, "CustomerPhoto")
+            if (cacheFile != null && cacheFile.exists()) {
+                photoUri = Uri.fromFile(cacheFile)
+                customerImagePath = cacheFile.absolutePath
                 binding.userimage.setImageURI(photoUri)
-                val imageFile = uriToFile(photoUri!!, this)
-                customerImagePath = imageFile!!.absolutePath
-                binding.imagenotuploaded.visibility = View.GONE
-            }
-            else {
-                photoUri = null
+            } else {
                 customerImagePath = ""
-                Glide.with(this).clear(binding.userimage)
-                binding.userimage.visibility = View.GONE
-                binding.lockimage.visibility = View.VISIBLE
+                binding.userimage.setImageURI(photoUri)
             }
-
+            binding.imagenotuploaded.visibility = View.GONE
         }
+        else {
+            photoUri = null
+            customerImagePath = ""
+            Glide.with(this).clear(binding.userimage)
+            binding.userimage.visibility = View.GONE
+            binding.lockimage.visibility = View.VISIBLE
+        }
+    }
 
 
 
@@ -320,7 +327,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
            setDataIfGeetingPanVerification()
        }
        else {
-           if(AlreadyCustomerCodeHaveEligiblity.isNotEmpty()){
+           if(AlreadyCustomerCodeHaveEligiblity.isNotEmpty() ){
                setDataIfCustomerAlreadyExist()
            }
 
@@ -1807,6 +1814,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         Log.d("PanVerification", "AadharLoc: $AadharLoc")
         Log.d("PanVerification", "AadharImage: ${AadharImage.take(30)}...")
 
+
         if(PanFirstName.isNotEmpty()){
             binding.firstName.setText(PanFirstName)
         }
@@ -1965,7 +1973,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
         binding.statename.setText(AlreadyCustomerStateName)
         binding.cityname.setText(AlreadyCustomerCityName)
 
-        if(!AlreadyCustomerImage.isNullOrBlank()){
+        if(!AlreadyCustomerImage.isNullOrBlank() && !isAlreadyCustomerDataLoaded){
             var CustomerImage = ConstantClass.BASE_URL_IMAGE + AlreadyCustomerImage
             binding.lockimage.visibility = View.GONE
             binding.userimage.visibility = View.VISIBLE
@@ -1973,6 +1981,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
             CustPhotoPath = Uri.parse(CustomerImage)
 
             Glide.with(this).load(CustomerImage).into( binding.userimage)
+            isAlreadyCustomerDataLoaded = true
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val imageFile = downloadImageToTemp(this@NewCustomerRegistrationPage, CustomerImage)
@@ -1988,10 +1997,7 @@ class NewCustomerRegistrationPage : BaseActivity() {
                 }
             }
 
-
         }
-
-
 
     }
 

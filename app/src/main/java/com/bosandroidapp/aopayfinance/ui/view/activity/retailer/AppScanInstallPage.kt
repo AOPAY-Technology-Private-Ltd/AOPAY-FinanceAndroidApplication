@@ -105,6 +105,7 @@ import com.bosandroidapp.aopayfinance.constant.ConstantClass.calculateEmiEndDate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.createMultipartFromUri
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.getCurrentStartDate
 import com.bosandroidapp.aopayfinance.constant.ConstantClass.iisAggrementVerified
+import com.bosandroidapp.aopayfinance.constant.ConstantClass.saveImageToCache
 import com.bosandroidapp.aopayfinance.data.model.ManageCustomerStepWiseReq
 import com.bosandroidapp.aopayfinance.data.model.SessionOutReq
 import com.bosandroidapp.aopayfinance.data.model.ValidateAccessKeyReq
@@ -159,6 +160,13 @@ class AppScanInstallPage : BaseActivity() {
         if (success) {
                 // Handle the photoUri, e.g., show image in ImageView
                 binding.invoiceImage.visibility= View.VISIBLE
+            val cachedFile = saveImageToCache(this, invoicePhotoUri!!, "InvoiceImage")
+            if (cachedFile != null) {
+                invoicePhotoUri = Uri.fromFile(cachedFile)
+                Invoive_Path = invoicePhotoUri
+            } else {
+                Invoive_Path = invoicePhotoUri
+            }
                 Glide.with(this)
                     .load(invoicePhotoUri)
                     .centerCrop()
