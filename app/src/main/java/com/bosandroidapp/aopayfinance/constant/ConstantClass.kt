@@ -159,7 +159,7 @@ object ConstantClass {
 
 
     // Change current environment here: RELEASE_UAT | STAGING | DEV | PRODUCTION
-    val CURRENT_ENVIRONMENT = AppEnvironment.PRODUCTION
+    val CURRENT_ENVIRONMENT = AppEnvironment.DEV
     val BASE_URL = CURRENT_ENVIRONMENT.baseUrl
     val BASE_URL_IMAGE = CURRENT_ENVIRONMENT.baseUrlImage
     val CUSTOMERPPURLLINK= BASE_URL +"api/V1/AopayFinance/download"
@@ -185,16 +185,13 @@ object ConstantClass {
 
     const val SMS_BASE_URL = "http://web.adcruxmedia.in/"
 
+   // const val PAN_BASE_URL = "https://api.aopay.in/"
+    const val PAN_BASE_URL = "https://uat.api.aopay.in/"
 
-    const val PAN_BASE_URL = "https://api.aopay.in/"
-    //const val PAN_BASE_URL = "https://uat.api.aopay.in/"
-
-
-    const val ONLINE_PG = "https://api.dikshifinsure.com/"
-  // const val ONLINE_PG = "https://uat.api.dikshifinsure.com/"
+   // const val ONLINE_PG = "https://api.dikshifinsure.com/"
+    const val ONLINE_PG = "https://uat.api.dikshifinsure.com/"
 
     const val ONLINE_ENACH_BASE_URL = "https://nachuat.nupaybiz.com/"
-
 
     // for online emandate auto pay
     const val MarchentOrderID_UPIAUTOPAY = "marchentOrderid"

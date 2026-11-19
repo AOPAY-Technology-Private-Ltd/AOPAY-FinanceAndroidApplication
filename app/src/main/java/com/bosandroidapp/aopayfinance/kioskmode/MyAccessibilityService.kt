@@ -84,10 +84,10 @@ class MyAccessibilityService : AccessibilityService() {
 
 
 
-       /* if (isMyAppInfoPage() && !isEMIsCompleted()) {
+        if (isMyAppInfoPage() && !isEMIsCompleted()) {
             Logger.d(ACCESSIBILITYTAG, "On App Info Page: Global Back")
             performGlobalAction(GLOBAL_ACTION_BACK)
-        }*/
+        }
 
 
 
@@ -186,6 +186,7 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
+
     override fun onInterrupt() {
         Log.d("Accessibility", "Service interrupted")
     }
@@ -235,6 +236,7 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         instance = this
@@ -263,7 +265,6 @@ class MyAccessibilityService : AccessibilityService() {
             setServiceInfo(info)
         }
     }
-
 
     // changes by me
     private fun isMyAppOnTop(): Boolean {
@@ -316,6 +317,7 @@ class MyAccessibilityService : AccessibilityService() {
         return (isAppInfo && isMyApp)
     }
 
+
     private fun isGoogleLogin(event: AccessibilityEvent?): Boolean {
         Log.d("Accessibility",(event?.packageName?:"").toString())
         if (event?.packageName?.contains("com.google.android.gms") ?: false ||
@@ -325,6 +327,7 @@ class MyAccessibilityService : AccessibilityService() {
         }
         return false
     }
+
 
     private fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
